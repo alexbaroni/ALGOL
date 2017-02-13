@@ -7,7 +7,7 @@
 #  file LICENSE_1_0.txt or copy at
 #  http://www.boost.org/LICENSE_1_0.txt)
 #
-# Project home: https://github.com/caseycarter/cmcstl2
+# Project home: https://github.com/alexbaroni/ALGOL
 #
 #
 cmake_minimum_required(VERSION 3.6)
