@@ -11,7 +11,8 @@ namespace algol { namespace integer {
     template<typename T>
     class integer_interval
     {
-        static_assert(std::is_integral<T>::value, "Integer interval requires integer elements");
+        static_assert(std::is_integral<T>::value || std::is_convertible<T, int>::value,
+                      "Integer interval requires integer elements");
         static_assert(!std::is_same<T, bool>::value, "Integer interval is not defined for bool");
 
     public:
