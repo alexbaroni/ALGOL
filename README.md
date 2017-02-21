@@ -6,7 +6,8 @@ Utlility classes for measuring executionn time, operation count (ctor, move, ope
 For pretty printing credits goes to:  
 https://louisdx.github.io/cxx-prettyprint/ i simply repackaged into my namespace. 
 
-For *range classes credits goes to eric niebler for its posts about iterator
+For *range classes credits goes to Eric Niebler for its posts about range
+Please read it to understand pitfall of this approach
 
 Tests and some examples are in tests and examples folder.  
 
