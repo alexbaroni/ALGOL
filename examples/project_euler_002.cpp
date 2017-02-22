@@ -6,7 +6,7 @@
 
 using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uint64_t>;
 using fibonacci_upto_n_seq = algol::sequence::fibonacci_upto_n_seq<operation_counter, 4000000>;
-using even_fibonacci_infinite_seq = algol::sequence::even_fibonacci_infinite_seq<operation_counter>;
+using even_fibonacci_upto_n_seq = algol::sequence::even_fibonacci_upto_n_seq<operation_counter, 4000000>;
 
 int main()
 {
@@ -17,7 +17,7 @@ int main()
     stopwatch sw;
     operation_counter sum = 0;
     fibonacci_upto_n_seq fibo_upto_n_seq;
-    even_fibonacci_infinite_seq even_fibo;
+    even_fibonacci_upto_n_seq even_fibo_upto_n;
 
     for(auto fn : fibo_upto_n_seq)
     {
@@ -36,10 +36,8 @@ int main()
     sum = 0;
     sw.restart();
 
-    for(auto fn : even_fibo)
+    for(auto fn : even_fibo_upto_n)
     {
-        if (fn > 4000000) break;
-
         sum += fn;
     }
 
