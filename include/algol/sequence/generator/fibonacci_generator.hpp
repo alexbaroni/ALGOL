@@ -98,6 +98,35 @@ namespace algol { namespace sequence {
 
             fibonacci_first_n_generator() : current_(T{0}), next_(T{1}), count_{0} {}
         };
+
+        template<typename T>
+        class even_fibonacci_infinite_generator {
+            mutable T current_;
+            mutable T next_;
+
+        protected:
+            bool next() const {
+                T next = current_ + (4 * next_);
+                current_ = next_;
+                next_ = next;
+                return true;
+            }
+
+            T const &dereference() const {
+                return next_;
+            }
+
+            explicit operator bool() const // any objects left?
+            {
+                return true;
+            }
+
+            bool operator!() const {
+                return false;
+            }
+
+            even_fibonacci_infinite_generator() : current_(T{0}), next_(T{2}) {}
+        };
     }
 
     template<typename T>
@@ -111,5 +140,9 @@ namespace algol { namespace sequence {
     template<typename T, std::size_t Count>
     using fibonacci_first_n_seq =
     sequence<T, generator::fibonacci_first_n_generator<T, Count>>;
+
+    template<typename T>
+    using even_fibonacci_infinite_seq =
+    sequence<T, generator::even_fibonacci_infinite_generator<T>>;
 }}
 #endif // ALGOL_SEQUENCE_GENERATOR_FIBONACCI_GENERATOR_HPP
