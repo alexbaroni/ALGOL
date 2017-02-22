@@ -106,7 +106,7 @@ namespace algol { namespace sequence {
 
         protected:
             bool next() const {
-                T next = current_ + (4 * next_);
+                T next = (next_ << 2) + current_;
                 current_ = next_;
                 next_ = next;
                 return true;
