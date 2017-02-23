@@ -31,13 +31,14 @@ namespace algol { namespace sequence {
                 iota_infinite_generator() : current_(T{1}) {}
             };
 
-            template<typename T, std::size_t Max>
+            template<typename T>
             class iota_upto_n_generator {
                 mutable T current_;
+                T max_;
             protected:
                 bool next() const {
                     current_++;
-                    if (current_ > Max)
+                    if (current_ > max_)
                         return false;
                     return true;
                 }
@@ -48,14 +49,16 @@ namespace algol { namespace sequence {
 
                 explicit operator bool() const // any objects left?
                 {
-                    return current_ < Max;
+                    return current_ < max_;
                 }
 
                 bool operator!() const {
-                    return current_ >= Max;
+                    return current_ >= max_;
                 }
 
                 iota_upto_n_generator() : current_(T{1}) {}
+                iota_upto_n_generator(T const& max) : current_(T{1}), max_(max) {}
+                iota_upto_n_generator(T&& max) : current_(T{1}), max_(std::move(max)) {}
             };
         }
 
@@ -63,8 +66,8 @@ namespace algol { namespace sequence {
         using iota_infinite_seq =
         sequence<T, generator::iota_infinite_generator<T>>;
 
-        template<typename T, std::size_t N>
+        template<typename T>
         using iota_upto_n_seq =
-        sequence<T, generator::iota_upto_n_generator<T, N>>;
+        sequence<T, generator::iota_upto_n_generator<T>>;
     }}
 #endif // ALGOL_SEQUENCE_GENERATOR_IOTA_GENERATOR_HPP

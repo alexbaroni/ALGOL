@@ -20,13 +20,13 @@ int main()
     std::cout << "n " << " - " << "length" << std::endl;
     for(auto l : interval_range(ival))
     {
-        interval::base_type c = 0;
+        interval::base_type c = 1;
         interval::base_type n = l;
 
         do
         {
-            if (n % 2 == 0)
-                n = n / 2;
+            if ((n & 1) == 0)
+                n = n >> 1;
             else
                 n = 3*n + 1;
 
@@ -45,13 +45,13 @@ int main()
     sw.restart();
     for(auto l : interval_range_op_count(iop))
     {
-        interval_op_count::base_type c = 0;
+        interval_op_count::base_type c = 1;
         interval_op_count::base_type n = l;
 
         do
         {
-            if (n % 2 == 0)
-                n = n / 2;
+            if ((n & 1) == 0)
+                n = n >> 1;
             else
                 n = 3*n + 1;
 
