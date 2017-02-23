@@ -50,8 +50,8 @@ namespace algol { namespace sequence {
 
             sequence const *seq_;
         };
-
-        explicit sequence() {}
+        template<typename... Args>
+        explicit sequence(Args&&... args) : Generator(std::forward<Args>(args)...) {}
 
         iterator begin() const { return iterator{*this}; }
 
