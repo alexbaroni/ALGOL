@@ -34,6 +34,12 @@ namespace algol { namespace perf {
         static std::string symbol() { return "s"; }
     };
 
+    /**
+     * @class stopwatch
+     * @brief keep track of elapsed time
+     * @tparam DurationT unit of time
+     * @tparam ClockT clock type
+     */
     template<typename DurationT = std::chrono::nanoseconds, typename ClockT = std::chrono::steady_clock>
     class stopwatch
     {

@@ -4,6 +4,12 @@
 #include <iostream>
 
 namespace algol { namespace perf {
+    /**
+     * @class operation_counter
+     * @brief wrap a type to count the operation performed on it
+     * @tparam T wrapped type
+     * @tparam Counter counter type
+     */
     template <typename T, typename Counter = std::uint64_t>
     class operation_counter final
     {
