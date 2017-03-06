@@ -1,12 +1,12 @@
-#ifndef ALGOL_SEQUENCE_GENERATOR_ARITHMETIC_PROGESSION_GENERATOR_HPP
-#define ALGOL_SEQUENCE_GENERATOR_ARITHMETIC_PROGESSION_GENERATOR_HPP
+#ifndef ALGOL_SEQUENCE_GENERATOR_ARITHMETIC_PROGRESSION_GENERATOR_HPP
+#define ALGOL_SEQUENCE_GENERATOR_ARITHMETIC_PROGRESSION_GENERATOR_HPP
 
 #include "algol/sequence/sequence.hpp"
 
 namespace algol { namespace sequence {
         namespace generator {
             template<typename T>
-            class arithmetic_progession_infinite_generator {
+            class arithmetic_progression_infinite_generator {
                 mutable T current_;
                 T difference_;
 
@@ -29,12 +29,12 @@ namespace algol { namespace sequence {
                     return false;
                 }
 
-                arithmetic_progession_infinite_generator(T const& initial_term, T const& difference) :
+                arithmetic_progression_infinite_generator(T const& initial_term, T const& difference) :
                         current_(initial_term), difference_(difference) {}
             };
 
             template<typename T>
-            class arithmetic_progession_first_n_generator {
+            class arithmetic_progression_first_n_generator {
                 mutable T current_;
                 T difference_;
                 mutable std::size_t count_;
@@ -63,17 +63,17 @@ namespace algol { namespace sequence {
                     return count_ <= 0;
                 }
 
-                arithmetic_progession_first_n_generator(T const& initial_term, T const& difference, std::size_t count) :
+                arithmetic_progression_first_n_generator(T const& initial_term, T const& difference, std::size_t count) :
                         current_{initial_term}, difference_{difference}, count_{count} {}
             };
         }
 
         template<typename T>
-        using arithmetic_progession_infinite_seq =
-        sequence<T, generator::arithmetic_progession_infinite_generator<T>>;
+        using arithmetic_progression_infinite_seq =
+        sequence<T, generator::arithmetic_progression_infinite_generator<T>>;
 
         template<typename T>
-        using arithmetic_progession_first_n_seq =
-        sequence<T, generator::arithmetic_progession_first_n_generator<T>>;
+        using arithmetic_progression_first_n_seq =
+        sequence<T, generator::arithmetic_progression_first_n_generator<T>>;
     }}
-#endif // ALGOL_SEQUENCE_GENERATOR_ARITHMETIC_PROGESSION_GENERATOR_HPP
+#endif // ALGOL_SEQUENCE_GENERATOR_ARITHMETIC_PROGRESSION_GENERATOR_HPP
