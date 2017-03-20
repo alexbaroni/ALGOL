@@ -15,6 +15,11 @@ add_executable(test.arithmetic_progression_generator_test arithmetic_progression
 add_executable(test.geometric_progression_generator_test geometric_progression_generator_test.cpp)
 add_executable(test.factorial_generator_test factorial_generator_test.cpp)
 
+add_executable(test.all_test stopwatch_test.cpp pprint_test.cpp operation_counter_test.cpp
+        integer_interval_test.cpp integer_interval_range_test.cpp istream_range_test.cpp lines_range_test.cpp
+        sequence_test.cpp fibonacci_generator_test.cpp iota_generator_test.cpp collatz_generator_test.cpp
+        arithmetic_progression_generator_test.cpp geometric_progression_generator_test.cpp factorial_generator_test.cpp)
+
 target_link_libraries(test.stopwatch_test gtest gtest_main)
 target_link_libraries(test.pprint_test gtest gtest_main)
 target_link_libraries(test.operation_counter_test gtest gtest_main)
@@ -24,7 +29,25 @@ target_link_libraries(test.istream_range_test gtest gtest_main)
 target_link_libraries(test.lines_range_test gtest gtest_main)
 target_link_libraries(test.sequence_test gtest gtest_main)
 target_link_libraries(test.fibonacci_generator_test gtest gtest_main)
+target_link_libraries(test.iota_generator_test gtest gtest_main)
 target_link_libraries(test.collatz_generator_test gtest gtest_main)
 target_link_libraries(test.arithmetic_progression_generator_test gtest gtest_main)
 target_link_libraries(test.geometric_progression_generator_test gtest gtest_main)
 target_link_libraries(test.factorial_generator_test gtest gtest_main)
+
+target_link_libraries(test.all_test gtest gtest_main)
+
+add_test(stopwatch_test test.stopwatch_test)
+add_test(pprint_test test.pprint_test)
+add_test(operation_counter_test test.operation_counter_test)
+add_test(integer_interval_test test.integer_interval_test)
+add_test(integer_interval_range_test test.integer_interval_range_test)
+add_test(istream_range_test test.istream_range_test)
+add_test(lines_range_test test.lines_range_test)
+add_test(sequence_test test.sequence_test)
+add_test(fibonacci_generator_test test.fibonacci_generator_test)
+add_test(iota_generator_test test.iota_generator_test)
+add_test(collatz_generator_test test.collatz_generator_test)
+add_test(arithmetic_progression_generator_test test.arithmetic_progression_generator_test)
+add_test(geometric_progression_generator_test test.geometric_progression_generator_test)
+add_test(factorial_generator_test test.factorial_generator_test)

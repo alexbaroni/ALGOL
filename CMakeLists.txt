@@ -13,6 +13,7 @@
 cmake_minimum_required(VERSION 3.6)
 
 project(ALGOL CXX)
+enable_testing()
 
 # see https://cmake.org/cmake/help/latest/module/FindBoost.html
 find_package(Boost REQUIRED)
