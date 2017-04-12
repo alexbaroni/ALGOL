@@ -12,6 +12,9 @@
 #
 cmake_minimum_required(VERSION 3.6)
 
+#set(CMAKE_C_COMPILER C:/msys64/mingw64/bin/clang.exe)
+#set(CMAKE_CXX_COMPILER C:/msys64/mingw64/bin/clang++.exe)
+
 project(ALGOL CXX)
 enable_testing()
 
@@ -22,10 +25,17 @@ include_directories(include ${Boost_INCLUDE_DIR})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -ftemplate-backtrace-limit=0")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -march=native")
-  set(CMAKE_CXX_FLAGS_DEBUG "-O0 -fno-inline -g3 -fstack-protector-all")
-  set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -g0 -DNDEBUG")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -stdlib=libstdc++ -ftemplate-backtrace-limit=0")
 endif()
+
+if (CMAKE_C_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic-errors -Werror -march=native")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -fno-inline -g3 -fstack-protector-all")
+set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -g0 -DNDEBUG")
 
 add_subdirectory(examples)
 add_subdirectory(tests)
