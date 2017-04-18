@@ -12,8 +12,8 @@
 #
 cmake_minimum_required(VERSION 3.6)
 
-#set(CMAKE_C_COMPILER C:/msys64/mingw64/bin/clang.exe)
-#set(CMAKE_CXX_COMPILER C:/msys64/mingw64/bin/clang++.exe)
+set(CMAKE_C_COMPILER /usr/local/gcc-6.3/bin/gcc-6.3)
+set(CMAKE_CXX_COMPILER /usr/local/gcc-6.3/bin/g++-6.3)
 
 project(ALGOL CXX)
 enable_testing()
