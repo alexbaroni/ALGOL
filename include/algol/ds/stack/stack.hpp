@@ -5,71 +5,111 @@
 #include <stdexcept>
 
 namespace algol {
-    namespace ds {
-        struct stack_error : public virtual std::logic_error {
+  namespace ds {
+    struct stack_error : public virtual std::logic_error
+    {
 #if defined(__clang__)
-            using std::logic_error::logic_error;
+      using std::logic_error::logic_error;
 #else
-
-            explicit stack_error(std::string const &what_arg) : std::logic_error{what_arg} {}
-
+      explicit stack_error(std::string const& what_arg) : std::logic_error {what_arg} {}
 #endif
-        };
+    };
 
-        struct stack_empty_error : public stack_error {
-            explicit stack_empty_error(std::string const &what_arg) : std::logic_error{what_arg},
-                                                                      stack_error{what_arg} {}
-        };
+    struct stack_empty_error : public stack_error
+    {
+      explicit stack_empty_error(std::string const& what_arg) : std::logic_error {what_arg},
+                                                                stack_error {what_arg} {}
+    };
 
-        struct stack_full_error : public stack_error {
-            explicit stack_full_error(std::string const &what_arg) : std::logic_error{what_arg},
-                                                                     stack_error{what_arg} {}
-        };
+    struct stack_full_error : public stack_error
+    {
+      explicit stack_full_error(std::string const& what_arg) : std::logic_error {what_arg},
+                                                               stack_error {what_arg} {}
+    };
 
-        template<typename T>
-        class stack {
-        public:
-            using value_type = T;
-            using reference = value_type &;
-            using const_reference = value_type const &;
-            using size_type = std::size_t;
+    template <typename T>
+    class stack
+    {
+    public:
+      using value_type = T;
+      using reference = value_type&;
+      using const_reference = value_type const&;
+      using size_type = std::size_t;
 
-            virtual bool empty() const noexcept = 0;
+      bool empty() const {
+        return empty_();
+      };
 
-            virtual size_type size() const noexcept = 0;
+      bool full() const {
+        return full_();
+      };
 
-            virtual reference top() = 0;
+      size_type size() const {
+        return size_();
+      }
 
-            virtual const_reference top() const = 0;
+      reference top() {
+        if (empty_())
+          throw stack_empty_error{"Attempting top() on empty stack"};
 
-            virtual void push(value_type const &value) = 0;
+        return top_();
+      }
 
-            virtual void push(value_type &&value) = 0;
+      const_reference top() const {
+        if (empty_())
+          throw stack_empty_error{"Attempting top() on empty stack"};
 
-            virtual void pop() = 0;
+        return top_();
+      }
 
-            virtual std::vector<T> to_vector() = 0;
+      void push(value_type const& value) {
+        if (full_())
+          throw stack_full_error{"Attempting push() on full stack"};
 
-            stack() = default;
+        push_(value);
+      }
 
-            stack(stack const &) = default;
+      void push(value_type&& value) {
+        if (full_())
+          throw stack_full_error{"Attempting push() on full stack"};
 
-            stack &operator=(stack const &) = default;
+        push_(std::forward<value_type>(value));
+      }
 
-            stack(stack &&) = default;
+      void pop() {
+        if (empty_())
+          throw stack_empty_error{"Attempting pop() on empty stack"};
 
-            stack &operator=(stack &&) = default;
+        pop_();
+      }
 
-            virtual ~stack() = default;
-        };
+      std::vector<T> to_vector() const {
+        return to_vector_();
+      };
 
-//  Note: Axioms for the ADT stack
-//  (new Stack()).isEmpty() = true
-//  (new Stack()).pop() = false
-//  (new Stack()).peek() = error
-//  (aStack.push(item)).isEmpty() = false
-//  (aStack.push(item)).peek() = item
-//  (aStack.push(item)).pop() = true
-    }
+      stack() = default;
+
+      stack(stack const&) = default;
+
+      stack& operator=(stack const&) = default;
+
+      stack(stack&&) = default;
+
+      stack& operator=(stack&&) = default;
+
+      virtual ~stack() = default;
+
+    private:
+      virtual bool empty_() const noexcept = 0;
+      virtual bool full_() const noexcept = 0;
+      virtual size_type size_() const noexcept = 0;
+      virtual reference top_() = 0;
+      virtual const_reference top_() const = 0;
+      virtual void push_(value_type const& value) = 0;
+      virtual void push_(value_type&& value) = 0;
+      virtual void pop_() = 0;
+      virtual std::vector<T> to_vector_() const = 0;
+    };
+  }
 }
 #endif //ALGOL_DS_STACK_HPP

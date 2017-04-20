@@ -3,7 +3,8 @@
 
 #include "algol/sequence/sequence.hpp"
 
-namespace algol { namespace sequence {
+namespace algol {
+  namespace sequence {
         namespace generator {
             template<typename T>
             class collatz_generator {

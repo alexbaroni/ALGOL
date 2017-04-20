@@ -11,50 +11,49 @@ PPRINT_DEFAULT_DECORATION(std::array<T COMMA N>, "[", "; ", "]", class T, std::s
 
 template <typename T>
 T kth_largest(std::vector<T> xs, std::size_t k) {
-    std::sort(std::begin(xs), std::end(xs), std::greater<T>());
-    return xs[k-1];
+  std::sort(std::begin(xs), std::end(xs), std::greater<T>());
+  return xs[k - 1];
 }
 
 template <typename T>
 T kth_largest2(std::vector<T> xs, std::size_t k) {
-    std::sort(std::begin(xs), std::begin(xs) + k, std::greater<T>());
+  std::sort(std::begin(xs), std::begin(xs) + k, std::greater<T>());
 
-    for(auto x = std::begin(xs) + k; x != std::end(xs); ++x) {
-        if (*x > xs[k - 1]) {
-            xs[k - 1] = *x;
-            std::sort(std::begin(xs), std::begin(xs) + k, std::greater<T>());
-        }
+  for (auto x = std::begin(xs) + k; x != std::end(xs); ++x) {
+    if (*x > xs[k - 1]) {
+      xs[k - 1] = *x;
+      std::sort(std::begin(xs), std::begin(xs) + k, std::greater<T>());
     }
+  }
 
-    return xs[k-1];
+  return xs[k - 1];
 }
 
-int main()
-{
-    using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
-    using operation_counter = algol::perf::operation_counter<std::int32_t, std::uint64_t>;
+int main() {
+  using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
+  using operation_counter = algol::perf::operation_counter<std::int32_t, std::uint64_t>;
 
-    std::vector<operation_counter> xs{5, 6, 9, 10, 23, 3, 8, 0, 22, 21};
+  std::vector<operation_counter> xs {5, 6, 9, 10, 23, 3, 8, 0, 22, 21};
 
-    std::cout << "kth-largest" << std::endl;
-    stopwatch sw;
+  std::cout << "kth-largest" << std::endl;
+  stopwatch sw;
 
-    auto k = kth_largest(xs, 3);
+  auto k = kth_largest(xs, 3);
 
-    std::cout << sw << std::endl;
-    std::cout << "3rd largest: " << k << std::endl;
+  std::cout << sw << std::endl;
+  std::cout << "3rd largest: " << k << std::endl;
 
-    operation_counter::report(std::cout);
+  operation_counter::report(std::cout);
 
-    std::cout << "kth-largest 2" << std::endl;
-    operation_counter::reset();
-    sw.restart();
+  std::cout << "kth-largest 2" << std::endl;
+  operation_counter::reset();
+  sw.restart();
 
-    k = kth_largest2(xs, 3);
+  k = kth_largest2(xs, 3);
 
-    std::cout << sw << std::endl;
-    std::cout << "3rd largest: " << k << std::endl;
-    operation_counter::report(std::cout);
+  std::cout << sw << std::endl;
+  std::cout << "3rd largest: " << k << std::endl;
+  operation_counter::report(std::cout);
 
-    return 0;
+  return 0;
 }

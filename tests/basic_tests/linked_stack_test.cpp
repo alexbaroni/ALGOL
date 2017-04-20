@@ -9,15 +9,36 @@ namespace ds = algol::ds;
 
 using operation_counter = algol::perf::operation_counter<std::int32_t, std::uint64_t>;
 
-class linked_stack_fixture : public ::testing::Test {
+class linked_stack_fixture : public ::testing::Test
+{
 protected:
-    ds::linked_stack<operation_counter> op_count_stack;
+  ds::linked_stack<operation_counter> op_count_stack;
 };
+
+TEST_F(linked_stack_fixture, axioms) {
+  // Note: Axioms for the ADT stack
+  // new stack is empty and not full
+  EXPECT_TRUE(op_count_stack.empty());
+  EXPECT_FALSE(op_count_stack.full());
+  // new stack is throws stack_empty_error on pop
+  EXPECT_THROW(op_count_stack.pop(), ds::stack_empty_error);
+  // new stack is throws stack_empty_error on top
+  EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
+  op_count_stack.push(1);
+  // a stack with one item is not empty
+  EXPECT_FALSE(op_count_stack.empty());
+  // a stack with one item on top return that item
+  EXPECT_EQ(op_count_stack.top(), 1);
+  // a stack with one item does not throw on pop
+  EXPECT_NO_THROW(op_count_stack.pop());
+}
 
 TEST_F(linked_stack_fixture, constructor) {
   EXPECT_FALSE(!op_count_stack.empty());
   EXPECT_TRUE(op_count_stack.empty());
   EXPECT_EQ(op_count_stack.size(), 0u);
+  EXPECT_FALSE(op_count_stack.full());
+  EXPECT_TRUE(!op_count_stack.full());
 }
 
 TEST_F(linked_stack_fixture, empty) {
@@ -25,7 +46,7 @@ TEST_F(linked_stack_fixture, empty) {
   EXPECT_EQ(op_count_stack.size(), 0u);
   EXPECT_THROW(op_count_stack.pop(), ds::stack_empty_error);
   EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
-  EXPECT_THROW({ static_cast<const ds::linked_stack <operation_counter> &>(op_count_stack).top(); },
+  EXPECT_THROW({ static_cast<const ds::linked_stack <operation_counter>&>(op_count_stack).top(); },
                ds::stack_empty_error);
 }
 
@@ -34,6 +55,15 @@ TEST_F(linked_stack_fixture, one_element) {
   EXPECT_FALSE(op_count_stack.empty());
   EXPECT_EQ(op_count_stack.size(), 1u);
   EXPECT_EQ(op_count_stack.top(), 2);
+}
+
+TEST_F(linked_stack_fixture, update_top_element) {
+  op_count_stack.push(2);
+  EXPECT_FALSE(op_count_stack.empty());
+  EXPECT_EQ(op_count_stack.size(), 1u);
+  EXPECT_EQ(op_count_stack.top(), 2);
+  op_count_stack.top() = 3;
+  EXPECT_EQ(op_count_stack.top(), 3);
 }
 
 TEST_F(linked_stack_fixture, five_elements) {
@@ -167,7 +197,7 @@ TEST_F(linked_stack_fixture, move_assign_operator) {
 }
 
 TEST_F(linked_stack_fixture, using_interface) {
-  ds::stack <operation_counter> &stack = op_count_stack;
+  ds::stack <operation_counter>& stack = op_count_stack;
 
   for (operation_counter i = 0; i < 1000; ++i)
     stack.push(i);

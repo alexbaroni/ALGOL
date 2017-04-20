@@ -8,42 +8,39 @@ using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uin
 using fibonacci_upto_n_seq = algol::sequence::fibonacci_upto_n_seq<operation_counter>;
 using even_fibonacci_upto_n_seq = algol::sequence::even_fibonacci_upto_n_seq<operation_counter>;
 
-int main()
-{
-    using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
+int main() {
+  using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
 
-    std::cout << "sequence" << std::endl;
+  std::cout << "sequence" << std::endl;
 
-    stopwatch sw;
-    operation_counter sum = 0;
-    fibonacci_upto_n_seq fibo_upto_n_seq{4000000};
-    even_fibonacci_upto_n_seq even_fibo_upto_n{4000000};
+  stopwatch sw;
+  operation_counter sum = 0;
+  fibonacci_upto_n_seq fibo_upto_n_seq {4000000};
+  even_fibonacci_upto_n_seq even_fibo_upto_n {4000000};
 
-    for(auto fn : fibo_upto_n_seq)
-    {
+  for (auto fn : fibo_upto_n_seq) {
 
-        if ((fn & 1) == 0)
-            sum += fn;
-    }
+    if ((fn & 1) == 0)
+      sum += fn;
+  }
 
-    std::cout << sw << std::endl;
-    std::cout << sum << std::endl;
+  std::cout << sw << std::endl;
+  std::cout << sum << std::endl;
 
-    operation_counter::report(std::cout);
+  operation_counter::report(std::cout);
 
-    std::cout << "even sequence" << std::endl;
-    operation_counter::reset();
-    sum = 0;
-    sw.restart();
+  std::cout << "even sequence" << std::endl;
+  operation_counter::reset();
+  sum = 0;
+  sw.restart();
 
-    for(auto fn : even_fibo_upto_n)
-    {
-        sum += fn;
-    }
+  for (auto fn : even_fibo_upto_n) {
+    sum += fn;
+  }
 
-    std::cout << sw << std::endl;
-    std::cout << sum << std::endl;
+  std::cout << sw << std::endl;
+  std::cout << sum << std::endl;
 
-    operation_counter::report(std::cout);
-    return 0;
+  operation_counter::report(std::cout);
+  return 0;
 }

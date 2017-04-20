@@ -10,59 +10,52 @@ using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uin
 using interval_op_count = algol::integer::integer_interval<operation_counter>;
 using interval_range_op_count = algol::integer::integer_interval_range<operation_counter>;
 
-int main()
-{
-    using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
+int main() {
+  using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
 
-    stopwatch sw;
+  stopwatch sw;
 
-    interval ival{11,20};
-    std::cout << "n " << " - " << "length" << std::endl;
-    for(auto l : interval_range(ival))
-    {
-        interval::base_type c = 1;
-        interval::base_type n = l;
+  interval int_interval {11, 20};
+  std::cout << "n " << " - " << "length" << std::endl;
+  for (auto l : interval_range(int_interval)) {
+    interval::base_type c = 1;
+    interval::base_type n = l;
 
-        do
-        {
-            if ((n & 1) == 0)
-                n = n >> 1;
-            else
-                n = 3*n + 1;
+    do {
+      if ((n & 1) == 0)
+        n = n >> 1;
+      else
+        n = 3 * n + 1;
 
-            c++;
-        }
-        while (n != 1);
+      c++;
+    } while (n != 1);
 
-        std::cout << l << " - " << c << std::endl;
-    }
+    std::cout << l << " - " << c << std::endl;
+  }
 
-    std::cout << sw << std::endl;
+  std::cout << sw << std::endl;
 
-    interval_op_count iop{11, 20};
-    std::cout << "operation_counter" << std::endl;
-    std::cout << "n " << " - " << "length" << std::endl;
-    sw.restart();
-    for(auto l : interval_range_op_count(iop))
-    {
-        interval_op_count::base_type c = 1;
-        interval_op_count::base_type n = l;
+  interval_op_count iop {11, 20};
+  std::cout << "operation_counter" << std::endl;
+  std::cout << "n " << " - " << "length" << std::endl;
+  sw.restart();
+  for (auto l : interval_range_op_count(iop)) {
+    interval_op_count::base_type c = 1;
+    interval_op_count::base_type n = l;
 
-        do
-        {
-            if ((n & 1) == 0)
-                n = n >> 1;
-            else
-                n = 3*n + 1;
+    do {
+      if ((n & 1) == 0)
+        n = n >> 1;
+      else
+        n = 3 * n + 1;
 
-            c++;
-        }
-        while (n != 1);
+      c++;
+    } while (n != 1);
 
-        std::cout << l << " - " << c << std::endl;
-    }
+    std::cout << l << " - " << c << std::endl;
+  }
 
-    std::cout << sw << std::endl;
-    operation_counter::report(std::cout);
-    return 0;
+  std::cout << sw << std::endl;
+  operation_counter::report(std::cout);
+  return 0;
 }
