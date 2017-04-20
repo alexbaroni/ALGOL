@@ -15,11 +15,10 @@ int main() {
 
   stopwatch sw;
   operation_counter sum = 0;
-  fibonacci_upto_n_seq fibo_upto_n_seq {4000000};
-  even_fibonacci_upto_n_seq even_fibo_upto_n {4000000};
+  fibonacci_upto_n_seq fibo_upto_n_seq{4000000};
+  even_fibonacci_upto_n_seq even_fibo_upto_n{4000000};
 
   for (auto fn : fibo_upto_n_seq) {
-
     if ((fn & 1) == 0)
       sum += fn;
   }

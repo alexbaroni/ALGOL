@@ -16,24 +16,23 @@ PPRINT_DEFAULT_DECORATION(std::pair<T COMMA U>, "(", ", ", ")", class T, class U
 
 namespace pprint = algol::io::pprint;
 
-class pprint_fixture : public ::testing::Test
-{
+class pprint_fixture : public ::testing::Test {
 protected:
-  std::array<int32_t, 10> array_ {2, 3, 5, 1, 10, 9, 4, 6, 8, 7};
-  std::pair<uint32_t, int32_t> pair_ {1, -1};
+  std::array<int32_t, 10> array_{2, 3, 5, 1, 10, 9, 4, 6, 8, 7};
+  std::pair<uint32_t, int32_t> pair_{1, -1};
   float carray_[5] = {1.1f, 2.2f, 3.3f, 4.4f, 5.5f};
-  std::vector<int> vector_ {155, 32, 26, 0};
-  std::vector<int> vector_a_ {2, 3, 4, 1}, vector_b_ {4, 6, 1, 2};
-  std::vector<std::vector<int>> vector_c_ {vector_a_, vector_b_, vector_b_, vector_a_};
-  std::vector<std::vector<int>> matrix_ {{1, 2, 3},
-                                         {4, 5, 6},
-                                         {7, 8, 9}};
-  std::map<int, int> matrix_of_pairs_ {std::make_pair<const int, int>(1, 1),
-                                       std::make_pair<const int, int>(2, 4),
-                                       std::make_pair<const int, int>(3, 7)};
-  std::set<int> set_ {1, 5, 3, 2, 9, 6, 7};
-  std::list<int> list_ {12, 12, 15, 8, 2, 1, 4};
-  std::vector<std::map<int, int>> vector_of_map_ {matrix_of_pairs_, matrix_of_pairs_, matrix_of_pairs_};
+  std::vector<int> vector_{155, 32, 26, 0};
+  std::vector<int> vector_a_{2, 3, 4, 1}, vector_b_{4, 6, 1, 2};
+  std::vector<std::vector<int>> vector_c_{vector_a_, vector_b_, vector_b_, vector_a_};
+  std::vector<std::vector<int>> matrix_{{1, 2, 3},
+                                        {4, 5, 6},
+                                        {7, 8, 9}};
+  std::map<int, int> matrix_of_pairs_{std::make_pair<const int, int>(1, 1),
+                                      std::make_pair<const int, int>(2, 4),
+                                      std::make_pair<const int, int>(3, 7)};
+  std::set<int> set_{1, 5, 3, 2, 9, 6, 7};
+  std::list<int> list_{12, 12, 15, 8, 2, 1, 4};
+  std::vector<std::map<int, int>> vector_of_map_{matrix_of_pairs_, matrix_of_pairs_, matrix_of_pairs_};
 };
 
 TEST_F(pprint_fixture, test_array_print) {

@@ -8,9 +8,8 @@
 
 namespace algol {
   namespace sequence {
-    template <typename T, typename Generator>
-    class sequence : private Generator
-    {
+    template<typename T, typename Generator>
+    class sequence : private Generator {
     public:
       // Define const_iterator and iterator together:
       using const_iterator = struct iterator
@@ -20,9 +19,8 @@ namespace algol {
               boost::forward_traversal_tag,
               T const&,
               T
-          >
-      {
-        iterator() : seq_ {} {}
+          > {
+        iterator() : seq_{} {}
 
       private:
         friend class sequence;
@@ -53,7 +51,8 @@ namespace algol {
 
         sequence const* seq_;
       };
-      template <typename... Args>
+
+      template<typename... Args>
       explicit sequence(Args&& ... args) : Generator(std::forward<Args>(args)...) {}
 
       iterator begin() const { return iterator{*this}; }

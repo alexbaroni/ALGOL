@@ -9,9 +9,8 @@
 
 namespace algol {
   namespace integer {
-    template <typename T>
-    class integer_interval_range
-    {
+    template<typename T>
+    class integer_interval_range {
       integer_interval <T>& interval_;
       mutable T obj_;
 
@@ -23,6 +22,7 @@ namespace algol {
 
         return true;
       }
+
     public:
       typedef T base_type;
 
@@ -34,9 +34,9 @@ namespace algol {
               boost::forward_traversal_tag,
               T const&,
               T
-          >
-      {
-        iterator() : rng_ {} {}
+          > {
+        iterator() : rng_{} {}
+
       private:
         friend class integer_interval_range;
 
@@ -72,6 +72,7 @@ namespace algol {
       }
 
       iterator begin() const { return iterator{*this}; }
+
       iterator end() const { return iterator{}; }
 
       explicit operator bool() const // any objects left?

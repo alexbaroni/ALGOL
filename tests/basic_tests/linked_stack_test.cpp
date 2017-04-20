@@ -9,8 +9,7 @@ namespace ds = algol::ds;
 
 using operation_counter = algol::perf::operation_counter<std::int32_t, std::uint64_t>;
 
-class linked_stack_fixture : public ::testing::Test
-{
+class linked_stack_fixture : public ::testing::Test {
 protected:
   ds::linked_stack<operation_counter> op_count_stack;
 };

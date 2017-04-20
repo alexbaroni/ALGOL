@@ -8,8 +8,7 @@ using stopwatch_ns = algol::perf::stopwatch<std::chrono::nanoseconds>;
 using stopwatch_us = algol::perf::stopwatch<std::chrono::microseconds>;
 using stopwatch_ms = algol::perf::stopwatch<std::chrono::milliseconds>;
 
-class stopwatch_fixture : public ::testing::Test
-{
+class stopwatch_fixture : public ::testing::Test {
 protected:
   stopwatch_ns sw_ns;
   stopwatch_us sw_us;

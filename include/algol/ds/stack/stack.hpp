@@ -6,30 +6,28 @@
 
 namespace algol {
   namespace ds {
-    struct stack_error : public virtual std::logic_error
-    {
+    struct stack_error : public virtual std::logic_error {
 #if defined(__clang__)
       using std::logic_error::logic_error;
 #else
-      explicit stack_error(std::string const& what_arg) : std::logic_error {what_arg} {}
+
+      explicit stack_error(std::string const& what_arg) : std::logic_error{what_arg} {}
+
 #endif
     };
 
-    struct stack_empty_error : public stack_error
-    {
-      explicit stack_empty_error(std::string const& what_arg) : std::logic_error {what_arg},
-                                                                stack_error {what_arg} {}
+    struct stack_empty_error : public stack_error {
+      explicit stack_empty_error(std::string const& what_arg) : std::logic_error{what_arg},
+                                                                stack_error{what_arg} {}
     };
 
-    struct stack_full_error : public stack_error
-    {
-      explicit stack_full_error(std::string const& what_arg) : std::logic_error {what_arg},
-                                                               stack_error {what_arg} {}
+    struct stack_full_error : public stack_error {
+      explicit stack_full_error(std::string const& what_arg) : std::logic_error{what_arg},
+                                                               stack_error{what_arg} {}
     };
 
-    template <typename T>
-    class stack
-    {
+    template<typename T>
+    class stack {
     public:
       using value_type = T;
       using reference = value_type&;
@@ -88,15 +86,10 @@ namespace algol {
       };
 
       stack() = default;
-
       stack(stack const&) = default;
-
       stack& operator=(stack const&) = default;
-
       stack(stack&&) = default;
-
       stack& operator=(stack&&) = default;
-
       virtual ~stack() = default;
 
     private:

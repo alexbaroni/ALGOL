@@ -5,11 +5,10 @@
 
 using interval = algol::integer::integer_interval<uint32_t>;
 
-class integer_interval_fixture : public ::testing::Test
-{
+class integer_interval_fixture : public ::testing::Test {
 protected:
   interval interval_empty;
-  interval interval_1_10 {1, 10};
+  interval interval_1_10{1, 10};
 };
 
 TEST_F(integer_interval_fixture, empty) {
@@ -34,7 +33,7 @@ TEST_F(integer_interval_fixture, not_empty) {
 
 TEST_F(integer_interval_fixture, read_from_istream) {
   interval interval_5_10;
-  std::istringstream sin {"[5, 10]"};
+  std::istringstream sin{"[5, 10]"};
   sin >> interval_5_10;
   EXPECT_EQ(width(interval_5_10), 6u);
   EXPECT_EQ(lower(interval_5_10), 5u);

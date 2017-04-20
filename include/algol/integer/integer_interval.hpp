@@ -9,9 +9,8 @@
 
 namespace algol {
   namespace integer {
-    template <typename T>
-    class integer_interval
-    {
+    template<typename T>
+    class integer_interval {
       static_assert(std::is_integral<T>::value || std::is_convertible<T, int>::value,
                     "Integer interval requires integer elements");
       static_assert(!std::is_same<T, bool>::value, "Integer interval is not defined for bool");
@@ -20,6 +19,7 @@ namespace algol {
       typedef T base_type;
 
       integer_interval() : integer_interval(T{}, T{}) {}
+
       integer_interval(T lower, T upper);
 
       integer_interval(integer_interval const&) = default;
@@ -37,55 +37,55 @@ namespace algol {
       T upper_;
     };
 
-    template <class T>
+    template<class T>
     inline
     integer_interval<T>::integer_interval(T lower, T upper):
         lower_(lower), upper_(upper) {}
 
-    template <class T>
+    template<class T>
     inline
     const T& integer_interval<T>::lower() const {
       return lower_;
     }
 
-    template <class T>
+    template<class T>
     inline
     const T& integer_interval<T>::upper() const {
       return upper_;
     }
 
-    template <class T>
+    template<class T>
     inline
     bool integer_interval<T>::is_empty() const {
       return lower_ >= upper_;
     }
 
-    template <class T>
+    template<class T>
     inline
     void integer_interval<T>::set_empty() {
       lower_ = T{};
       upper_ = T{};
     }
 
-    template <class T>
+    template<class T>
     inline
     bool empty(integer_interval<T> const& x) {
       return x.is_empty();
     }
 
-    template <class T>
+    template<class T>
     inline
     const T& lower(integer_interval<T> const& x) {
       return x.lower();
     }
 
-    template <class T>
+    template<class T>
     inline
     const T& upper(integer_interval<T> const& x) {
       return x.upper();
     }
 
-    template <class T>
+    template<class T>
     inline
     T width(integer_interval<T> const& x) {
       if (x.is_empty())
@@ -94,7 +94,7 @@ namespace algol {
         return x.upper() - x.lower() + static_cast<T>(1);
     }
 
-    template <class T>
+    template<class T>
     inline
     bool in(T const& x, integer_interval<T> const& y) {
       if (y.is_empty())
@@ -103,7 +103,7 @@ namespace algol {
         return x >= y.lower() && x <= y.upper();
     }
 
-    template <class CharType, class CharTraits, class T>
+    template<class CharType, class CharTraits, class T>
     std::basic_istream<CharType, CharTraits>& operator>>
         (std::basic_istream<CharType, CharTraits>& stream, integer_interval<T>& value) {
       T lower, upper;
@@ -130,7 +130,7 @@ namespace algol {
       return stream;
     }
 
-    template <class CharType, class CharTraits, class T>
+    template<class CharType, class CharTraits, class T>
     std::basic_ostream<CharType, CharTraits>& operator<<
         (std::basic_ostream<CharType, CharTraits>& stream, integer_interval<T> const& value) {
       boost::io::ios_all_saver ias(stream);

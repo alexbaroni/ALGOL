@@ -7,13 +7,12 @@
 
 using istream_range = algol::stream::istream_range<uint32_t>;
 
-class istream_range_fixture : public ::testing::Test
-{
+class istream_range_fixture : public ::testing::Test {
 protected:
-  std::istringstream sin_empty {""};
-  istream_range ir_empty {sin_empty};
-  std::istringstream sin {"1 2 3 4 5 6"};
-  istream_range ir {sin};
+  std::istringstream sin_empty{""};
+  istream_range ir_empty{sin_empty};
+  std::istringstream sin{"1 2 3 4 5 6"};
+  istream_range ir{sin};
 };
 
 TEST_F(istream_range_fixture, empty) {

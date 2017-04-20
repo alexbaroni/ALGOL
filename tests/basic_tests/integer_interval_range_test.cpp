@@ -7,13 +7,12 @@
 using interval = algol::integer::integer_interval<uint32_t>;
 using interval_range = algol::integer::integer_interval_range<interval::base_type>;
 
-class integer_interval_range_fixture : public ::testing::Test
-{
+class integer_interval_range_fixture : public ::testing::Test {
 protected:
   interval interval_empty;
-  interval interval_1_10 {1, 10};
-  interval_range interval_range_empty {interval_empty};
-  interval_range interval_range_1_10 {interval_1_10};
+  interval interval_1_10{1, 10};
+  interval_range interval_range_empty{interval_empty};
+  interval_range interval_range_1_10{interval_1_10};
 };
 
 TEST_F(integer_interval_range_fixture, empty) {

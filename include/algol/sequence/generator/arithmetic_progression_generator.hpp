@@ -6,9 +6,8 @@
 namespace algol {
   namespace sequence {
     namespace generator {
-      template <typename T>
-      class arithmetic_progression_infinite_generator
-      {
+      template<typename T>
+      class arithmetic_progression_infinite_generator {
         mutable T current_;
         T difference_;
 
@@ -35,9 +34,8 @@ namespace algol {
             current_(initial_term), difference_(difference) {}
       };
 
-      template <typename T>
-      class arithmetic_progression_first_n_generator
-      {
+      template<typename T>
+      class arithmetic_progression_first_n_generator {
         mutable T current_;
         T difference_;
         mutable std::size_t count_;
@@ -67,15 +65,15 @@ namespace algol {
         }
 
         arithmetic_progression_first_n_generator(T const& initial_term, T const& difference, std::size_t count) :
-            current_ {initial_term}, difference_ {difference}, count_ {count} {}
+            current_{initial_term}, difference_{difference}, count_{count} {}
       };
     }
 
-    template <typename T>
+    template<typename T>
     using arithmetic_progression_infinite_seq =
     sequence<T, generator::arithmetic_progression_infinite_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using arithmetic_progression_first_n_seq =
     sequence<T, generator::arithmetic_progression_first_n_generator<T>>;
   }

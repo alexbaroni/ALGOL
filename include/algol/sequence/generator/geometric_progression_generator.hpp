@@ -6,9 +6,8 @@
 namespace algol {
   namespace sequence {
     namespace generator {
-      template <typename T>
-      class geometric_progression_infinite_generator
-      {
+      template<typename T>
+      class geometric_progression_infinite_generator {
         mutable T current_;
         T ratio_;
 
@@ -35,9 +34,8 @@ namespace algol {
             current_(initial_term), ratio_(ratio) {}
       };
 
-      template <typename T>
-      class geometric_progression_first_n_generator
-      {
+      template<typename T>
+      class geometric_progression_first_n_generator {
         mutable T current_;
         T ratio_;
         mutable std::size_t count_;
@@ -67,15 +65,15 @@ namespace algol {
         }
 
         geometric_progression_first_n_generator(T const& initial_term, T const& ratio, std::size_t count) :
-            current_ {initial_term}, ratio_ {ratio}, count_ {count} {}
+            current_{initial_term}, ratio_{ratio}, count_{count} {}
       };
     }
 
-    template <typename T>
+    template<typename T>
     using geometric_progression_infinite_seq =
     sequence<T, generator::geometric_progression_infinite_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using geometric_progression_first_n_seq =
     sequence<T, generator::geometric_progression_first_n_generator<T>>;
   }

@@ -9,11 +9,10 @@
 using arithmetic_progression_infinite = algol::sequence::arithmetic_progression_infinite_seq<uint32_t>;
 using arithmetic_progression_first_n = algol::sequence::arithmetic_progression_first_n_seq<uint32_t>;
 
-class arithmetic_progression_fixture : public ::testing::Test
-{
+class arithmetic_progression_fixture : public ::testing::Test {
 protected:
-  arithmetic_progression_infinite inf_seq {5, 2};
-  arithmetic_progression_first_n first_n_seq {2, 3, 6};
+  arithmetic_progression_infinite inf_seq{5, 2};
+  arithmetic_progression_first_n first_n_seq{2, 3, 6};
 };
 
 TEST_F(arithmetic_progression_fixture, infinite) {

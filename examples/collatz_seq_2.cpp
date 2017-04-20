@@ -16,10 +16,10 @@ int main() {
 
   stopwatch sw;
 
-  interval_op_count iop {11, 20};
+  interval_op_count iop{11, 20};
   std::cout << "n " << " - " << "length" << std::endl;
   for (auto l : interval_range_op_count(iop)) {
-    collatz_seq seq {l};
+    collatz_seq seq{l};
 
     std::cout << l << " - " << std::distance(std::begin(seq), std::end(seq)) << std::endl;
   }

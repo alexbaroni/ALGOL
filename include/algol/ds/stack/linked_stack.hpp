@@ -5,23 +5,22 @@
 
 namespace algol {
   namespace ds {
-    template <typename T>
-    class linked_stack final : public stack<T>
-    {
+    template<typename T>
+    class linked_stack final : public stack<T> {
     public:
       using value_type = typename stack<T>::value_type;
       using reference = typename stack<T>::reference;
       using const_reference = typename stack<T>::const_reference;
       using size_type = typename stack<T>::size_type;
 
-      linked_stack() : stack<T>(), top_node_ {nullptr}, items_ {size_type{}} {}
+      linked_stack() : stack<T>(), top_node_{nullptr}, items_{size_type{}} {}
 
       linked_stack(linked_stack const& rhs) : linked_stack() {
         linked_stack stack;
 
         if (!rhs.empty()) {
           for (auto i = size_type{}; i < rhs.items_; ++i) {
-            stack.push_(new node {T{}, nullptr});
+            stack.push_(new node{T{}, nullptr});
           }
 
           node* iter = stack.top_node_;
@@ -37,18 +36,18 @@ namespace algol {
       }
 
       linked_stack& operator=(linked_stack const& rhs) {
-        linked_stack temp {rhs};
+        linked_stack temp{rhs};
         swap(temp);
         return *this;
       }
 
-      linked_stack(linked_stack&& rhs) noexcept : top_node_ {rhs.top_node_}, items_ {rhs.items_} {
+      linked_stack(linked_stack&& rhs) noexcept : top_node_{rhs.top_node_}, items_{rhs.items_} {
         rhs.top_node_ = nullptr;
         rhs.items_ = size_type{};
       }
 
       linked_stack& operator=(linked_stack&& rhs) noexcept {
-        linked_stack temp {std::move(rhs)};
+        linked_stack temp{std::move(rhs)};
         swap(temp);
         return *this;
       }
@@ -66,8 +65,7 @@ namespace algol {
       }
 
     private:
-      struct node
-      {
+      struct node {
         T value_;
         node* next_;
       };
@@ -93,11 +91,11 @@ namespace algol {
       }
 
       void push_(value_type const& value) override {
-        push_(new node {value, nullptr});
+        push_(new node{value, nullptr});
       }
 
       void push_(value_type&& value) override {
-        push_(new node {std::move(value), nullptr});
+        push_(new node{std::move(value), nullptr});
       }
 
       void pop_() override {
@@ -108,7 +106,7 @@ namespace algol {
       }
 
       std::vector<T> to_vector_() const override {
-        std::vector<T> vector {};
+        std::vector<T> vector{};
         vector.reserve(size_());
 
         node* iter = top_node_;
@@ -130,7 +128,7 @@ namespace algol {
       size_type items_;
     };
 
-    template <typename T>
+    template<typename T>
     void swap(linked_stack<T>& lhs, linked_stack<T>& rhs) noexcept {
       lhs.swap(rhs);
     }

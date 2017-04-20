@@ -9,11 +9,10 @@
 using geometric_progression_infinite = algol::sequence::geometric_progression_infinite_seq<uint32_t>;
 using geometric_progression_first_n = algol::sequence::geometric_progression_first_n_seq<uint32_t>;
 
-class geometric_progression_fixture : public ::testing::Test
-{
+class geometric_progression_fixture : public ::testing::Test {
 protected:
-  geometric_progression_infinite inf_seq {2, 3};
-  geometric_progression_first_n first_n_seq {5, 2, 6};
+  geometric_progression_infinite inf_seq{2, 3};
+  geometric_progression_first_n first_n_seq{5, 2, 6};
 };
 
 TEST_F(geometric_progression_fixture, infinite) {

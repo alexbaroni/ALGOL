@@ -8,8 +8,7 @@
 
 namespace algol {
   namespace stream {
-    class lines_range
-    {
+    class lines_range {
       std::istream& sin_;
       mutable std::string obj_;
       char delim_;
@@ -18,6 +17,7 @@ namespace algol {
         std::getline(sin_, obj_, delim_);
         return sin_ ? true : false;
       }
+
     public:
       // Define const_iterator and iterator together:
       using const_iterator = struct iterator
@@ -25,9 +25,9 @@ namespace algol {
               iterator,
               std::string const,
               std::input_iterator_tag
-          >
-      {
-        iterator() : rng_ {} {}
+          > {
+        iterator() : rng_{} {}
+
       private:
         friend class lines_range;
 
@@ -59,11 +59,12 @@ namespace algol {
       };
 
       explicit lines_range(std::istream& sin, char delim = '\n')
-          : sin_(sin), obj_ {}, delim_(delim) {
+          : sin_(sin), obj_{}, delim_(delim) {
         next(); // prime the pump
       }
 
       iterator begin() const { return iterator{*this}; }
+
       iterator end() const { return iterator{}; }
 
       explicit operator bool() const // any objects left?

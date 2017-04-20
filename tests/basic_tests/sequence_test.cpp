@@ -5,9 +5,8 @@
 
 #include "gtest/gtest.h"
 
-template <typename T, T Max>
-class iota_upto_n_generator
-{
+template<typename T, T Max>
+class iota_upto_n_generator {
   mutable T current_;
 protected:
   bool next() const {
@@ -31,16 +30,15 @@ protected:
   iota_upto_n_generator() : current_(T{1}) {}
 };
 
-template <typename T>
+template<typename T>
 using iota_upto_n_seq_empty =
 algol::sequence::sequence<T, iota_upto_n_generator<T, 0>>;
 
-template <typename T>
+template<typename T>
 using iota_upto_n_seq =
 algol::sequence::sequence<T, iota_upto_n_generator<T, 10>>;
 
-class sequence_fixture : public ::testing::Test
-{
+class sequence_fixture : public ::testing::Test {
 protected:
   iota_upto_n_seq_empty<uint32_t> seq_empty;
   iota_upto_n_seq<uint32_t> seq;

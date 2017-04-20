@@ -11,18 +11,17 @@ namespace algol {
      * @tparam T wrapped type
      * @tparam Counter counter type
      */
-    template <typename T, typename Counter = std::uint64_t>
-    class operation_counter final
-    {
+    template<typename T, typename Counter = std::uint64_t>
+    class operation_counter final {
     public:
       typedef T value_type;
       typedef Counter counter_type;
 
-      operation_counter() : value_ {} { assignments_++; }
+      operation_counter() : value_{} { assignments_++; }
 
-      operation_counter(T value) : value_ {value} { assignments_++; }
+      operation_counter(T value) : value_{value} { assignments_++; }
 
-      operation_counter(operation_counter const& value) : value_ {value.value_} { assignments_++; }
+      operation_counter(operation_counter const& value) : value_{value.value_} { assignments_++; }
 
       operation_counter(operation_counter&& value) : value_(std::move(value.value_)) { moves_++; }
 
@@ -264,13 +263,13 @@ namespace algol {
 
     private:
       // generates a non-template operator... for this T and this Counter
-      template <typename U>
+      template<typename U>
       friend bool operator==(U const& y, operation_counter const& x) {
         equal_comparisons_++;
         return T(y) == x.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator==(operation_counter const& x, U const& y) {
         equal_comparisons_++;
         return x.value_ == T(y);
@@ -281,13 +280,13 @@ namespace algol {
         return x.value_ == y.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator!=(U const& y, operation_counter const& x) {
         equal_comparisons_++;
         return T(y) != x.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator!=(operation_counter const& x, U const& y) {
         equal_comparisons_++;
         return x.value_ != T(y);
@@ -298,13 +297,13 @@ namespace algol {
         return x.value_ != y.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator<(U const& y, operation_counter const& x) {
         less_comparisons_++;
         return T(y) < x.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator<(operation_counter const& x, U const& y) {
         less_comparisons_++;
         return x.value_ < T(y);
@@ -315,13 +314,13 @@ namespace algol {
         return x.value_ < y.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator>(U const& y, operation_counter const& x) {
         great_comparisons_++;
         return T(y) > x.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator>(operation_counter const& x, U const& y) {
         great_comparisons_++;
         return x.value_ > T(y);
@@ -332,13 +331,13 @@ namespace algol {
         return x.value_ > y.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator<=(U const& y, operation_counter const& x) {
         less_eq_comparisons_++;
         return T(y) <= x.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator<=(operation_counter const& x, U const& y) {
         less_eq_comparisons_++;
         return x.value_ <= T(y);
@@ -349,13 +348,13 @@ namespace algol {
         return x.value_ <= y.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator>=(U const& y, operation_counter const& x) {
         great_eq_comparisons_++;
         return T(y) >= x.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend bool operator>=(operation_counter const& x, U const& y) {
         great_eq_comparisons_++;
         return x.value_ >= T(y);
@@ -366,12 +365,12 @@ namespace algol {
         return x.value_ >= y.value_;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator+(operation_counter value1, U const& value2) {
         return value1 += value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator+(U const& value1, operation_counter value2) {
         return value2 += value1;
       }
@@ -380,12 +379,12 @@ namespace algol {
         return value1 += value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator-(operation_counter value1, U const& value2) {
         return value1 -= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator-(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) -= value2;
       }
@@ -394,12 +393,12 @@ namespace algol {
         return value1 -= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator*(operation_counter value1, U const& value2) {
         return value1 *= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator*(U const& value1, operation_counter value2) {
         return value2 *= value1;
       }
@@ -408,12 +407,12 @@ namespace algol {
         return value1 *= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator/(operation_counter value1, U const& value2) {
         return value1 /= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator/(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) /= value2;
       }
@@ -422,12 +421,12 @@ namespace algol {
         return value1 /= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator%(operation_counter value1, U const& value2) {
         return value1 %= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator%(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) %= value2;
       }
@@ -436,12 +435,12 @@ namespace algol {
         return value1 %= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator&(operation_counter value1, U const& value2) {
         return value1 &= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator&(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) &= value2;
       }
@@ -450,12 +449,12 @@ namespace algol {
         return value1 &= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator|(operation_counter value1, U const& value2) {
         return value1 |= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator|(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) |= value2;
       }
@@ -464,12 +463,12 @@ namespace algol {
         return value1 |= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator^(operation_counter value1, U const& value2) {
         return value1 ^= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator^(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) ^= value2;
       }
@@ -478,12 +477,12 @@ namespace algol {
         return value1 ^= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator<<(operation_counter value1, U const& value2) {
         return value1 <<= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator<<(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) <<= value2;
       }
@@ -492,12 +491,12 @@ namespace algol {
         return value1 <<= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator>>(operation_counter value1, U const& value2) {
         return value1 >>= value2;
       }
 
-      template <typename U>
+      template<typename U>
       friend operation_counter operator>>(U const& value1, operation_counter const& value2) {
         return operation_counter(value1) >>= value2;
       }
@@ -537,76 +536,76 @@ namespace algol {
       static Counter complements_;
     };
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::accesses_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::assignments_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::moves_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::increments_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::decrements_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::additions_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::subtractions_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::multiplications_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::divisions_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::moduli_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::equal_comparisons_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::less_comparisons_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::great_comparisons_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::less_eq_comparisons_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::great_eq_comparisons_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::ands_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::ors_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::xors_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::left_shifts_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::right_shifts_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::unary_plus_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::unary_minus_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::nots_ = Counter{};
 
-    template <typename T, typename Counter>
+    template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::complements_ = Counter{};
   }
 }

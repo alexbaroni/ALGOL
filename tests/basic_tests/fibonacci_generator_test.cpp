@@ -14,15 +14,14 @@ using even_fibonacci_infinite_seq = algol::sequence::even_fibonacci_infinite_seq
 using even_fibonacci_upto_n_seq = algol::sequence::even_fibonacci_upto_n_seq<uint32_t>;
 using even_fibonacci_first_n_seq = algol::sequence::even_fibonacci_first_n_seq<uint32_t>;
 
-class fibonacci_fixture : public ::testing::Test
-{
+class fibonacci_fixture : public ::testing::Test {
 protected:
   fibonacci_infinite_seq inf_seq;
-  fibonacci_upto_n_seq upto_n_seq {55};
-  fibonacci_first_n_seq first_n_seq {10};
+  fibonacci_upto_n_seq upto_n_seq{55};
+  fibonacci_first_n_seq first_n_seq{10};
   even_fibonacci_infinite_seq even_inf_seq;
-  even_fibonacci_upto_n_seq even_upto_n_seq {4000000};
-  even_fibonacci_first_n_seq even_first_n_seq {10};
+  even_fibonacci_upto_n_seq even_upto_n_seq{4000000};
+  even_fibonacci_first_n_seq even_first_n_seq{10};
 };
 
 TEST_F(fibonacci_fixture, infinite) {

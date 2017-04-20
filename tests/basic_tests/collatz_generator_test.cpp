@@ -8,11 +8,10 @@
 
 using collatz_seq = algol::sequence::collatz_seq<uint32_t>;
 
-class collatz_fixture : public ::testing::Test
-{
+class collatz_fixture : public ::testing::Test {
 protected:
-  collatz_seq seq_1 {1};
-  collatz_seq seq_5 {5};
+  collatz_seq seq_1{1};
+  collatz_seq seq_5{5};
 };
 
 TEST_F(collatz_fixture, collatz_seq_1) {

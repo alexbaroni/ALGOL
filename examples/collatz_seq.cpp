@@ -15,7 +15,7 @@ int main() {
 
   stopwatch sw;
 
-  interval int_interval {11, 20};
+  interval int_interval{11, 20};
   std::cout << "n " << " - " << "length" << std::endl;
   for (auto l : interval_range(int_interval)) {
     interval::base_type c = 1;
@@ -35,7 +35,7 @@ int main() {
 
   std::cout << sw << std::endl;
 
-  interval_op_count iop {11, 20};
+  interval_op_count iop{11, 20};
   std::cout << "operation_counter" << std::endl;
   std::cout << "n " << " - " << "length" << std::endl;
   sw.restart();

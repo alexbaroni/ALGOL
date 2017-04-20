@@ -5,33 +5,28 @@
 
 namespace algol {
   namespace perf {
-    template <typename DurationT>
-    struct duration_string
-    {
+    template<typename DurationT>
+    struct duration_string {
       static std::string symbol() { return ""; }
     };
 
-    template <>
-    struct duration_string<std::chrono::nanoseconds>
-    {
+    template<>
+    struct duration_string<std::chrono::nanoseconds> {
       static std::string symbol() { return "ns"; }
     };
 
-    template <>
-    struct duration_string<std::chrono::microseconds>
-    {
+    template<>
+    struct duration_string<std::chrono::microseconds> {
       static std::string symbol() { return "us"; }
     };
 
-    template <>
-    struct duration_string<std::chrono::milliseconds>
-    {
+    template<>
+    struct duration_string<std::chrono::milliseconds> {
       static std::string symbol() { return "ms"; }
     };
 
-    template <>
-    struct duration_string<std::chrono::seconds>
-    {
+    template<>
+    struct duration_string<std::chrono::seconds> {
       static std::string symbol() { return "s"; }
     };
 
@@ -41,9 +36,8 @@ namespace algol {
      * @tparam DurationT unit of time
      * @tparam ClockT clock type
      */
-    template <typename DurationT = std::chrono::nanoseconds, typename ClockT = std::chrono::steady_clock>
-    class stopwatch
-    {
+    template<typename DurationT = std::chrono::nanoseconds, typename ClockT = std::chrono::steady_clock>
+    class stopwatch {
     public:
       stopwatch() : start_time_(ClockT::now()) {}
 

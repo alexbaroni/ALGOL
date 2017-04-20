@@ -13,7 +13,7 @@ int main() {
 
   stopwatch sw;
 
-  std::array<operation_counter, 10> values {2, 3, 5, 1, 10, 9, 4, 6, 8, 7};
+  std::array<operation_counter, 10> values{2, 3, 5, 1, 10, 9, 4, 6, 8, 7};
   std::cout << values << std::endl;
   for (auto v : values) {
     if (v == 6)

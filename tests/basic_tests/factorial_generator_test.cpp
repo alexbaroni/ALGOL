@@ -9,11 +9,10 @@
 using factorial_infinite = algol::sequence::factorial_infinite_seq<uint32_t>;
 using factorial_first_n = algol::sequence::factorial_first_n_seq<uint32_t>;
 
-class factorial_fixture : public ::testing::Test
-{
+class factorial_fixture : public ::testing::Test {
 protected:
   factorial_infinite inf_seq;
-  factorial_first_n first_n_seq {6};
+  factorial_first_n first_n_seq{6};
 };
 
 TEST_F(factorial_fixture, infinite) {

@@ -7,13 +7,12 @@
 
 using lines_range = algol::stream::lines_range;
 
-class lines_range_fixture : public ::testing::Test
-{
+class lines_range_fixture : public ::testing::Test {
 protected:
-  std::istringstream sin_empty {""};
-  lines_range lr_empty {sin_empty};
-  std::istringstream sin {"line 1\nline 2\nline 3\nline 4"};
-  lines_range lr {sin};
+  std::istringstream sin_empty{""};
+  lines_range lr_empty{sin_empty};
+  std::istringstream sin{"line 1\nline 2\nline 3\nline 4"};
+  lines_range lr{sin};
 };
 
 TEST_F(lines_range_fixture, empty) {

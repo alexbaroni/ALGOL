@@ -7,9 +7,8 @@
 
 namespace algol {
   namespace stream {
-    template <typename T>
-    class istream_range
-    {
+    template<typename T>
+    class istream_range {
       std::istream& sin_;
       mutable T obj_;
 
@@ -17,6 +16,7 @@ namespace algol {
         sin_ >> obj_;
         return sin_ ? true : false;
       }
+
     public:
       // Define const_iterator and iterator together:
       using const_iterator = struct iterator
@@ -24,9 +24,9 @@ namespace algol {
               iterator,
               T const,
               std::input_iterator_tag
-          >
-      {
-        iterator() : rng_ {} {}
+          > {
+        iterator() : rng_{} {}
+
       private:
         friend class istream_range;
 
@@ -58,11 +58,12 @@ namespace algol {
       };
 
       explicit istream_range(std::istream& sin)
-          : sin_(sin), obj_ {} {
+          : sin_(sin), obj_{} {
         next(); // prime the pump
       }
 
       iterator begin() const { return iterator{*this}; }
+
       iterator end() const { return iterator{}; }
 
       explicit operator bool() const // any objects left?

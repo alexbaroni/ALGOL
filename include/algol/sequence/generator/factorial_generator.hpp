@@ -6,9 +6,8 @@
 namespace algol {
   namespace sequence {
     namespace generator {
-      template <typename T>
-      class factorial_infinite_generator
-      {
+      template<typename T>
+      class factorial_infinite_generator {
         mutable T current_;
         mutable T term_;
 
@@ -36,9 +35,8 @@ namespace algol {
             current_(T{1}), term_(T{1}) {}
       };
 
-      template <typename T>
-      class factorial_first_n_generator
-      {
+      template<typename T>
+      class factorial_first_n_generator {
         mutable T current_;
         mutable T term_;
         mutable std::size_t count_;
@@ -69,15 +67,15 @@ namespace algol {
         }
 
         factorial_first_n_generator(std::size_t count) :
-            current_(T{1}), term_(T{1}), count_ {count} {}
+            current_(T{1}), term_(T{1}), count_{count} {}
       };
     }
 
-    template <typename T>
+    template<typename T>
     using factorial_infinite_seq =
     sequence<T, generator::factorial_infinite_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using factorial_first_n_seq =
     sequence<T, generator::factorial_first_n_generator<T>>;
   }

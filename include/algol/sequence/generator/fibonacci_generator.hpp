@@ -6,9 +6,8 @@
 namespace algol {
   namespace sequence {
     namespace generator {
-      template <typename T>
-      class fibonacci_infinite_generator
-      {
+      template<typename T>
+      class fibonacci_infinite_generator {
         mutable T current_;
         mutable T next_;
 
@@ -36,9 +35,8 @@ namespace algol {
         fibonacci_infinite_generator() : current_(T{0}), next_(T{1}) {}
       };
 
-      template <typename T>
-      class fibonacci_upto_n_generator
-      {
+      template<typename T>
+      class fibonacci_upto_n_generator {
         mutable T current_;
         mutable T next_;
         T max_;
@@ -66,13 +64,14 @@ namespace algol {
         }
 
         fibonacci_upto_n_generator() : current_(T{0}), next_(T{1}), max_(T{0}) {}
+
         fibonacci_upto_n_generator(T const& max) : current_(T{0}), next_(T{1}), max_(max) {}
+
         fibonacci_upto_n_generator(T&& max) : current_(T{0}), next_(T{1}), max_(std::move(max)) {}
       };
 
-      template <typename T>
-      class fibonacci_first_n_generator
-      {
+      template<typename T>
+      class fibonacci_first_n_generator {
         mutable T current_;
         mutable T next_;
         mutable std::size_t count_;
@@ -103,12 +102,11 @@ namespace algol {
           return count_ <= 0;
         }
 
-        fibonacci_first_n_generator(std::size_t count) : current_(T{0}), next_(T{1}), count_ {count} {}
+        fibonacci_first_n_generator(std::size_t count) : current_(T{0}), next_(T{1}), count_{count} {}
       };
 
-      template <typename T>
-      class even_fibonacci_infinite_generator
-      {
+      template<typename T>
+      class even_fibonacci_infinite_generator {
         mutable T current_;
         mutable T next_;
 
@@ -136,9 +134,8 @@ namespace algol {
         even_fibonacci_infinite_generator() : current_(T{0}), next_(T{2}) {}
       };
 
-      template <typename T>
-      class even_fibonacci_upto_n_generator
-      {
+      template<typename T>
+      class even_fibonacci_upto_n_generator {
         mutable T current_;
         mutable T next_;
         T max_;
@@ -166,13 +163,14 @@ namespace algol {
         }
 
         even_fibonacci_upto_n_generator() : current_(T{0}), next_(T{2}), max_(T{0}) {}
+
         even_fibonacci_upto_n_generator(T const& max) : current_(T{0}), next_(T{2}), max_(max) {}
+
         even_fibonacci_upto_n_generator(T&& max) : current_(T{0}), next_(T{2}), max_(std::move(max)) {}
       };
 
-      template <typename T>
-      class even_fibonacci_first_n_generator
-      {
+      template<typename T>
+      class even_fibonacci_first_n_generator {
         mutable T current_;
         mutable T next_;
         mutable std::size_t count_;
@@ -202,31 +200,31 @@ namespace algol {
           return count_ <= 0;
         }
 
-        even_fibonacci_first_n_generator(std::size_t count) : current_(T{0}), next_(T{2}), count_ {count} {}
+        even_fibonacci_first_n_generator(std::size_t count) : current_(T{0}), next_(T{2}), count_{count} {}
       };
     }
 
-    template <typename T>
+    template<typename T>
     using fibonacci_infinite_seq =
     sequence<T, generator::fibonacci_infinite_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using fibonacci_upto_n_seq =
     sequence<T, generator::fibonacci_upto_n_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using fibonacci_first_n_seq =
     sequence<T, generator::fibonacci_first_n_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using even_fibonacci_infinite_seq =
     sequence<T, generator::even_fibonacci_infinite_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using even_fibonacci_upto_n_seq =
     sequence<T, generator::even_fibonacci_upto_n_generator<T>>;
 
-    template <typename T>
+    template<typename T>
     using even_fibonacci_first_n_seq =
     sequence<T, generator::even_fibonacci_first_n_generator<T>>;
   }
