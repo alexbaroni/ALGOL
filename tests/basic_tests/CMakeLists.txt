@@ -1,3 +1,23 @@
+# hack to make clion see this file belong to the project
+set(SOURCE_FILES
+    ../../include/algol/ds/list/list.hpp
+    ../../include/algol/ds/stack/linked_stack.hpp
+    ../../include/algol/ds/stack/stack.hpp
+    ../../include/algol/integer/integer_interval.hpp
+    ../../include/algol/integer/integer_interval_range.hpp
+    ../../include/algol/io/pprint.hpp
+    ../../include/algol/perf/operation_counter.hpp
+    ../../include/algol/perf/stopwatch.hpp
+    ../../include/algol/sequence/generator/arithmetic_progression_generator.hpp
+    ../../include/algol/sequence/generator/collatz_generator.hpp
+    ../../include/algol/sequence/generator/factorial_generator.hpp
+    ../../include/algol/sequence/generator/fibonacci_generator.hpp
+    ../../include/algol/sequence/generator/geometric_progression_generator.hpp
+    ../../include/algol/sequence/generator/iota_generator.hpp
+    ../../include/algol/sequence/sequence.hpp
+    ../../include/algol/stream/istream_range.hpp
+    ../../include/algol/stream/lines_range.hpp)
+
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(test.stopwatch_test stopwatch_test.cpp)
@@ -16,7 +36,7 @@ add_executable(test.geometric_progression_generator_test geometric_progression_g
 add_executable(test.factorial_generator_test factorial_generator_test.cpp)
 add_executable(test.linked_stack_test linked_stack_test.cpp)
 
-add_executable(test.all_test stopwatch_test.cpp pprint_test.cpp operation_counter_test.cpp
+add_executable(test.all_test ${SOURCE_FILES} stopwatch_test.cpp pprint_test.cpp operation_counter_test.cpp
     integer_interval_test.cpp integer_interval_range_test.cpp istream_range_test.cpp lines_range_test.cpp
     sequence_test.cpp fibonacci_generator_test.cpp iota_generator_test.cpp collatz_generator_test.cpp
     arithmetic_progression_generator_test.cpp geometric_progression_generator_test.cpp

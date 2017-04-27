@@ -1,4 +1,5 @@
 #include <vector>
+#include <memory>
 
 #include "algol/ds/stack/stack.hpp"
 #include "algol/ds/stack/linked_stack.hpp"
@@ -30,6 +31,15 @@ TEST_F(linked_stack_fixture, axioms) {
   EXPECT_EQ(op_count_stack.top(), 1);
   // a stack with one item does not throw on pop
   EXPECT_NO_THROW(op_count_stack.pop());
+  op_count_stack.push(1);
+  auto size = op_count_stack.size();
+  op_count_stack.push(2);
+  // a push increase the size of the stack by 1
+  EXPECT_EQ(op_count_stack.size(), size + 1u);
+  size = op_count_stack.size();
+  op_count_stack.pop();
+  // a pop decrease the size of the stack by 1
+  EXPECT_EQ(op_count_stack.size(), size - 1u);
 }
 
 TEST_F(linked_stack_fixture, constructor) {
@@ -38,6 +48,14 @@ TEST_F(linked_stack_fixture, constructor) {
   EXPECT_EQ(op_count_stack.size(), 0u);
   EXPECT_FALSE(op_count_stack.full());
   EXPECT_TRUE(!op_count_stack.full());
+}
+
+TEST_F(linked_stack_fixture, initilizer_list) {
+  std::vector<operation_counter> val = {6, 5, 4, 3, 2, 1};
+  ds::linked_stack<operation_counter> init_list_stack{1, 2, 3, 4, 5, 6};
+  EXPECT_FALSE(init_list_stack.empty());
+  EXPECT_EQ(init_list_stack.size(), 6u);
+  ASSERT_EQ(init_list_stack.to_vector(), val);
 }
 
 TEST_F(linked_stack_fixture, empty) {
@@ -63,6 +81,16 @@ TEST_F(linked_stack_fixture, update_top_element) {
   EXPECT_EQ(op_count_stack.top(), 2);
   op_count_stack.top() = 3;
   EXPECT_EQ(op_count_stack.top(), 3);
+}
+
+TEST_F(linked_stack_fixture, swap) {
+  ds::linked_stack<operation_counter> swap_stack;
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  swap(swap_stack, op_count_stack);
+  EXPECT_FALSE(swap_stack.empty());
+  EXPECT_EQ(swap_stack.size(), 2u);
+  EXPECT_EQ(swap_stack.top(), 3);
 }
 
 TEST_F(linked_stack_fixture, five_elements) {
@@ -210,6 +238,187 @@ TEST_F(linked_stack_fixture, using_interface) {
   for (auto i = 0; i < 500; ++i)
     stack.pop();
   EXPECT_TRUE(stack.empty());
+}
+
+TEST_F(linked_stack_fixture, equal) {
+  ds::linked_stack <operation_counter> other_stack;
+  ds::linked_stack <operation_counter> other_stack2;
+  op_count_stack.push(1);
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  op_count_stack.push(4);
+  op_count_stack.push(5);
+  // reflexive property of equality
+  EXPECT_TRUE(op_count_stack == op_count_stack);
+  EXPECT_FALSE(op_count_stack == other_stack);
+  other_stack.push(1);
+  other_stack.push(2);
+  other_stack.push(3);
+  other_stack.push(4);
+  other_stack.push(6);
+  EXPECT_FALSE(op_count_stack == other_stack);
+  other_stack.pop();
+  other_stack.push(5);
+  //symmetric property of equality
+  EXPECT_TRUE(op_count_stack == other_stack);
+  EXPECT_TRUE(other_stack == op_count_stack);
+  other_stack2 = other_stack;
+  //transitive property of equality
+  EXPECT_TRUE(op_count_stack == other_stack);
+  EXPECT_TRUE(other_stack == other_stack2);
+  EXPECT_TRUE(op_count_stack == other_stack2);
+}
+
+TEST_F(linked_stack_fixture, not_equal) {
+  ds::linked_stack <operation_counter> other_stack;
+  op_count_stack.push(1);
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  op_count_stack.push(4);
+  op_count_stack.push(5);
+  EXPECT_TRUE(op_count_stack != other_stack);
+  other_stack.push(1);
+  other_stack.push(2);
+  other_stack.push(3);
+  other_stack.push(4);
+  other_stack.push(6);
+  EXPECT_TRUE(op_count_stack != other_stack);
+  other_stack.pop();
+  other_stack.push(5);
+  EXPECT_FALSE(op_count_stack != other_stack);
+}
+
+TEST_F(linked_stack_fixture, less_than) {
+  ds::linked_stack <operation_counter> other_stack;
+  op_count_stack.push(1);
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  op_count_stack.push(4);
+  op_count_stack.push(5);
+  EXPECT_FALSE(op_count_stack < other_stack);
+  EXPECT_TRUE(other_stack < op_count_stack);
+  other_stack.push(1);
+  other_stack.push(2);
+  other_stack.push(3);
+  other_stack.push(4);
+  other_stack.push(6);
+  EXPECT_TRUE(op_count_stack < other_stack);
+  EXPECT_FALSE(other_stack < op_count_stack);
+  other_stack.pop();
+  other_stack.push(5);
+  EXPECT_FALSE(op_count_stack < other_stack);
+  EXPECT_FALSE(other_stack < op_count_stack);
+  other_stack.pop();
+  EXPECT_FALSE(op_count_stack < other_stack);
+  EXPECT_TRUE(other_stack < op_count_stack);
+  op_count_stack.pop();
+  op_count_stack.pop();
+  EXPECT_TRUE(op_count_stack < other_stack);
+  EXPECT_FALSE(other_stack < op_count_stack);
+}
+
+
+TEST_F(linked_stack_fixture, less_than_or_equal) {
+  ds::linked_stack <operation_counter> other_stack;
+  op_count_stack.push(1);
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  op_count_stack.push(4);
+  op_count_stack.push(5);
+  EXPECT_FALSE(op_count_stack <= other_stack);
+  EXPECT_TRUE(other_stack <= op_count_stack);
+  other_stack.push(1);
+  other_stack.push(2);
+  other_stack.push(3);
+  other_stack.push(4);
+  other_stack.push(6);
+  EXPECT_TRUE(op_count_stack <= other_stack);
+  EXPECT_FALSE(other_stack <= op_count_stack);
+  other_stack.pop();
+  other_stack.push(5);
+  EXPECT_TRUE(op_count_stack <= other_stack);
+  EXPECT_TRUE(other_stack <= op_count_stack);
+  other_stack.pop();
+  EXPECT_FALSE(op_count_stack <= other_stack);
+  EXPECT_TRUE(other_stack <= op_count_stack);
+  op_count_stack.pop();
+  op_count_stack.pop();
+  EXPECT_TRUE(op_count_stack <= other_stack);
+  EXPECT_FALSE(other_stack <= op_count_stack);
+}
+
+TEST_F(linked_stack_fixture, greater_than) {
+  ds::linked_stack <operation_counter> other_stack;
+  op_count_stack.push(1);
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  op_count_stack.push(4);
+  op_count_stack.push(5);
+  EXPECT_TRUE(op_count_stack > other_stack);
+  EXPECT_FALSE(other_stack > op_count_stack);
+  other_stack.push(1);
+  other_stack.push(2);
+  other_stack.push(3);
+  other_stack.push(4);
+  other_stack.push(6);
+  EXPECT_FALSE(op_count_stack > other_stack);
+  EXPECT_TRUE(other_stack > op_count_stack);
+  other_stack.pop();
+  other_stack.push(5);
+  EXPECT_FALSE(op_count_stack > other_stack);
+  EXPECT_FALSE(other_stack > op_count_stack);
+  other_stack.pop();
+  EXPECT_TRUE(op_count_stack > other_stack);
+  EXPECT_FALSE(other_stack > op_count_stack);
+  op_count_stack.pop();
+  op_count_stack.pop();
+  EXPECT_FALSE(op_count_stack > other_stack);
+  EXPECT_TRUE(other_stack > op_count_stack);
+}
+
+TEST_F(linked_stack_fixture, greater_than_or_equal) {
+  ds::linked_stack <operation_counter> other_stack;
+  op_count_stack.push(1);
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  op_count_stack.push(4);
+  op_count_stack.push(5);
+  EXPECT_TRUE(op_count_stack >= other_stack);
+  EXPECT_FALSE(other_stack >= op_count_stack);
+  other_stack.push(1);
+  other_stack.push(2);
+  other_stack.push(3);
+  other_stack.push(4);
+  other_stack.push(6);
+  EXPECT_FALSE(op_count_stack >= other_stack);
+  EXPECT_TRUE(other_stack >= op_count_stack);
+  other_stack.pop();
+  other_stack.push(5);
+  EXPECT_TRUE(op_count_stack >= other_stack);
+  EXPECT_TRUE(other_stack >= op_count_stack);
+  other_stack.pop();
+  EXPECT_TRUE(op_count_stack >= other_stack);
+  EXPECT_FALSE(other_stack >= op_count_stack);
+  op_count_stack.pop();
+  op_count_stack.pop();
+  EXPECT_FALSE(op_count_stack >= other_stack);
+  EXPECT_TRUE(other_stack >= op_count_stack);
+}
+
+TEST_F(linked_stack_fixture, clear) {
+  op_count_stack.push(1);
+  op_count_stack.push(2);
+  op_count_stack.push(3);
+  op_count_stack.push(4);
+  op_count_stack.push(5);
+  EXPECT_FALSE(op_count_stack.empty());
+  EXPECT_EQ(op_count_stack.size(), 5u);
+  EXPECT_EQ(op_count_stack.top(), 5);
+  op_count_stack.clear();
+  EXPECT_TRUE(op_count_stack.empty());
+  EXPECT_EQ(op_count_stack.size(), 0u);
+  EXPECT_THROW(op_count_stack.pop(), ds::stack_empty_error);
+  EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
 }
 
 TEST_F(linked_stack_fixture, to_vector) {
