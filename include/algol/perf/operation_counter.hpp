@@ -43,7 +43,9 @@ namespace algol {
         return *this;
       }
 
-      ~operation_counter() = default;
+      ~operation_counter() {
+        destructions_++;
+      };
 
       operator T() const {
         accesses_++;
@@ -164,6 +166,8 @@ namespace algol {
 
       static Counter const& moves() { return moves_; }
 
+      static Counter const& destructions() { return destructions_; }
+
       static Counter const& increments() { return increments_; }
 
       static Counter const& decrements() { return decrements_; }
@@ -211,6 +215,7 @@ namespace algol {
            << " Accesses:             " << accesses_ << '\n'
            << " Assignments:          " << assignments_ << '\n'
            << " Moves:                " << moves_ << '\n'
+           << " Destructions:         " << destructions_ << '\n'
            << " Increments:           " << increments_ << '\n'
            << " Decrements:           " << decrements_ << '\n'
            << " Additions:            " << additions_ << '\n'
@@ -238,6 +243,7 @@ namespace algol {
         accesses_ = Counter{};
         assignments_ = Counter{};
         moves_ = Counter{};
+        destructions_ = Counter{};
         increments_ = Counter{};
         decrements_ = Counter{};
         additions_ = Counter{};
@@ -513,6 +519,7 @@ namespace algol {
       static Counter accesses_;
       static Counter assignments_;
       static Counter moves_;
+      static Counter destructions_;
       static Counter increments_;
       static Counter decrements_;
       static Counter additions_;
@@ -544,6 +551,9 @@ namespace algol {
 
     template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::moves_ = Counter{};
+
+    template<typename T, typename Counter>
+    Counter operation_counter<T, Counter>::destructions_ = Counter{};
 
     template<typename T, typename Counter>
     Counter operation_counter<T, Counter>::increments_ = Counter{};
