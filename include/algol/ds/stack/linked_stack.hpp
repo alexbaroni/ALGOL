@@ -3,13 +3,17 @@
  * Linked stack implementation.
  */
 
-#include "stack.hpp"
-
 #ifndef ALGOL_DS_LINKED_STACK_HPP
 #define ALGOL_DS_LINKED_STACK_HPP
 
+#include "stack.hpp"
+#include "stl2/concepts.hpp"
+
 namespace algol {
   namespace ds {
+
+    using namespace ::std::experimental::ranges;
+
     /**
      * \brief Implementation of the Stsck ADT using a linked structure.
      * \details see class [stack](@ref stack)
@@ -17,7 +21,7 @@ namespace algol {
      * \invariant The item that is accessible at the top of the stack is the item that has
      * most recently been pushed onto it and not yet popped (removed).
      */
-    template<typename T>
+    template<CopyConstructible T>
     class linked_stack final : public stack<T> {
     public:
       using value_type = typename stack<T>::value_type;
@@ -138,7 +142,9 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if the items are the same and in the same order, false otherwise.
        */
-      bool operator==(linked_stack const& rhs) const {
+
+      bool operator==(linked_stack const& rhs) const
+        requires EqualityComparable<T>() {
         if (items_ != rhs.items_)
           return false;
 
@@ -165,7 +171,9 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if the items are not the same or not in the same order, false otherwise.
        */
-      bool operator!=(linked_stack const& rhs) const {
+
+      bool operator!=(linked_stack const& rhs) const
+      requires EqualityComparable<T>() {
         return !(*this == rhs);
       }
 
@@ -184,7 +192,8 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than the provided stack, false otherwise.
        */
-      bool operator<(linked_stack const& rhs) const {
+      bool operator<(linked_stack const& rhs) const
+      requires StrictTotallyOrdered<T>() {
         node* this_iter = top_node_;
         node* rhs_iter = rhs.top_node_;
 
@@ -217,7 +226,8 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than or equal to the provided stack, false otherwise.
        */
-      bool operator<=(linked_stack const& rhs) const {
+      bool operator<=(linked_stack const& rhs) const
+      requires StrictTotallyOrdered<T>() {
         return !(*this > rhs);
       }
 
@@ -236,7 +246,8 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than the provided stack, false otherwise.
        */
-      bool operator>(linked_stack const& rhs) const {
+      bool operator>(linked_stack const& rhs) const
+      requires StrictTotallyOrdered<T>() {
         return rhs < *this;
       }
 
@@ -255,7 +266,8 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than or equal to the provided stack, false otherwise.
        */
-      bool operator>=(linked_stack const& rhs) const {
+      bool operator>=(linked_stack const& rhs) const
+      requires StrictTotallyOrdered<T>() {
         return !(*this < rhs);
       }
 

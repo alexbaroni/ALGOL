@@ -10,10 +10,10 @@
 # Project home: https://github.com/alexbaroni/ALGOL
 #
 #
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.8)
 
-set(CMAKE_C_COMPILER gcc-6.3)
-set(CMAKE_CXX_COMPILER g++-6.3)
+set(CMAKE_C_COMPILER gcc-7.1)
+set(CMAKE_CXX_COMPILER g++-7.1)
 
 project(ALGOL CXX)
 enable_testing()
@@ -21,7 +21,7 @@ enable_testing()
 # see https://cmake.org/cmake/help/latest/module/FindBoost.html
 find_package(Boost REQUIRED)
 
-include_directories(include ${Boost_INCLUDE_DIR})
+include_directories(include ${Boost_INCLUDE_DIR} lib/cmcstl2/include)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -ftemplate-backtrace-limit=0")
@@ -37,6 +37,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic-errors -Werror -
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -fno-inline -g3 -fstack-protector-all")
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -g0 -DNDEBUG")
 
+add_subdirectory(lib/cmcstl2)
 add_subdirectory(examples)
 add_subdirectory(tests)
 
