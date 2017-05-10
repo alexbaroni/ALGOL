@@ -1,6 +1,7 @@
 # hack to make clion see this file belong to the project
 set(SOURCE_FILES
     ../../include/algol/ds/list/list.hpp
+    ../../include/algol/ds/stack/fixed_stack.hpp
     ../../include/algol/ds/stack/linked_stack.hpp
     ../../include/algol/ds/stack/stack.hpp
     ../../include/algol/integer/integer_interval.hpp
@@ -35,12 +36,13 @@ add_executable(test.arithmetic_progression_generator_test arithmetic_progression
 add_executable(test.geometric_progression_generator_test geometric_progression_generator_test.cpp)
 add_executable(test.factorial_generator_test factorial_generator_test.cpp)
 add_executable(test.linked_stack_test linked_stack_test.cpp)
+add_executable(test.fixed_stack_test fixed_stack_test.cpp)
 
 add_executable(test.all_test ${SOURCE_FILES} stopwatch_test.cpp pprint_test.cpp operation_counter_test.cpp
     integer_interval_test.cpp integer_interval_range_test.cpp istream_range_test.cpp lines_range_test.cpp
     sequence_test.cpp fibonacci_generator_test.cpp iota_generator_test.cpp collatz_generator_test.cpp
     arithmetic_progression_generator_test.cpp geometric_progression_generator_test.cpp
-    factorial_generator_test.cpp linked_stack_test.cpp)
+    factorial_generator_test.cpp linked_stack_test.cpp fixed_stack_test.cpp)
 
 target_link_libraries(test.stopwatch_test gtest gtest_main)
 target_link_libraries(test.pprint_test gtest gtest_main)
@@ -57,6 +59,7 @@ target_link_libraries(test.arithmetic_progression_generator_test gtest gtest_mai
 target_link_libraries(test.geometric_progression_generator_test gtest gtest_main)
 target_link_libraries(test.factorial_generator_test gtest gtest_main)
 target_link_libraries(test.linked_stack_test gtest gtest_main)
+target_link_libraries(test.fixed_stack_test gtest gtest_main)
 
 target_link_libraries(test.all_test gtest gtest_main)
 

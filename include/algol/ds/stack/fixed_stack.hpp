@@ -1,11 +1,13 @@
 /**
  * \file
- * Linked stack implementation.
+ * Fixed stack implementation.
  */
 
-#ifndef ALGOL_DS_LINKED_STACK_HPP
-#define ALGOL_DS_LINKED_STACK_HPP
+#ifndef ALGOL_DS_FIXED_STACK_HPP
+#define ALGOL_DS_FIXED_STACK_HPP
 
+#include <algorithm>
+#include <memory>
 #include "stack.hpp"
 #include "stl2/concepts.hpp"
 
@@ -15,14 +17,14 @@ namespace algol {
     using namespace ::std::experimental::ranges;
 
     /**
-     * \brief Implementation of the Stsck ADT using a linked structure.
+     * \brief Implementation of the Stsck ADT using a fixed array.
      * \details see class [stack](@ref stack)
      * \tparam T type of the items stored in the stack.
      * \invariant The item that is accessible at the top of the stack is the item that has
      * most recently been pushed onto it and not yet popped (removed).
      */
-    template<CopyConstructible T>
-    class linked_stack final : public stack<T> {
+    template<CopyConstructible T, typename stack<T>::size_type N>
+    class fixed_stack final : public stack<T> {
     public:
       using value_type = typename stack<T>::value_type;
       using reference = typename stack<T>::reference;
@@ -35,7 +37,7 @@ namespace algol {
        * \postcondition The stack is empty.
        * \complexity O(1)
        */
-      linked_stack() : stack<T>(), top_node_{nullptr}, items_{size_type{}} {}
+      fixed_stack() : stack<T>(), items_{size_type{}}, top_item_{size_type{}}, array_{allocator_.allocate(N)} {}
 
       /**
        * \brief Construct a stack with values provided.
@@ -47,7 +49,7 @@ namespace algol {
        * \complexity O(N)
        * \param values The items to be pushed onto the stack.
        */
-      linked_stack(std::initializer_list<value_type> values) : linked_stack() {
+      fixed_stack(std::initializer_list<value_type> values) : fixed_stack() {
         for (auto const& v : values)
           push_(v);
       }
@@ -59,22 +61,16 @@ namespace algol {
        * \complexity O(N)
        * \param rhs The stack to be copied.
        */
-      linked_stack(linked_stack const& rhs) : linked_stack() {
-        linked_stack stack;
+      fixed_stack(fixed_stack const& rhs) : fixed_stack() {
+        fixed_stack stack;
 
         if (!rhs.empty()) {
           for (auto i = size_type{}; i < rhs.items_; ++i) {
-            stack.push_((node*) ::operator new (sizeof(node)));
+            allocator_.construct(&stack.array_[i], value_type{rhs.array_[i]});
           }
 
-          node* this_iter = stack.top_node_;
-          node* rhs_iter = rhs.top_node_;
-
-          while (rhs_iter) {
-            new(&this_iter->value_) T(rhs_iter->value_);
-            this_iter = this_iter->next_;
-            rhs_iter = rhs_iter->next_;
-          }
+          stack.items_ = rhs.items_;
+          stack.top_item_ = rhs.top_item_;
         }
         swap(stack);
       }
@@ -88,8 +84,8 @@ namespace algol {
        * \param rhs The stack to be copied.
        * \return The stack containing the provided stack items.
        */
-      linked_stack& operator=(linked_stack const& rhs) {
-        linked_stack temp{rhs};
+      fixed_stack& operator=(fixed_stack const& rhs) {
+        fixed_stack temp{rhs};
         swap(temp);
         return *this;
       }
@@ -101,9 +97,10 @@ namespace algol {
        * \complexity O(1)
        * \param rhs The stack to be moved, items contained are 'stolen' from this stack.
        */
-      linked_stack(linked_stack&& rhs) noexcept : top_node_{rhs.top_node_}, items_{rhs.items_} {
-        rhs.top_node_ = nullptr;
+      fixed_stack(fixed_stack&& rhs) noexcept : items_{rhs.items_}, top_item_{rhs.top_item_}, array_{rhs.array_} {
         rhs.items_ = size_type{};
+        rhs.top_item_ = size_type{};
+        rhs.array_ = nullptr;
       }
 
       /**
@@ -115,8 +112,8 @@ namespace algol {
        * \param rhs The stack to be moved, items contained are 'stolen' from this stack.
        * \return The stack containing the provided stack items.
        */
-      linked_stack& operator=(linked_stack&& rhs) noexcept {
-        linked_stack temp{std::move(rhs)};
+      fixed_stack& operator=(fixed_stack&& rhs) noexcept {
+        fixed_stack temp{std::move(rhs)};
         swap(temp);
         return *this;
       }
@@ -125,12 +122,13 @@ namespace algol {
        * \brief Destructor
        * \precondition None.
        * \postcondition The stack items are destroyed.
-       * \complexity O(N)
+       * \complexity O(N) Destructor calls
        */
-      ~linked_stack() {
-        while (!empty_()) {
-          pop_();
+      ~fixed_stack() {
+        for (auto i = size_type{}; i < items_; ++i) {
+          allocator_.destroy(&array_[i]);
         }
+        allocator_.deallocate(array_, N);
       }
 
       /**
@@ -143,23 +141,17 @@ namespace algol {
        * \return True if the items are the same and in the same order, false otherwise.
        */
 
-      bool operator==(linked_stack const& rhs) const
-        requires EqualityComparable<T>() {
+      bool operator==(fixed_stack const& rhs) const
+      requires EqualityComparable<T>() {
         if (items_ != rhs.items_)
           return false;
 
-        node* this_iter = top_node_;
-        node* rhs_iter = rhs.top_node_;
-
-        while (this_iter && rhs_iter) {
-          if (this_iter->value_ != rhs_iter->value_)
+        for (auto i = size_type{}; i < items_; ++i) {
+          if (array_[i] != rhs.array_[i])
             return false;
-
-          this_iter = this_iter->next_;
-          rhs_iter = rhs_iter->next_;
         }
 
-        return !this_iter && !rhs_iter;
+        return true;
       }
 
       /**
@@ -172,10 +164,11 @@ namespace algol {
        * \return True if the items are not the same or not in the same order, false otherwise.
        */
 
-      bool operator!=(linked_stack const& rhs) const
+      bool operator!=(fixed_stack const& rhs) const
       requires EqualityComparable<T>() {
         return !(*this == rhs);
       }
+
 
       /**
        * \brief Less than operator.
@@ -192,23 +185,19 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than the provided stack, false otherwise.
        */
-      bool operator<(linked_stack const& rhs) const
+      bool operator<(fixed_stack const& rhs) const
       requires StrictTotallyOrdered<T>() {
-        node* this_iter = top_node_;
-        node* rhs_iter = rhs.top_node_;
-
-        while (this_iter && rhs_iter) {
-          if (this_iter->value_ < rhs_iter->value_)
+        auto items = std::min(items_, rhs.items_);
+        for (auto i = size_type{}; i < items; ++i) {
+          if (array_[i] < rhs.array_[i])
             return true;
 
-          if (this_iter->value_ > rhs_iter->value_)
+          if (array_[i] > rhs.array_[i])
             return false;
-
-          this_iter = this_iter->next_;
-          rhs_iter = rhs_iter->next_;
         }
 
-        return !this_iter && rhs_iter;
+
+        return items_ < rhs.items_;
       }
 
       /**
@@ -226,7 +215,7 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than or equal to the provided stack, false otherwise.
        */
-      bool operator<=(linked_stack const& rhs) const
+      bool operator<=(fixed_stack const& rhs) const
       requires StrictTotallyOrdered<T>() {
         return !(*this > rhs);
       }
@@ -246,7 +235,7 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than the provided stack, false otherwise.
        */
-      bool operator>(linked_stack const& rhs) const
+      bool operator>(fixed_stack const& rhs) const
       requires StrictTotallyOrdered<T>() {
         return rhs < *this;
       }
@@ -266,7 +255,7 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than or equal to the provided stack, false otherwise.
        */
-      bool operator>=(linked_stack const& rhs) const
+      bool operator>=(fixed_stack const& rhs) const
       requires StrictTotallyOrdered<T>() {
         return !(*this < rhs);
       }
@@ -279,24 +268,20 @@ namespace algol {
        * \complexity O(1)
        * \param rhs The stack to be swapped with this
        */
-      void swap(linked_stack& rhs) noexcept {
+      void swap(fixed_stack& rhs) noexcept {
         using std::swap;
-        swap(top_node_, rhs.top_node_);
         swap(items_, rhs.items_);
+        swap(top_item_, rhs.top_item_);
+        swap(array_, rhs.array_);
       }
 
     private:
-      struct node {
-        value_type value_;
-        node* next_;
-      };
-
       bool empty_() const noexcept final {
-        return top_node_ == nullptr;
+        return items_ == size_type{};
       }
 
       bool full_() const noexcept final {
-        return false;
+        return top_item_ == N;
       }
 
       size_type size_() const noexcept final {
@@ -304,30 +289,33 @@ namespace algol {
       }
 
       reference top_() final {
-        return top_node_->value_;
+        return array_[top_item_ - 1];
       }
 
       const_reference top_() const final {
-        return top_node_->value_;
+        return array_[top_item_ - 1];
       }
 
       void push_(value_type const& value) final {
-        push_(new node{value, nullptr});
+        allocator_.construct(&array_[top_item_], value_type{value});
+        top_item_++;
+        items_++;
       }
 
       void push_(value_type&& value) final {
-        push_(new node{std::move(value), nullptr});
+        allocator_.construct(&array_[top_item_], value_type{std::move(value)});
+        top_item_++;
+        items_++;
       }
 
       void pop_() final {
-        node* node_to_pop = top_node_;
-        top_node_ = top_node_->next_;
+        top_item_--;
         items_--;
-        delete node_to_pop;
+        allocator_.destroy(&array_[top_item_]);
       }
 
       void clear_() noexcept final {
-        linked_stack temp{};
+        fixed_stack temp{};
         swap(temp);
       }
 
@@ -335,23 +323,16 @@ namespace algol {
         std::vector<T> vector{};
         vector.reserve(size_());
 
-        node* this_iter = top_node_;
-
-        while (this_iter) {
-          vector.emplace_back(this_iter->value_);
-          this_iter = this_iter->next_;
+        for (auto i = items_; i > size_type{}; --i) {
+          vector.emplace_back(array_[i - 1]);
         }
         return vector;
       }
 
-      void push_(node* node_to_push) {
-        node_to_push->next_ = top_node_;
-        top_node_ = node_to_push;
-        items_++;
-      }
-
-      node* top_node_;
       size_type items_;
+      size_type top_item_;
+      value_type* array_;
+      std::allocator<T> allocator_;
     };
 
     /**
@@ -364,11 +345,11 @@ namespace algol {
      * \param lhs Stack to be exchanged with rhs.
      * \param rhs Stack to be exchanged with lhs.
      */
-    template<typename T>
-    void swap(linked_stack<T>& lhs, linked_stack<T>& rhs) noexcept {
+    template<typename T, typename stack<T>::size_type N>
+    void swap(fixed_stack<T, N>& lhs, fixed_stack<T, N>& rhs) noexcept {
       lhs.swap(rhs);
     }
   }
 }
 
-#endif //ALGOL_DS_LINKED_STACK_HPP
+#endif //ALGOL_DS_FIXED_STACK_HPP
