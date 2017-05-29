@@ -17,7 +17,9 @@ set(SOURCE_FILES
     ../../include/algol/sequence/generator/iota_generator.hpp
     ../../include/algol/sequence/sequence.hpp
     ../../include/algol/stream/istream_range.hpp
-    ../../include/algol/stream/lines_range.hpp)
+    ../../include/algol/stream/lines_range.hpp
+    ../../include/algol/result/result.hpp
+    ../../include/algol/eval/eval.hpp)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
@@ -37,12 +39,13 @@ add_executable(test.geometric_progression_generator_test geometric_progression_g
 add_executable(test.factorial_generator_test factorial_generator_test.cpp)
 add_executable(test.linked_stack_test linked_stack_test.cpp)
 add_executable(test.fixed_stack_test fixed_stack_test.cpp)
+add_executable(test.result_test result_test.cpp)
 
 add_executable(test.all_test ${SOURCE_FILES} stopwatch_test.cpp pprint_test.cpp operation_counter_test.cpp
     integer_interval_test.cpp integer_interval_range_test.cpp istream_range_test.cpp lines_range_test.cpp
     sequence_test.cpp fibonacci_generator_test.cpp iota_generator_test.cpp collatz_generator_test.cpp
     arithmetic_progression_generator_test.cpp geometric_progression_generator_test.cpp
-    factorial_generator_test.cpp linked_stack_test.cpp fixed_stack_test.cpp)
+    factorial_generator_test.cpp linked_stack_test.cpp fixed_stack_test.cpp result_test.cpp)
 
 target_link_libraries(test.stopwatch_test gtest gtest_main)
 target_link_libraries(test.pprint_test gtest gtest_main)
@@ -60,6 +63,7 @@ target_link_libraries(test.geometric_progression_generator_test gtest gtest_main
 target_link_libraries(test.factorial_generator_test gtest gtest_main)
 target_link_libraries(test.linked_stack_test gtest gtest_main)
 target_link_libraries(test.fixed_stack_test gtest gtest_main)
+target_link_libraries(test.result_test gtest gtest_main)
 
 target_link_libraries(test.all_test gtest gtest_main)
 
@@ -77,3 +81,6 @@ add_test(collatz_generator_test test.collatz_generator_test)
 add_test(arithmetic_progression_generator_test test.arithmetic_progression_generator_test)
 add_test(geometric_progression_generator_test test.geometric_progression_generator_test)
 add_test(factorial_generator_test test.factorial_generator_test)
+add_test(linked_stack_test test.linked_stack_test)
+add_test(fixed_stack_test test.fixed_stack_test)
+add_test(result_test test.result_test )

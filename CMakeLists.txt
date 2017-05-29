@@ -37,7 +37,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic-errors -Werror -
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -fno-inline -g3 -fstack-protector-all")
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -g0 -DNDEBUG")
 
-add_subdirectory(lib/cmcstl2)
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/home/derkalt/toolchains/gcc-7.1.0/lib64")
+
+#add_subdirectory(lib/cmcstl2)
 add_subdirectory(examples)
 add_subdirectory(tests)
 
