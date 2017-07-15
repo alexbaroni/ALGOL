@@ -1,7 +1,10 @@
 # ALGOL
-Utility library for algorithm analysis
+Utility library for algorithm analysis.
+Can be complied only with gcc 7.1 uses c++17 fetures and concepts.
 
-Utlility classes for measuring executionn time, operation count (ctor, move, operator, ...) and pretty printing STL containers.  
+Utlility classes for measuring executionn time, 
+operation count (ctor, move, operator, ...),
+pretty printing STL containers and more.  
 
 For pretty printing credits goes to:  
 https://louisdx.github.io/cxx-prettyprint/ i simply repackaged into my namespace. 
