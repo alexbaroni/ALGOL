@@ -1,21 +1,28 @@
-#ifndef ALGOL_STREAM_LINES_RANGE_HPP
-#define ALGOL_STREAM_LINES_RANGE_HPP
+/**
+ * \file
+ * Eveluation tokenizer.
+ */
 
-#include <iosfwd>
+#ifndef ALGOL_EVAL_EVAL_TOKENIZER_HPP
+#define ALGOL_EVAL_EVAL_TOKENIZER_HPP
+
 #include <string>
+#include <sstream>
+#include <iosfwd>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/assert.hpp>
 
 namespace algol {
-  namespace stream {
-    class lines_range {
+  namespace eval {
+    template <typename T = std::string>
+    class eval_tokenizer {
+      std::istringstream iss_;
       std::istream& sin_;
-      mutable std::string obj_;
-      char delim_;
+      mutable T obj_;
 
       bool next () const
       {
-        std::getline(sin_, obj_, delim_);
+        sin_ >> obj_;
         return sin_ ? true : false;
       }
 
@@ -24,18 +31,18 @@ namespace algol {
       using const_iterator = struct iterator
           : boost::iterator_facade<
               iterator,
-              std::string const,
+              T const,
               std::input_iterator_tag
           > {
         iterator () : rng_ {}
         {}
 
       private:
-        friend class lines_range;
+        friend class eval_tokenizer;
 
         friend class boost::iterator_core_access;
 
-        explicit iterator (lines_range const& rng)
+        explicit iterator (eval_tokenizer const& rng)
             : rng_(rng ? &rng : nullptr)
         {}
 
@@ -54,18 +61,18 @@ namespace algol {
           return rng_ == that.rng_;
         }
 
-        std::string const& dereference () const
+        T const& dereference () const
         {
           // Don't dereference a singular iterator
           BOOST_ASSERT(rng_);
           return rng_->obj_;
         }
 
-        lines_range const* rng_;
+        eval_tokenizer const* rng_;
       };
 
-      explicit lines_range (std::istream& sin, char delim = '\n')
-          : sin_(sin), obj_ {}, delim_(delim)
+      explicit eval_tokenizer (std::string const& expression)
+          : iss_(std::istringstream{expression}), sin_(iss_), obj_ {}
       {
         next(); // prime the pump
       }
@@ -84,13 +91,7 @@ namespace algol {
       bool operator! () const
       { return !sin_; }
     };
-
-    inline
-    lines_range getlines (std::istream& sin, char delim = '\n')
-    {
-      return lines_range{sin, delim};
-    }
   }
 }
 
-#endif // ALGOL_STREAM_LINES_RANGE_HPP
+#endif //ALGOL_EVAL_EVAL_TOKENIZER_HPP

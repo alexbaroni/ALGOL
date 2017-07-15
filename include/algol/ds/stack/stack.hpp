@@ -19,7 +19,10 @@ namespace algol {
 #if defined(__clang__)
       using std::logic_error::logic_error;
 #else
-      explicit stack_error(std::string const& what_arg) : std::logic_error{what_arg} {}
+
+      explicit stack_error (std::string const& what_arg) : std::logic_error {what_arg}
+      {}
+
 #endif
     };
 
@@ -28,8 +31,9 @@ namespace algol {
      * \details Throwed from top and pop operation.
      */
     struct stack_empty_error : public stack_error {
-      explicit stack_empty_error(std::string const& what_arg) : std::logic_error{what_arg},
-                                                                stack_error{what_arg} {}
+      explicit stack_empty_error (std::string const& what_arg) : std::logic_error {what_arg},
+                                                                 stack_error {what_arg}
+      {}
     };
 
     /**
@@ -37,8 +41,9 @@ namespace algol {
      * \details Throwed from push operation.
      */
     struct stack_full_error : public stack_error {
-      explicit stack_full_error(std::string const& what_arg) : std::logic_error{what_arg},
-                                                               stack_error{what_arg} {}
+      explicit stack_full_error (std::string const& what_arg) : std::logic_error {what_arg},
+                                                                stack_error {what_arg}
+      {}
     };
 
     /**
@@ -50,7 +55,7 @@ namespace algol {
      * \invariant The item that is accessible at the top of the stack is the item that has
      * most recently been pushed onto it and not yet popped (removed).
      */
-    template<typename T>
+    template <typename T>
     class stack {
     public:
       using value_type = T;
@@ -65,7 +70,8 @@ namespace algol {
        * \complexity O(1)
        * \return True if the stack is empty, false otherwise.
        */
-      bool empty() const {
+      bool empty () const
+      {
         return empty_();
       };
 
@@ -76,7 +82,8 @@ namespace algol {
        * \complexity O(1)
        * \return True if the stack is full, false otherwise.
        */
-      bool full() const {
+      bool full () const
+      {
         return full_();
       };
 
@@ -87,7 +94,8 @@ namespace algol {
        * \complexity O(1)
        * \return The current number of the items on the stack
        */
-      size_type size() const {
+      size_type size () const
+      {
         return size_();
       }
 
@@ -99,7 +107,8 @@ namespace algol {
        * \throws stack_empty_error if the stack is empty
        * \return The item on the top of the stack
        */
-      reference top() {
+      reference top ()
+      {
         if (empty_())
           throw stack_empty_error{"Attempting top() on empty stack"};
 
@@ -114,7 +123,8 @@ namespace algol {
        * \throws stack_empty_error if the stack is empty
        * \return The item on the top of the stack
        */
-      const_reference top() const {
+      const_reference top () const
+      {
         if (empty_())
           throw stack_empty_error{"Attempting top() on empty stack"};
 
@@ -129,7 +139,8 @@ namespace algol {
        * \throws stack_full_error if the stack is full and the stack is not changed.
        * \param value The item to push onto the stack.
        */
-      void push(value_type const& value) {
+      void push (value_type const& value)
+      {
         if (full_())
           throw stack_full_error{"Attempting push() on full stack"};
 
@@ -144,7 +155,8 @@ namespace algol {
        * \throws stack_full_error if the stack is full and the stack is not changed.
        * \param value The item to push onto the stack with move operation.
        */
-      void push(value_type&& value) {
+      void push (value_type&& value)
+      {
         if (full_())
           throw stack_full_error{"Attempting push() on full stack"};
 
@@ -158,7 +170,8 @@ namespace algol {
        * \complexity O(1)
        * \throws stack_empty_error if the stack is empty.
        */
-      void pop() {
+      void pop ()
+      {
         if (empty_())
           throw stack_empty_error{"Attempting pop() on empty stack"};
 
@@ -171,7 +184,8 @@ namespace algol {
        * \postcondition The stack is empty, the size becomes 0.
        * \complexity O(N) Removing items is linear.
        */
-      void clear() noexcept {
+      void clear () noexcept
+      {
         clear_();
       }
 
@@ -182,28 +196,29 @@ namespace algol {
        * \complexity O(N)
        * \return A vector with the items pushed onto the stack.
        */
-      std::vector<T> to_vector() const {
+      std::vector<T> to_vector () const
+      {
         return to_vector_();
       };
 
-      stack() = default;
-      stack(stack const&) = default;
-      stack& operator=(stack const&) = default;
-      stack(stack&&) = default;
-      stack& operator=(stack&&) = default;
-      virtual ~stack() = default;
+      stack () = default;
+      stack (stack const&) = default;
+      stack& operator= (stack const&) = default;
+      stack (stack&&) = default;
+      stack& operator= (stack&&) = default;
+      virtual ~stack () = default;
 
     private:
-      virtual bool empty_() const noexcept = 0;
-      virtual bool full_() const noexcept = 0;
-      virtual size_type size_() const noexcept = 0;
-      virtual reference top_() = 0;
-      virtual const_reference top_() const = 0;
-      virtual void push_(value_type const& value) = 0;
-      virtual void push_(value_type&& value) = 0;
-      virtual void pop_() = 0;
-      virtual void clear_() = 0;
-      virtual std::vector<T> to_vector_() const = 0;
+      virtual bool empty_ () const noexcept = 0;
+      virtual bool full_ () const noexcept = 0;
+      virtual size_type size_ () const noexcept = 0;
+      virtual reference top_ () = 0;
+      virtual const_reference top_ () const = 0;
+      virtual void push_ (value_type const& value) = 0;
+      virtual void push_ (value_type&& value) = 0;
+      virtual void pop_ () = 0;
+      virtual void clear_ () = 0;
+      virtual std::vector<T> to_vector_ () const = 0;
     };
   }
 }

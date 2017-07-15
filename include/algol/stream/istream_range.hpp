@@ -7,12 +7,13 @@
 
 namespace algol {
   namespace stream {
-    template<typename T>
+    template <typename T>
     class istream_range {
       std::istream& sin_;
       mutable T obj_;
 
-      bool next() const {
+      bool next () const
+      {
         sin_ >> obj_;
         return sin_ ? true : false;
       }
@@ -25,17 +26,20 @@ namespace algol {
               T const,
               std::input_iterator_tag
           > {
-        iterator() : rng_{} {}
+        iterator () : rng_ {}
+        {}
 
       private:
         friend class istream_range;
 
         friend class boost::iterator_core_access;
 
-        explicit iterator(istream_range const& rng)
-            : rng_(rng ? &rng : nullptr) {}
+        explicit iterator (istream_range const& rng)
+            : rng_(rng ? &rng : nullptr)
+        {}
 
-        void increment() {
+        void increment ()
+        {
           // Don't advance a singular iterator
           BOOST_ASSERT(rng_);
           // Fetch the next element, null out the
@@ -44,11 +48,13 @@ namespace algol {
             rng_ = nullptr;
         }
 
-        bool equal(iterator that) const {
+        bool equal (iterator that) const
+        {
           return rng_ == that.rng_;
         }
 
-        T const& dereference() const {
+        T const& dereference () const
+        {
           // Don't dereference a singular iterator
           BOOST_ASSERT(rng_);
           return rng_->obj_;
@@ -57,21 +63,25 @@ namespace algol {
         istream_range const* rng_;
       };
 
-      explicit istream_range(std::istream& sin)
-          : sin_(sin), obj_{} {
+      explicit istream_range (std::istream& sin)
+          : sin_(sin), obj_ {}
+      {
         next(); // prime the pump
       }
 
-      iterator begin() const { return iterator{*this}; }
+      iterator begin () const
+      { return iterator{*this}; }
 
-      iterator end() const { return iterator{}; }
+      iterator end () const
+      { return iterator{}; }
 
-      explicit operator bool() const // any objects left?
+      explicit operator bool () const // any objects left?
       {
         return sin_ ? true : false;
       }
 
-      bool operator!() const { return !sin_; }
+      bool operator! () const
+      { return !sin_; }
     };
   }
 }

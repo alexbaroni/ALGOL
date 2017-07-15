@@ -4,7 +4,8 @@
 
 using namespace algol::eval;
 
-int main() {
+int main ()
+{
   std::string prefix = "+ * 2 3 / 6 2";
   std::string postfix = "2 3 * 6 2 / +";
   assert(postfix_to_prefix(postfix) == prefix);

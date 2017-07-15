@@ -6,24 +6,26 @@
 
 using namespace algol::eval;
 
-bool is_operator(std::string const& op) {
+bool is_operator (std::string const& op)
+{
   return op == "+" || op == "-" || op == "*" || op == "/" || op == "^"; // || op == "%";
 }
 
-template<std::size_t N=100>
-std::string prefix_to_postfix2(std::string const& expression) {
+template <std::size_t N = 100>
+std::string prefix_to_postfix2 (std::string const& expression)
+{
   algol::ds::fixed_stack<std::string, N> stack;
   algol::ds::fixed_stack<std::string, N> token_stack;
-  std::istringstream prefix{expression};
+  std::istringstream prefix {expression};
 
-  while(!prefix.eof()) {
+  while (!prefix.eof()) {
     std::string token;
     prefix >> token;
     token_stack.push(token);
     prefix >> std::ws;
   }
 
-  while(!token_stack.empty()) {
+  while (!token_stack.empty()) {
     std::string token = token_stack.top();
     token_stack.pop();
     if (is_operator(token)) {
@@ -51,7 +53,8 @@ std::string prefix_to_postfix2(std::string const& expression) {
   return stack.top();
 }
 
-int main() {
+int main ()
+{
   std::string prefix = "+ * 2 3 / 6 2";
   std::string postfix = "2 3 * 6 2 / +";
   assert(prefix_to_postfix(prefix) == postfix);

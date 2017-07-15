@@ -11,15 +11,16 @@ using interval_op_count = algol::integer::integer_interval<operation_counter>;
 using interval_range_op_count = algol::integer::integer_interval_range<operation_counter>;
 using collatz_seq = algol::sequence::collatz_seq<operation_counter>;
 
-int main() {
+int main ()
+{
   using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
 
   stopwatch sw;
 
-  interval_op_count iop{11, 20};
+  interval_op_count iop {11, 20};
   std::cout << "n " << " - " << "length" << std::endl;
   for (auto l : interval_range_op_count(iop)) {
-    collatz_seq seq{l};
+    collatz_seq seq {l};
 
     std::cout << l << " - " << std::distance(std::begin(seq), std::end(seq)) << std::endl;
   }

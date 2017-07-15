@@ -21,7 +21,7 @@ namespace algol {
      * \invariant The item that is accessible at the top of the stack is the item that has
      * most recently been pushed onto it and not yet popped (removed).
      */
-    template<CopyConstructible T>
+    template <CopyConstructible T>
     class linked_stack final : public stack<T> {
     public:
       using value_type = typename stack<T>::value_type;
@@ -35,7 +35,8 @@ namespace algol {
        * \postcondition The stack is empty.
        * \complexity O(1)
        */
-      linked_stack() : stack<T>(), top_node_{nullptr}, items_{size_type{}} {}
+      linked_stack () : stack<T>(), top_node_ {nullptr}, items_ {size_type{}}
+      {}
 
       /**
        * \brief Construct a stack with values provided.
@@ -47,7 +48,8 @@ namespace algol {
        * \complexity O(N)
        * \param values The items to be pushed onto the stack.
        */
-      linked_stack(std::initializer_list<value_type> values) : linked_stack() {
+      linked_stack (std::initializer_list<value_type> values) : linked_stack()
+      {
         for (auto const& v : values)
           push_(v);
       }
@@ -59,12 +61,14 @@ namespace algol {
        * \complexity O(N)
        * \param rhs The stack to be copied.
        */
-      linked_stack(linked_stack const& rhs) : linked_stack() {
+      linked_stack (linked_stack const& rhs) : linked_stack()
+      {
         linked_stack stack;
 
         if (!rhs.empty()) {
           for (auto i = size_type{}; i < rhs.items_; ++i) {
-            stack.push_((node*) ::operator new (sizeof(node)));
+            stack.push_((node * )
+            ::operator new(sizeof(node)));
           }
 
           node* this_iter = stack.top_node_;
@@ -88,8 +92,9 @@ namespace algol {
        * \param rhs The stack to be copied.
        * \return The stack containing the provided stack items.
        */
-      linked_stack& operator=(linked_stack const& rhs) {
-        linked_stack temp{rhs};
+      linked_stack& operator= (linked_stack const& rhs)
+      {
+        linked_stack temp {rhs};
         swap(temp);
         return *this;
       }
@@ -101,7 +106,8 @@ namespace algol {
        * \complexity O(1)
        * \param rhs The stack to be moved, items contained are 'stolen' from this stack.
        */
-      linked_stack(linked_stack&& rhs) noexcept : top_node_{rhs.top_node_}, items_{rhs.items_} {
+      linked_stack (linked_stack&& rhs) noexcept : top_node_ {rhs.top_node_}, items_ {rhs.items_}
+      {
         rhs.top_node_ = nullptr;
         rhs.items_ = size_type{};
       }
@@ -115,8 +121,9 @@ namespace algol {
        * \param rhs The stack to be moved, items contained are 'stolen' from this stack.
        * \return The stack containing the provided stack items.
        */
-      linked_stack& operator=(linked_stack&& rhs) noexcept {
-        linked_stack temp{std::move(rhs)};
+      linked_stack& operator= (linked_stack&& rhs) noexcept
+      {
+        linked_stack temp {std::move(rhs)};
         swap(temp);
         return *this;
       }
@@ -127,7 +134,8 @@ namespace algol {
        * \postcondition The stack items are destroyed.
        * \complexity O(N)
        */
-      ~linked_stack() {
+      ~linked_stack ()
+      {
         while (!empty_()) {
           pop_();
         }
@@ -143,8 +151,10 @@ namespace algol {
        * \return True if the items are the same and in the same order, false otherwise.
        */
 
-      bool operator==(linked_stack const& rhs) const
-        requires EqualityComparable<T>() {
+      bool operator== (linked_stack const& rhs) const
+
+      requires EqualityComparable<T> ()
+      {
         if (items_ != rhs.items_)
           return false;
 
@@ -172,8 +182,10 @@ namespace algol {
        * \return True if the items are not the same or not in the same order, false otherwise.
        */
 
-      bool operator!=(linked_stack const& rhs) const
-      requires EqualityComparable<T>() {
+      bool operator!= (linked_stack const& rhs) const
+
+      requires EqualityComparable<T> ()
+      {
         return !(*this == rhs);
       }
 
@@ -192,8 +204,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than the provided stack, false otherwise.
        */
-      bool operator<(linked_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator< (linked_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         node* this_iter = top_node_;
         node* rhs_iter = rhs.top_node_;
 
@@ -226,8 +240,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than or equal to the provided stack, false otherwise.
        */
-      bool operator<=(linked_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator<= (linked_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         return !(*this > rhs);
       }
 
@@ -246,8 +262,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than the provided stack, false otherwise.
        */
-      bool operator>(linked_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator> (linked_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         return rhs < *this;
       }
 
@@ -266,8 +284,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than or equal to the provided stack, false otherwise.
        */
-      bool operator>=(linked_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator>= (linked_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         return !(*this < rhs);
       }
 
@@ -279,7 +299,8 @@ namespace algol {
        * \complexity O(1)
        * \param rhs The stack to be swapped with this
        */
-      void swap(linked_stack& rhs) noexcept {
+      void swap (linked_stack& rhs) noexcept
+      {
         using std::swap;
         swap(top_node_, rhs.top_node_);
         swap(items_, rhs.items_);
@@ -291,48 +312,58 @@ namespace algol {
         node* next_;
       };
 
-      bool empty_() const noexcept final {
+      bool empty_ () const noexcept final
+      {
         return top_node_ == nullptr;
       }
 
-      bool full_() const noexcept final {
+      bool full_ () const noexcept final
+      {
         return false;
       }
 
-      size_type size_() const noexcept final {
+      size_type size_ () const noexcept final
+      {
         return items_;
       }
 
-      reference top_() final {
+      reference top_ () final
+      {
         return top_node_->value_;
       }
 
-      const_reference top_() const final {
+      const_reference top_ () const final
+      {
         return top_node_->value_;
       }
 
-      void push_(value_type const& value) final {
-        push_(new node{value, nullptr});
+      void push_ (value_type const& value) final
+      {
+        push_(new node {value, nullptr});
       }
 
-      void push_(value_type&& value) final {
-        push_(new node{std::move(value), nullptr});
+      void push_ (value_type&& value) final
+      {
+        push_(new node {std::move(value), nullptr});
       }
 
-      void pop_() final {
+      void pop_ () final
+      {
         node* node_to_pop = top_node_;
         top_node_ = top_node_->next_;
         items_--;
         delete node_to_pop;
       }
 
-      void clear_() noexcept final {
-        linked_stack temp{};
+      void clear_ () noexcept final
+      {
+        linked_stack temp {};
         swap(temp);
       }
 
-      std::vector<T> to_vector_() const final {
-        std::vector<T> vector{};
+      std::vector<T> to_vector_ () const final
+      {
+        std::vector<T> vector {};
         vector.reserve(size_());
 
         node* this_iter = top_node_;
@@ -344,7 +375,8 @@ namespace algol {
         return vector;
       }
 
-      void push_(node* node_to_push) {
+      void push_ (node* node_to_push)
+      {
         node_to_push->next_ = top_node_;
         top_node_ = node_to_push;
         items_++;
@@ -364,8 +396,9 @@ namespace algol {
      * \param lhs Stack to be exchanged with rhs.
      * \param rhs Stack to be exchanged with lhs.
      */
-    template<typename T>
-    void swap(linked_stack<T>& lhs, linked_stack<T>& rhs) noexcept {
+    template <typename T>
+    void swap (linked_stack<T>& lhs, linked_stack<T>& rhs) noexcept
+    {
       lhs.swap(rhs);
     }
   }

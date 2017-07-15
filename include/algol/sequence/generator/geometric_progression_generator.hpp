@@ -6,42 +6,47 @@
 namespace algol {
   namespace sequence {
     namespace generator {
-      template<typename T>
+      template <typename T>
       class geometric_progression_infinite_generator {
         mutable T current_;
         T ratio_;
 
       protected:
-        bool next() const {
+        bool next () const
+        {
           current_ *= ratio_;
           return true;
         }
 
-        T const& dereference() const {
+        T const& dereference () const
+        {
           return current_;
         }
 
-        explicit operator bool() const // any objects left?
+        explicit operator bool () const // any objects left?
         {
           return true;
         }
 
-        bool operator!() const {
+        bool operator! () const
+        {
           return false;
         }
 
-        geometric_progression_infinite_generator(T const& initial_term, T const& ratio) :
-            current_(initial_term), ratio_(ratio) {}
+        geometric_progression_infinite_generator (T const& initial_term, T const& ratio) :
+            current_(initial_term), ratio_(ratio)
+        {}
       };
 
-      template<typename T>
+      template <typename T>
       class geometric_progression_first_n_generator {
         mutable T current_;
         T ratio_;
         mutable std::size_t count_;
 
       protected:
-        bool next() const {
+        bool next () const
+        {
           count_--;
 
           if (count_ <= 0)
@@ -51,29 +56,32 @@ namespace algol {
           return true;
         }
 
-        T const& dereference() const {
+        T const& dereference () const
+        {
           return current_;
         }
 
-        explicit operator bool() const // any objects left?
+        explicit operator bool () const // any objects left?
         {
           return count_ > 0;
         }
 
-        bool operator!() const {
+        bool operator! () const
+        {
           return count_ <= 0;
         }
 
-        geometric_progression_first_n_generator(T const& initial_term, T const& ratio, std::size_t count) :
-            current_{initial_term}, ratio_{ratio}, count_{count} {}
+        geometric_progression_first_n_generator (T const& initial_term, T const& ratio, std::size_t count) :
+            current_ {initial_term}, ratio_ {ratio}, count_ {count}
+        {}
       };
     }
 
-    template<typename T>
+    template <typename T>
     using geometric_progression_infinite_seq =
     sequence<T, generator::geometric_progression_infinite_generator<T>>;
 
-    template<typename T>
+    template <typename T>
     using geometric_progression_first_n_seq =
     sequence<T, generator::geometric_progression_first_n_generator<T>>;
   }

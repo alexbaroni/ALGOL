@@ -23,7 +23,7 @@ namespace algol {
      * \invariant The item that is accessible at the top of the stack is the item that has
      * most recently been pushed onto it and not yet popped (removed).
      */
-    template<CopyConstructible T, typename stack<T>::size_type N>
+    template <CopyConstructible T, typename stack<T>::size_type N>
     class fixed_stack final : public stack<T> {
     public:
       using value_type = typename stack<T>::value_type;
@@ -37,7 +37,8 @@ namespace algol {
        * \postcondition The stack is empty.
        * \complexity O(1)
        */
-      fixed_stack() : stack<T>(), items_{size_type{}}, top_item_{size_type{}}, array_{allocator_.allocate(N)} {}
+      fixed_stack () : stack<T>(), items_ {size_type{}}, top_item_ {size_type{}}, array_ {allocator_.allocate(N)}
+      {}
 
       /**
        * \brief Construct a stack with values provided.
@@ -49,7 +50,8 @@ namespace algol {
        * \complexity O(N)
        * \param values The items to be pushed onto the stack.
        */
-      fixed_stack(std::initializer_list<value_type> values) : fixed_stack() {
+      fixed_stack (std::initializer_list<value_type> values) : fixed_stack()
+      {
         for (auto const& v : values)
           push_(v);
       }
@@ -61,7 +63,8 @@ namespace algol {
        * \complexity O(N)
        * \param rhs The stack to be copied.
        */
-      fixed_stack(fixed_stack const& rhs) : fixed_stack() {
+      fixed_stack (fixed_stack const& rhs) : fixed_stack()
+      {
         fixed_stack stack;
 
         if (!rhs.empty()) {
@@ -84,8 +87,9 @@ namespace algol {
        * \param rhs The stack to be copied.
        * \return The stack containing the provided stack items.
        */
-      fixed_stack& operator=(fixed_stack const& rhs) {
-        fixed_stack temp{rhs};
+      fixed_stack& operator= (fixed_stack const& rhs)
+      {
+        fixed_stack temp {rhs};
         swap(temp);
         return *this;
       }
@@ -97,7 +101,8 @@ namespace algol {
        * \complexity O(1)
        * \param rhs The stack to be moved, items contained are 'stolen' from this stack.
        */
-      fixed_stack(fixed_stack&& rhs) noexcept : items_{rhs.items_}, top_item_{rhs.top_item_}, array_{rhs.array_} {
+      fixed_stack (fixed_stack&& rhs) noexcept : items_ {rhs.items_}, top_item_ {rhs.top_item_}, array_ {rhs.array_}
+      {
         rhs.items_ = size_type{};
         rhs.top_item_ = size_type{};
         rhs.array_ = nullptr;
@@ -112,8 +117,9 @@ namespace algol {
        * \param rhs The stack to be moved, items contained are 'stolen' from this stack.
        * \return The stack containing the provided stack items.
        */
-      fixed_stack& operator=(fixed_stack&& rhs) noexcept {
-        fixed_stack temp{std::move(rhs)};
+      fixed_stack& operator= (fixed_stack&& rhs) noexcept
+      {
+        fixed_stack temp {std::move(rhs)};
         swap(temp);
         return *this;
       }
@@ -124,7 +130,8 @@ namespace algol {
        * \postcondition The stack items are destroyed.
        * \complexity O(N) Destructor calls
        */
-      ~fixed_stack() {
+      ~fixed_stack ()
+      {
         for (auto i = size_type{}; i < items_; ++i) {
           allocator_.destroy(&array_[i]);
         }
@@ -141,8 +148,10 @@ namespace algol {
        * \return True if the items are the same and in the same order, false otherwise.
        */
 
-      bool operator==(fixed_stack const& rhs) const
-      requires EqualityComparable<T>() {
+      bool operator== (fixed_stack const& rhs) const
+
+      requires EqualityComparable<T> ()
+      {
         if (items_ != rhs.items_)
           return false;
 
@@ -164,11 +173,12 @@ namespace algol {
        * \return True if the items are not the same or not in the same order, false otherwise.
        */
 
-      bool operator!=(fixed_stack const& rhs) const
-      requires EqualityComparable<T>() {
+      bool operator!= (fixed_stack const& rhs) const
+
+      requires EqualityComparable<T> ()
+      {
         return !(*this == rhs);
       }
-
 
       /**
        * \brief Less than operator.
@@ -185,8 +195,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than the provided stack, false otherwise.
        */
-      bool operator<(fixed_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator< (fixed_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         auto items = std::min(items_, rhs.items_);
         for (auto i = size_type{}; i < items; ++i) {
           if (array_[i] < rhs.array_[i])
@@ -195,7 +207,6 @@ namespace algol {
           if (array_[i] > rhs.array_[i])
             return false;
         }
-
 
         return items_ < rhs.items_;
       }
@@ -215,8 +226,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically less than or equal to the provided stack, false otherwise.
        */
-      bool operator<=(fixed_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator<= (fixed_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         return !(*this > rhs);
       }
 
@@ -235,8 +248,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than the provided stack, false otherwise.
        */
-      bool operator>(fixed_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator> (fixed_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         return rhs < *this;
       }
 
@@ -255,8 +270,10 @@ namespace algol {
        * \param rhs The stack to be compared with this.
        * \return True if this stack is lexicographically greater than or equal to the provided stack, false otherwise.
        */
-      bool operator>=(fixed_stack const& rhs) const
-      requires StrictTotallyOrdered<T>() {
+      bool operator>= (fixed_stack const& rhs) const
+
+      requires StrictTotallyOrdered<T> ()
+      {
         return !(*this < rhs);
       }
 
@@ -268,7 +285,8 @@ namespace algol {
        * \complexity O(1)
        * \param rhs The stack to be swapped with this
        */
-      void swap(fixed_stack& rhs) noexcept {
+      void swap (fixed_stack& rhs) noexcept
+      {
         using std::swap;
         swap(items_, rhs.items_);
         swap(top_item_, rhs.top_item_);
@@ -276,51 +294,61 @@ namespace algol {
       }
 
     private:
-      bool empty_() const noexcept final {
+      bool empty_ () const noexcept final
+      {
         return items_ == size_type{};
       }
 
-      bool full_() const noexcept final {
+      bool full_ () const noexcept final
+      {
         return top_item_ == N;
       }
 
-      size_type size_() const noexcept final {
+      size_type size_ () const noexcept final
+      {
         return items_;
       }
 
-      reference top_() final {
+      reference top_ () final
+      {
         return array_[top_item_ - 1];
       }
 
-      const_reference top_() const final {
+      const_reference top_ () const final
+      {
         return array_[top_item_ - 1];
       }
 
-      void push_(value_type const& value) final {
+      void push_ (value_type const& value) final
+      {
         allocator_.construct(&array_[top_item_], value_type{value});
         top_item_++;
         items_++;
       }
 
-      void push_(value_type&& value) final {
+      void push_ (value_type&& value) final
+      {
         allocator_.construct(&array_[top_item_], value_type{std::move(value)});
         top_item_++;
         items_++;
       }
 
-      void pop_() final {
+      void pop_ () final
+      {
         top_item_--;
         items_--;
         allocator_.destroy(&array_[top_item_]);
       }
 
-      void clear_() noexcept final {
-        fixed_stack temp{};
+      void clear_ () noexcept final
+      {
+        fixed_stack temp {};
         swap(temp);
       }
 
-      std::vector<T> to_vector_() const final {
-        std::vector<T> vector{};
+      std::vector<T> to_vector_ () const final
+      {
+        std::vector<T> vector {};
         vector.reserve(size_());
 
         for (auto i = items_; i > size_type{}; --i) {
@@ -345,8 +373,9 @@ namespace algol {
      * \param lhs Stack to be exchanged with rhs.
      * \param rhs Stack to be exchanged with lhs.
      */
-    template<typename T, typename stack<T>::size_type N>
-    void swap(fixed_stack<T, N>& lhs, fixed_stack<T, N>& rhs) noexcept {
+    template <typename T, typename stack<T>::size_type N>
+    void swap (fixed_stack<T, N>& lhs, fixed_stack<T, N>& rhs) noexcept
+    {
       lhs.swap(rhs);
     }
   }

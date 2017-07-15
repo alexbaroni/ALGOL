@@ -10,12 +10,13 @@ using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uin
 using interval_op_count = algol::integer::integer_interval<operation_counter>;
 using interval_range_op_count = algol::integer::integer_interval_range<operation_counter>;
 
-int main() {
+int main ()
+{
   using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
 
   stopwatch sw;
 
-  interval int_interval{11, 20};
+  interval int_interval {11, 20};
   std::cout << "n " << " - " << "length" << std::endl;
   for (auto l : interval_range(int_interval)) {
     interval::base_type c = 1;
@@ -35,7 +36,7 @@ int main() {
 
   std::cout << sw << std::endl;
 
-  interval_op_count iop{11, 20};
+  interval_op_count iop {11, 20};
   std::cout << "operation_counter" << std::endl;
   std::cout << "n " << " - " << "length" << std::endl;
   sw.restart();

@@ -9,12 +9,13 @@
 
 namespace algol {
   namespace integer {
-    template<typename T>
+    template <typename T>
     class integer_interval_range {
       integer_interval <T>& interval_;
       mutable T obj_;
 
-      bool next() const {
+      bool next () const
+      {
         if (empty(interval_) || obj_ >= upper(interval_))
           return false;
 
@@ -35,17 +36,20 @@ namespace algol {
               T const&,
               T
           > {
-        iterator() : rng_{} {}
+        iterator () : rng_ {}
+        {}
 
       private:
         friend class integer_interval_range;
 
         friend class boost::iterator_core_access;
 
-        explicit iterator(integer_interval_range const& rng)
-            : rng_(rng ? &rng : nullptr) {}
+        explicit iterator (integer_interval_range const& rng)
+            : rng_(rng ? &rng : nullptr)
+        {}
 
-        void increment() {
+        void increment ()
+        {
           // Don't advance a singular iterator
           BOOST_ASSERT(rng_);
           // Fetch the next element, null out the
@@ -54,11 +58,13 @@ namespace algol {
             rng_ = nullptr;
         }
 
-        bool equal(iterator that) const {
+        bool equal (iterator that) const
+        {
           return rng_ == that.rng_;
         }
 
-        T const& dereference() const {
+        T const& dereference () const
+        {
           // Don't dereference a singular iterator
           BOOST_ASSERT(rng_);
           return rng_->obj_;
@@ -67,20 +73,24 @@ namespace algol {
         integer_interval_range const* rng_;
       };
 
-      explicit integer_interval_range(integer_interval <T>& interval)
-          : interval_(interval), obj_(lower(interval)) {
+      explicit integer_interval_range (integer_interval <T>& interval)
+          : interval_(interval), obj_(lower(interval))
+      {
       }
 
-      iterator begin() const { return iterator{*this}; }
+      iterator begin () const
+      { return iterator{*this}; }
 
-      iterator end() const { return iterator{}; }
+      iterator end () const
+      { return iterator{}; }
 
-      explicit operator bool() const // any objects left?
+      explicit operator bool () const // any objects left?
       {
         return !empty(interval_) && obj_ < upper(interval_);
       }
 
-      bool operator!() const { return empty(interval_) || obj_ >= upper(interval_); }
+      bool operator! () const
+      { return empty(interval_) || obj_ >= upper(interval_); }
     };
   }
 }

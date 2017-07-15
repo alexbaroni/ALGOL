@@ -6,11 +6,13 @@
 
 using namespace algol::eval;
 
-bool is_equal(double a, double b, double epsilon) {
+bool is_equal (double a, double b, double epsilon)
+{
   return std::abs(a - b) < epsilon;
 }
 
-int main() {
+int main ()
+{
   double val;
   std::string expression = "2 3 4 + *";
   val = evaluate_postfix<double>(expression);
@@ -40,7 +42,7 @@ int main() {
     expression = "7 3 12 + ";
     val = evaluate_postfix<double>(expression); //throws invalid_postfix_expression
   }
-  catch(std::system_error const& e) {
+  catch (std::system_error const& e) {
     std::cout << e.code().category().name() << ": " << e.what() << std::endl;
   }
 
