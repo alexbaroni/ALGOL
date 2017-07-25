@@ -261,37 +261,37 @@ namespace algol {
 // relational operator
 
   template<typename T>
-  constexpr bool operator== (result<T> const& x, result<T> const& y)
+  bool operator== (result<T> const& x, result<T> const& y)
   {
     return bool(x) != bool(y) ? false : bool(x) == false ? true : static_cast<T>(x) == static_cast<T>(y);
   }
 
   template<typename T>
-  constexpr bool operator!= (result<T> const& x, result<T> const& y)
+  bool operator!= (result<T> const& x, result<T> const& y)
   {
     return !(x == y);
   }
 
   template<typename T>
-  constexpr bool operator< (result<T> const& x, result<T> const& y)
+  bool operator< (result<T> const& x, result<T> const& y)
   {
     return (!y) ? false : (!x) ? true : static_cast<T>(x) < static_cast<T>(y);
   }
 
   template<typename T>
-  constexpr bool operator> (result<T> const& x, result<T> const& y)
+  bool operator> (result<T> const& x, result<T> const& y)
   {
     return (y < x);
   }
 
   template<typename T>
-  constexpr bool operator<= (result<T> const& x, result<T> const& y)
+  bool operator<= (result<T> const& x, result<T> const& y)
   {
     return !(y < x);
   }
 
   template<typename T>
-  constexpr bool operator>= (result<T> const& x, result<T> const& y)
+  bool operator>= (result<T> const& x, result<T> const& y)
   {
     return !(x < y);
   }
@@ -300,73 +300,73 @@ namespace algol {
 // comparison with T
 
   template<typename T>
-  constexpr bool operator== (result<T> const& lhs, T const& rhs)
+  bool operator== (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) == rhs : false;
   }
 
   template<typename T>
-  constexpr bool operator== (T const& lhs, result<T> const& rhs)
+  bool operator== (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs == static_cast<T>(rhs) : false;
   }
 
   template<typename T>
-  constexpr bool operator!= (result<T> const& lhs, T const& rhs)
+  bool operator!= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) != rhs : true;
   }
 
   template<typename T>
-  constexpr bool operator!= (T const& lhs, result<T> const& rhs)
+  bool operator!= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs != static_cast<T>(rhs) : true;
   }
 
   template<typename T>
-  constexpr bool operator< (result<T> const& lhs, T const& rhs)
+  bool operator< (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) < rhs : true;
   }
 
   template<typename T>
-  constexpr bool operator< (T const& lhs, result<T> const& rhs)
+  bool operator< (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs < static_cast<T>(rhs) : false;
   }
 
   template<typename T>
-  constexpr bool operator> (T const& lhs, result<T> const& rhs)
+  bool operator> (T const& lhs, result<T> const& rhs)
   {
     return bool(lhs) ? static_cast<T>(rhs) < lhs : false;
   }
 
   template<typename T>
-  constexpr bool operator> (result<T> const& lhs, T const& rhs)
+  bool operator> (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? rhs < static_cast<T>(lhs) : false;
   }
 
   template<typename T>
-  constexpr bool operator<= (T const& lhs, result<T> const& rhs)
+  bool operator<= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? !(static_cast<T>(rhs) < lhs) : false;
   }
 
   template<typename T>
-  constexpr bool operator<= (result<T> const& lhs, T const& rhs)
+  bool operator<= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? !(rhs < static_cast<T>(lhs)) : true;
   }
 
   template<typename T>
-  constexpr bool operator>= (result<T> const& lhs, T const& rhs)
+  bool operator>= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? !(static_cast<T>(lhs) < rhs) : false;
   }
 
   template<typename T>
-  constexpr bool operator>= (T const& lhs, result<T> const& rhs)
+  bool operator>= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? !(lhs < static_cast<T>(rhs)) : true;
   }
@@ -378,13 +378,13 @@ namespace algol {
   }
 
   template<class T>
-  constexpr inline result<T> make_result (T const& value)
+  inline result<T> make_result (T const& value)
   {
     return result<T>(value);
   }
 
   template<class T>
-  constexpr inline result<T> make_result (T&& value)
+  inline result<T> make_result (T&& value)
   {
     return result<T>(std::move(value));
   }
