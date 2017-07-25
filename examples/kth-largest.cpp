@@ -1,7 +1,7 @@
-#include <iostream>
 #include <array>
-#include <algorithm>
 #include <vector>
+#include <iostream>
+#include <algorithm>
 #include "algol/io/pprint.hpp"
 #include "algol/perf/stopwatch.hpp"
 #include "algol/perf/operation_counter.hpp"

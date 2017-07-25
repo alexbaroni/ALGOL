@@ -1,12 +1,17 @@
 # hack to make clion see this file belong to the project
 set(SOURCE_FILES
+    ../../include/algol/ds/array/array.hpp
     ../../include/algol/ds/list/list.hpp
     ../../include/algol/ds/stack/fixed_stack.hpp
     ../../include/algol/ds/stack/linked_stack.hpp
     ../../include/algol/ds/stack/stack.hpp
+    ../../include/algol/eval/eval.hpp
+    ../../include/algol/eval/eval_tokenizer.hpp
+    ../../include/algol/func/function.hpp
     ../../include/algol/integer/integer_interval.hpp
     ../../include/algol/integer/integer_interval_range.hpp
     ../../include/algol/io/pprint.hpp
+    ../../include/algol/math/math.hpp
     ../../include/algol/perf/operation_counter.hpp
     ../../include/algol/perf/stopwatch.hpp
     ../../include/algol/sequence/generator/arithmetic_progression_generator.hpp
@@ -24,9 +29,12 @@ set(SOURCE_FILES
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
+add_executable(test.array_test array_test.cpp)
 add_executable(test.stopwatch_test stopwatch_test.cpp)
 add_executable(test.pprint_test pprint_test.cpp)
 add_executable(test.operation_counter_test operation_counter_test.cpp)
+add_executable(test.function_test function_test.cpp)
+add_executable(test.math_test math_test.cpp)
 add_executable(test.integer_interval_test integer_interval_test.cpp)
 add_executable(test.integer_interval_range_test integer_interval_range_test.cpp)
 add_executable(test.istream_range_test istream_range_test.cpp)
@@ -43,15 +51,19 @@ add_executable(test.fixed_stack_test fixed_stack_test.cpp)
 add_executable(test.result_test result_test.cpp)
 add_executable(test.to_test to_test.cpp)
 
-add_executable(test.all_test ${SOURCE_FILES} stopwatch_test.cpp pprint_test.cpp operation_counter_test.cpp
-    integer_interval_test.cpp integer_interval_range_test.cpp istream_range_test.cpp lines_range_test.cpp
-    sequence_test.cpp fibonacci_generator_test.cpp iota_generator_test.cpp collatz_generator_test.cpp
-    arithmetic_progression_generator_test.cpp geometric_progression_generator_test.cpp
-    factorial_generator_test.cpp linked_stack_test.cpp fixed_stack_test.cpp result_test.cpp to_test.cpp)
+add_executable(test.all_test ${SOURCE_FILES} array_test.cpp stopwatch_test.cpp pprint_test.cpp
+    operation_counter_test.cpp function_test.cpp integer_interval_test.cpp integer_interval_range_test.cpp
+    istream_range_test.cpp lines_range_test.cpp sequence_test.cpp fibonacci_generator_test.cpp
+    iota_generator_test.cpp math_test.cpp collatz_generator_test.cpp arithmetic_progression_generator_test.cpp
+    geometric_progression_generator_test.cpp factorial_generator_test.cpp linked_stack_test.cpp
+    fixed_stack_test.cpp result_test.cpp to_test.cpp)
 
+target_link_libraries(test.array_test gtest gtest_main)
 target_link_libraries(test.stopwatch_test gtest gtest_main)
 target_link_libraries(test.pprint_test gtest gtest_main)
 target_link_libraries(test.operation_counter_test gtest gtest_main)
+target_link_libraries(test.function_test gtest gtest_main)
+target_link_libraries(test.math_test gtest gtest_main)
 target_link_libraries(test.integer_interval_test gtest gtest_main)
 target_link_libraries(test.integer_interval_range_test gtest gtest_main)
 target_link_libraries(test.istream_range_test gtest gtest_main)
@@ -70,9 +82,12 @@ target_link_libraries(test.to_test gtest gtest_main)
 
 target_link_libraries(test.all_test gtest gtest_main)
 
+add_test(array_test test.array_test)
 add_test(stopwatch_test test.stopwatch_test)
 add_test(pprint_test test.pprint_test)
 add_test(operation_counter_test test.operation_counter_test)
+add_test(function_test test.function_test)
+add_test(math_test test.math_test)
 add_test(integer_interval_test test.integer_interval_test)
 add_test(integer_interval_range_test test.integer_interval_range_test)
 add_test(istream_range_test test.istream_range_test)

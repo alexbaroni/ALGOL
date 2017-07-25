@@ -1,40 +1,24 @@
 #include <array>
 #include <iostream>
 #include <cassert>
-#include "algol/ds/stack/linked_stack.hpp"
+#include "algol/func/function.hpp"
 #include "algol/perf/stopwatch.hpp"
-
-/*
-template<typename T, std::size_t N>
-constexpr std::array<T, N> make_array() {
-  T value{};
-  std::array<T, N> values{};
-  for(std::size_t i = 0; i < N; ++i) {
-    values[i] = value;
-    value++;
-  }
-  return values;
-}
-*/
+#include "algol/ds/array/array.hpp"
+#include "algol/ds/stack/linked_stack.hpp"
 
 using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
 
-int main ()
-{
+int main() {
   stopwatch sw;
-  //std::array<int, 10000> array = make_array<int, 10000>();
-  std::array<int, 10000> array {};
-  algol::ds::linked_stack<int> stack;
+  algol::ds::linked_stack<std::size_t> stack;
+  std::array<std::size_t, 10000> array = algol::ds::fill_array<10000>(algol::identity);
 
-  for (int i = 0; i < 10000; ++i)
-    array[i] = i;
-
-  for (auto v : array)
+  for(const auto& v : array)
     stack.push(v);
 
   assert(stack.top() == 9999);
 
-  for (auto& v : array) {
+  for(auto& v : array) {
     v = stack.top();
     stack.pop();
   }

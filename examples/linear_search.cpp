@@ -1,5 +1,5 @@
-#include <iostream>
 #include <array>
+#include <iostream>
 #include "algol/io/pprint.hpp"
 #include "algol/perf/stopwatch.hpp"
 #include "algol/perf/operation_counter.hpp"
@@ -16,7 +16,7 @@ int main ()
 
   std::array<operation_counter, 10> values {2, 3, 5, 1, 10, 9, 4, 6, 8, 7};
   std::cout << values << std::endl;
-  for (auto v : values) {
+  for (const auto& v : values) {
     if (v == 6)
       break;
   }

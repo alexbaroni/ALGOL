@@ -4,13 +4,13 @@
 #include "algol/sequence/sequence.hpp"
 #include "algol/sequence/generator/fibonacci_generator.hpp"
 
-using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uint64_t>;
-using fibonacci_upto_n_seq = algol::sequence::fibonacci_upto_n_seq<operation_counter>;
-using even_fibonacci_upto_n_seq = algol::sequence::even_fibonacci_upto_n_seq<operation_counter>;
 
 int main ()
 {
   using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
+  using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uint64_t>;
+  using fibonacci_upto_n_seq = algol::sequence::fibonacci_upto_n_seq<operation_counter>;
+  using even_fibonacci_upto_n_seq = algol::sequence::even_fibonacci_upto_n_seq<operation_counter>;
 
   std::cout << "sequence" << std::endl;
 

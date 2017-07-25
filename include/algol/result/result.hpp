@@ -6,7 +6,7 @@
 #include <system_error>
 
 namespace algol {
-  template <typename T>
+  template<typename T>
   class result {
   public:
     using value_type = T;
@@ -50,7 +50,7 @@ namespace algol {
         new(&exception_) std::exception_ptr(rhs.exception_);
     }
 
-    template <typename U,
+    template<typename U,
         typename = std::enable_if_t<std::is_void_v<U>>>
     result (result<U> const& rhs) :
         has_error_(rhs.has_error_), has_exception_(rhs.has_exception_)
@@ -165,15 +165,13 @@ namespace algol {
     {}
   };
 
-  template <>
+  template<>
   class result<void> {
   public:
     using value_type = void;
 
-/*
     template<typename U>
     using other = result<U>;
-*/
 
     ~result ()
     {
@@ -262,37 +260,37 @@ namespace algol {
 
 // relational operator
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator== (result<T> const& x, result<T> const& y)
   {
     return bool(x) != bool(y) ? false : bool(x) == false ? true : static_cast<T>(x) == static_cast<T>(y);
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator!= (result<T> const& x, result<T> const& y)
   {
     return !(x == y);
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator< (result<T> const& x, result<T> const& y)
   {
     return (!y) ? false : (!x) ? true : static_cast<T>(x) < static_cast<T>(y);
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator> (result<T> const& x, result<T> const& y)
   {
     return (y < x);
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator<= (result<T> const& x, result<T> const& y)
   {
     return !(y < x);
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator>= (result<T> const& x, result<T> const& y)
   {
     return !(x < y);
@@ -301,103 +299,103 @@ namespace algol {
 
 // comparison with T
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator== (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) == rhs : false;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator== (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs == static_cast<T>(rhs) : false;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator!= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) != rhs : true;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator!= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs != static_cast<T>(rhs) : true;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator< (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) < rhs : true;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator< (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs < static_cast<T>(rhs) : false;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator> (T const& lhs, result<T> const& rhs)
   {
     return bool(lhs) ? static_cast<T>(rhs) < lhs : false;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator> (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? rhs < static_cast<T>(lhs) : false;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator<= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? !(static_cast<T>(rhs) < lhs) : false;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator<= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? !(rhs < static_cast<T>(lhs)) : true;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator>= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? !(static_cast<T>(lhs) < rhs) : false;
   }
 
-  template <typename T>
+  template<typename T>
   constexpr bool operator>= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? !(lhs < static_cast<T>(rhs)) : true;
   }
 
-  template <typename T>
+  template<typename T>
   void swap (result<T>& lhs, result<T>& rhs) noexcept(noexcept(lhs.swap(rhs)))
   {
     lhs.swap(rhs);
   }
 
-  template <class T>
+  template<class T>
   constexpr inline result<T> make_result (T const& value)
   {
     return result<T>(value);
   }
 
-  template <class T>
+  template<class T>
   constexpr inline result<T> make_result (T&& value)
   {
     return result<T>(std::move(value));
   }
 
-  template <class T = void>
+  template<class T = void>
   inline result<T> make_result (std::error_code error)
   {
     return result<T>(std::move(error));
   }
 
-  template <class T = void>
+  template<class T = void>
   inline result<T> make_result (std::exception_ptr excp = std::current_exception())
   {
     return result<T>(std::move(excp));

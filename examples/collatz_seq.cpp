@@ -4,21 +4,20 @@
 #include "algol/integer/integer_interval.hpp"
 #include "algol/integer/integer_interval_range.hpp"
 
-using interval = algol::integer::integer_interval<uint32_t>;
-using interval_range = algol::integer::integer_interval_range<interval::base_type>;
-using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uint64_t>;
-using interval_op_count = algol::integer::integer_interval<operation_counter>;
-using interval_range_op_count = algol::integer::integer_interval_range<operation_counter>;
-
 int main ()
 {
   using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
+  using interval = algol::integer::integer_interval<uint32_t>;
+  using interval_range = algol::integer::integer_interval_range<interval::base_type>;
+  using operation_counter = algol::perf::operation_counter<std::uint32_t, std::uint64_t>;
+  using interval_op_count = algol::integer::integer_interval<operation_counter>;
+  using interval_range_op_count = algol::integer::integer_interval_range<operation_counter>;
 
   stopwatch sw;
 
   interval int_interval {11, 20};
   std::cout << "n " << " - " << "length" << std::endl;
-  for (auto l : interval_range(int_interval)) {
+  for (const auto& l : interval_range(int_interval)) {
     interval::base_type c = 1;
     interval::base_type n = l;
 
@@ -40,7 +39,7 @@ int main ()
   std::cout << "operation_counter" << std::endl;
   std::cout << "n " << " - " << "length" << std::endl;
   sw.restart();
-  for (auto l : interval_range_op_count(iop)) {
+  for (const auto& l : interval_range_op_count(iop)) {
     interval_op_count::base_type c = 1;
     interval_op_count::base_type n = l;
 

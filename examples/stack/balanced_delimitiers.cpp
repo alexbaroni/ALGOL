@@ -16,19 +16,16 @@ bool is_balanced (std::string const& text)
   auto close_end = std::end(close_delim);
   algol::ds::fixed_stack<char, 100> stack;
 
-  for (auto c : text) {
-    auto open = open_delim.find(c);
-    if (open != open_end) {
+  for (const auto& c : text) {
+    if (auto open = open_delim.find(c); open != open_end) {
       stack.push(c);
     }
     else {
-      auto close = close_delim.find(c);
-      if (close != close_end) {
+      if (auto close = close_delim.find(c); close != close_end) {
         if (stack.empty())
           return false;
 
-        const auto open = close->second;
-        if (stack.top() != open)
+        if (auto& delim = close->second; stack.top() != delim)
           return false;
         stack.pop();
       }

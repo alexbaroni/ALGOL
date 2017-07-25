@@ -11,9 +11,8 @@
 #include "algol/result/result.hpp"
 
 namespace algol {
-  template <typename T>
-  auto to (std::string const& from) -> result<T>
-  {
+  template<typename T>
+  auto to(std::string const& from) -> result<T> {
     static_assert(std::is_arithmetic_v<T> && !std::is_same_v<T, bool>);
     try {
       if constexpr (std::is_same_v<T, float>)
@@ -31,7 +30,7 @@ namespace algol {
       else
         return make_result(std::make_error_code(std::errc::not_supported));
     }
-    catch (...) {
+    catch(...) {
       return make_result<T>(std::current_exception());
     }
   }
