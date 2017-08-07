@@ -1,3 +1,4 @@
+#include <utility>
 #include <system_error>
 #include <exception>
 #include "algol/result/result.hpp"
@@ -114,4 +115,28 @@ TEST_F(result_fixture, compare_with_t) {
   ASSERT_TRUE(1 <= res_1);
   ASSERT_TRUE(res_1 >= 1);
   ASSERT_TRUE(1 >= res_1);
+}
+
+TEST_F(result_fixture, in_place) {
+  auto res = algol::result<int>{std::in_place, 2};
+  ASSERT_TRUE(res == 2);
+  auto res_2 = algol::result<std::vector<int>>{std::in_place, {2, 3, 4, 5}};
+  ASSERT_EQ(static_cast<std::vector<int>>(res_2).size(), 4u);
+  auto res_3 = algol::make_result<std::vector<int>>({2, 3, 4, 5});
+  ASSERT_EQ(static_cast<std::vector<int>>(res_3).size(), 4u);
+  auto res_4 = algol::make_result<std::pair<int, double>>(2, 3.0);
+  ASSERT_EQ((static_cast<std::pair<int, double>>(res_4).second), 3.0);
+}
+
+TEST_F(result_fixture, structured_binding)
+{
+  auto res_3 = algol::make_result<std::vector<int>>({2, 3, 4, 5});
+  auto [v] = res_3;
+  ASSERT_EQ(v.size(), 4u);
+  auto res_4 = algol::make_result<std::pair<int, double>>(2, 3.0);
+  auto [p] = res_4;
+  auto [i, d] = p;
+  ASSERT_TRUE(i == 2 && d == 3.0);
+//  auto re = algol::make_result(std::make_error_code(std::errc::invalid_argument));
+//  auto [x] = re;
 }

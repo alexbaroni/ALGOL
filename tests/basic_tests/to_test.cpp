@@ -35,5 +35,21 @@ TEST_F(to_fixture, fp_test) {
 }
 
 TEST_F(to_fixture, exception_test) {
-  ASSERT_THROW({int i = algol::to<int>("DEFGG"); i++; }, std::invalid_argument);
+  ASSERT_THROW({char i = algol::to<char>("1000"); i++; }, std::system_error);
+  ASSERT_THROW({unsigned char i = algol::to<unsigned char>("-1"); i++; }, std::system_error);
+  ASSERT_THROW({int i = algol::to<int>("1235467890123456789012345"); i++; }, std::system_error);
+  ASSERT_THROW({unsigned int i = algol::to<unsigned int>("-1"); i++; }, std::system_error);
+  ASSERT_THROW({long i = algol::to<long>("1235467890123456789012345"); i++; }, std::system_error);
+  ASSERT_THROW({unsigned long i = algol::to<unsigned long>("-1"); i++; }, std::system_error);
+  ASSERT_THROW({long long i = algol::to<long long>("1235467890123456789012345"); i++; }, std::system_error);
+  ASSERT_THROW({unsigned long long i = algol::to<unsigned long long>("-1"); i++; }, std::system_error);
+  ASSERT_THROW({float i = algol::to<float>("3.40282e+039"); i++; }, std::system_error);
+  ASSERT_THROW({double i = algol::to<double>("3.40282e+339"); i++; }, std::system_error);
+  ASSERT_THROW({long double i = algol::to<long double>("3.40282e+33339"); i++; }, std::system_error);
+  ASSERT_THROW({float i = algol::to<float>("DEFGG"); i++; }, std::system_error);
+  ASSERT_THROW({double i = algol::to<double>("DEFGG"); i++; }, std::system_error);
+  ASSERT_THROW({long double i = algol::to<long double>("DEFGG"); i++; }, std::system_error);
+  ASSERT_THROW({long i = algol::to<long>("DEFGG"); i++; }, std::system_error);
+  ASSERT_THROW({int i = algol::to<int>("DEFGG"); i++; }, std::system_error);
+  ASSERT_THROW({char i = algol::to<char>("DEFGG"); i++; }, std::system_error);
 }

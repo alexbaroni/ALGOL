@@ -101,16 +101,16 @@ namespace algol::eval {
 
   // Only evaluates expression with numbers and +,-,*,/,^,% separated by spaces
   template<typename T, std::size_t N = 100>
-  auto evaluate_postfix(std::string const& expression) -> algol::result<T> {
+  auto evaluate_postfix(std::string const& expression) {
     algol::ds::fixed_stack<T, N> stack;
     eval_tokenizer postfix{expression};
 
     for (const auto& token : postfix) {
       if (detail::is_operator(token)) {
         if (stack.size() >= 2) {
-          double operand2 = stack.top();
+          T operand2 = stack.top();
           stack.pop();
-          double operand1 = stack.top();
+          T operand1 = stack.top();
           stack.pop();
 
           switch (token[0]) {
@@ -130,7 +130,7 @@ namespace algol::eval {
         }
         else {
           // Malformed postfix expression missing operand
-          return algol::make_result(make_error_code(eval_errors::invalid_postfix_expression));
+          return algol::make_result<T>(make_error_code(eval_errors::invalid_postfix_expression));
         }
       }
       else {
@@ -139,19 +139,19 @@ namespace algol::eval {
         }
         else {
           // Malformed postfix expression (neither an operator nor an operand)
-          return algol::make_result(make_error_code(eval_errors::invalid_postfix_expression));
+          return algol::make_result<T>(make_error_code(eval_errors::invalid_postfix_expression));
         }
       }
     }
 
     if (stack.size() != 1)
-      return algol::make_result(make_error_code(eval_errors::invalid_postfix_expression));
+      return algol::make_result<T>(make_error_code(eval_errors::invalid_postfix_expression));
 
-    return stack.top();
+    return algol::make_result<T>(stack.top());
   }
 
   template<std::size_t N = 100>
-  auto postfix_to_prefix(std::string const& expression) -> algol::result<std::string> {
+  auto postfix_to_prefix(std::string const& expression) {
     algol::ds::fixed_stack<std::string, N> stack;
     eval_tokenizer postfix{expression};
 
@@ -169,7 +169,7 @@ namespace algol::eval {
           stack.push(token);
         }
         else {
-          return algol::make_result(make_error_code(eval_errors::invalid_postfix_expression));
+          return algol::make_result<std::string>(make_error_code(eval_errors::invalid_postfix_expression));
         }
       }
       else {
@@ -178,9 +178,9 @@ namespace algol::eval {
     }
 
     if (stack.size() != 1)
-      return algol::make_result(make_error_code(eval_errors::invalid_postfix_expression));
+      return algol::make_result<std::string>(make_error_code(eval_errors::invalid_postfix_expression));
 
-    return stack.top();
+    return algol::make_result<std::string>(stack.top());
   }
 
   template<std::size_t N = 100>

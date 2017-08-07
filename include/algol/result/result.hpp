@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <exception>
+#include <utility>
 #include <system_error>
 
 namespace algol {
@@ -21,22 +22,31 @@ namespace algol {
         exception_.~exception_ptr();
     }
 
-    result (T const& rhs) : value_(rhs), has_value_(true)
+    explicit result (T const& rhs) : value_(rhs), has_value_(true)
     {}
 
-    result (T&& rhs) : value_(std::move(rhs)), has_value_(true)
+    explicit result (T&& rhs) : value_(std::move(rhs)), has_value_(true)
     {}
 
-    result (std::error_code const& rhs) : error_(rhs), has_error_(true)
+    template<typename... Args>
+    explicit result (std::in_place_t, Args&& ... args) : value_(std::forward<Args>(args)...), has_value_(true)
     {}
 
-    result (std::error_code&& rhs) : error_(std::move(rhs)), has_error_(true)
+    template<typename U, typename... Args>
+    explicit result (std::in_place_t, std::initializer_list<U> ilist, Args&& ... args) :
+        value_(ilist, std::forward<Args>(args)...), has_value_(true)
     {}
 
-    result (std::exception_ptr const& rhs) : exception_(rhs), has_exception_(true)
+    explicit result (std::error_code const& rhs) : error_(rhs), has_error_(true)
     {}
 
-    result (std::exception_ptr&& rhs) : exception_(std::move(rhs)), has_exception_(true)
+    explicit result (std::error_code&& rhs) : error_(std::move(rhs)), has_error_(true)
+    {}
+
+    explicit result (std::exception_ptr const& rhs) : exception_(rhs), has_exception_(true)
+    {}
+
+    explicit result (std::exception_ptr&& rhs) : exception_(std::move(rhs)), has_exception_(true)
     {}
 
     result (result const& rhs) :
@@ -45,17 +55,6 @@ namespace algol {
       if (has_value_)
         new(&value_) T(rhs.value_);
       else if (has_error_)
-        new(&error_) std::error_code(rhs.error_);
-      else
-        new(&exception_) std::exception_ptr(rhs.exception_);
-    }
-
-    template<typename U,
-        typename = std::enable_if_t<std::is_void_v<U>>>
-    result (result<U> const& rhs) :
-        has_error_(rhs.has_error_), has_exception_(rhs.has_exception_)
-    {
-      if (has_error_)
         new(&error_) std::error_code(rhs.error_);
       else
         new(&exception_) std::exception_ptr(rhs.exception_);
@@ -72,16 +71,6 @@ namespace algol {
         new(&exception_) std::exception_ptr(std::move(rhs.exception_));
     }
 
-    operator T& ()
-    {
-      if (has_value_)
-        return value_;
-      else if (has_error_)
-        throw std::system_error(error_);
-      else
-        std::rethrow_exception(exception_);
-    }
-
     operator T const& () const
     {
       if (has_value_)
@@ -91,6 +80,11 @@ namespace algol {
       else
         std::rethrow_exception(exception_);
     }
+
+//    const T* operator-> () const;
+//    const T& operator* () const& ;
+//    const T&& operator* () const&& ;
+
 
     void swap (result& rhs) noexcept(std::is_nothrow_move_constructible<T>::value)
     {
@@ -136,7 +130,7 @@ namespace algol {
       }
     }
 
-    constexpr explicit operator bool () const noexcept
+    explicit operator bool () const noexcept
     {
       return has_value_;
     }
@@ -149,6 +143,13 @@ namespace algol {
 
     bool has_exception ()
     { return has_exception_; }
+
+    template <std::size_t N>
+    decltype(auto) get () const
+    {
+      if constexpr (N == 0)
+      return (value_); //parens needed to get reference
+    }
 
   private:
     union {
@@ -170,9 +171,6 @@ namespace algol {
   public:
     using value_type = void;
 
-    template<typename U>
-    using other = result<U>;
-
     ~result ()
     {
       if (has_error_)
@@ -181,16 +179,16 @@ namespace algol {
         exception_.~exception_ptr();
     }
 
-    result (std::error_code const& rhs) : error_(rhs), has_error_(true)
+    explicit result (std::error_code const& rhs) : error_(rhs), has_error_(true)
     {}
 
-    result (std::error_code&& rhs) : error_(std::move(rhs)), has_error_(true)
+    explicit result (std::error_code&& rhs) : error_(std::move(rhs)), has_error_(true)
     {}
 
-    result (std::exception_ptr const& rhs) : exception_(rhs), has_exception_(true)
+    explicit result (std::exception_ptr const& rhs) : exception_(rhs), has_exception_(true)
     {}
 
-    result (std::exception_ptr&& rhs) : exception_(std::move(rhs)), has_exception_(true)
+    explicit result (std::exception_ptr&& rhs) : exception_(std::move(rhs)), has_exception_(true)
     {}
 
     result (result const& rhs) :
@@ -377,16 +375,22 @@ namespace algol {
     lhs.swap(rhs);
   }
 
-  template<class T>
-  inline result<T> make_result (T const& value)
+  template <class T>
+  inline result<std::decay_t<T>> make_result (T&& value)
   {
-    return result<T>(value);
+    return result<std::decay_t<T>>{std::forward<T>(value)};
   }
 
-  template<class T>
-  inline result<T> make_result (T&& value)
+  template <class T, class... Args>
+  inline result<T> make_result (Args&& ... args)
   {
-    return result<T>(std::move(value));
+    return result<T>{std::in_place, std::forward<Args>(args)...};
+  }
+
+  template <class T, class U, class... Args>
+  inline result<T> make_result (std::initializer_list<U> ilist, Args&& ... args)
+  {
+    return result<T>{std::in_place, ilist, std::forward<Args>(args)...};
   }
 
   template<class T = void>
@@ -396,10 +400,18 @@ namespace algol {
   }
 
   template<class T = void>
-  inline result<T> make_result (std::exception_ptr excp = std::current_exception())
+  inline result<T> make_result (std::exception_ptr excp)
   {
     return result<T>(std::move(excp));
   }
+}
+
+namespace std {
+  template<typename T>
+  struct tuple_size<algol::result<T>>
+      : std::integral_constant<std::size_t, 1> {};
+
+  template<typename T> struct tuple_element<0,algol::result<T>> { using type = const T&; };
 }
 
 #endif //ALGOL_RESULT_RESULT_HPP

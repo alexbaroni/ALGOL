@@ -25,7 +25,7 @@ set(SOURCE_FILES
     ../../include/algol/stream/lines_range.hpp
     ../../include/algol/result/result.hpp
     ../../include/algol/eval/eval.hpp
-    ../../include/algol/result/to.hpp)
+    ../../include/algol/result/to.hpp ../../include/algol/perf/benchmark.hpp)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
