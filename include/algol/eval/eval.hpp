@@ -40,9 +40,12 @@ namespace algol::eval {
       // Return what each enum means in text
       virtual std::string message(int c) const final {
         switch (static_cast<eval_errors>(c)) {
-          case eval_errors::invalid_prefix_expression:return "invalid prefix expression";
-          case eval_errors::invalid_postfix_expression:return "invalid postfix expression";
-          default:return "unknown";
+          case eval_errors::invalid_prefix_expression:
+            return "invalid prefix expression";
+          case eval_errors::invalid_postfix_expression:
+            return "invalid postfix expression";
+          default:
+            return "unknown";
         }
       }
 
@@ -50,7 +53,8 @@ namespace algol::eval {
       virtual std::error_condition default_error_condition(int c) const noexcept final {
         switch (static_cast<eval_errors>(c)) {
           case eval_errors::invalid_prefix_expression:
-          case eval_errors::invalid_postfix_expression:return make_error_condition(std::errc::invalid_argument);
+          case eval_errors::invalid_postfix_expression:
+            return make_error_condition(std::errc::invalid_argument);
           default:
             // I have no mapping for this code
             return std::error_condition(c, *this);
@@ -114,17 +118,23 @@ namespace algol::eval {
           stack.pop();
 
           switch (token[0]) {
-            case '+':stack.push(operand1 + operand2);
+            case '+':
+              stack.push(operand1 + operand2);
               break;
-            case '-':stack.push(operand1 - operand2);
+            case '-':
+              stack.push(operand1 - operand2);
               break;
-            case '*':stack.push(operand1 * operand2);
+            case '*':
+              stack.push(operand1 * operand2);
               break;
-            case '/':stack.push(operand1 / operand2);
+            case '/':
+              stack.push(operand1 / operand2);
               break;
-            case '%':stack.push(algol::math::mod(operand1, operand2));
+            case '%':
+              stack.push(algol::math::mod(operand1, operand2));
               break;
-            case '^':stack.push(std::pow(operand1, operand2));
+            case '^':
+              stack.push(std::pow(operand1, operand2));
               break;
           }
         }

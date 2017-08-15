@@ -70,18 +70,16 @@ namespace algol::perf {
     emplace (Args&&... args)
     {
       assignments_++;
-      value_.~T();
-      construct_(std::forward<Args>(args)...);
+      emplace_(std::forward<Args>(args)...);
       return value_;
     }
 
     template<typename U, typename... Args>
     std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&&...>, T&>
-    emplace(std::initializer_list<U> ilist, Args&& ... args)
+    emplace (std::initializer_list<U> ilist, Args&& ... args)
     {
       assignments_++;
-      value_.~T();
-      construct_(ilist, std::forward<Args>(args)...);
+      emplace_(ilist, std::forward<Args>(args)...);
       return value_;
     }
 
@@ -441,8 +439,9 @@ namespace algol::perf {
 
   private:
     template<typename... Args>
-    void construct_ (Args&&... args) noexcept(std::is_nothrow_constructible<T, Args...>())
+    void emplace_ (Args&& ... args) noexcept(std::is_nothrow_constructible<T, Args...>())
     {
+      value_.~T();
       ::new(std::addressof(value_)) T(std::forward<Args>(args)...);
     }
 

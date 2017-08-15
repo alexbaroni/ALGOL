@@ -21,10 +21,10 @@ enable_testing()
 # see https://cmake.org/cmake/help/latest/module/FindBoost.html
 find_package(Boost REQUIRED)
 
-include_directories(include ${Boost_INCLUDE_DIR} lib/cmcstl2/include)
+include_directories(include ${Boost_INCLUDE_DIR} lib/cmcstl2/include lib/Sprout)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -ftemplate-backtrace-limit=0")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -fconstexpr-depth=2048 -ftemplate-backtrace-limit=0")
 else ()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -ftemplate-backtrace-limit=0")
 endif ()

@@ -13,6 +13,7 @@ set(SOURCE_FILES
     ../../include/algol/io/pprint.hpp
     ../../include/algol/math/math.hpp
     ../../include/algol/perf/operation_counter.hpp
+    ../../include/algol/perf/duration.hpp
     ../../include/algol/perf/stopwatch.hpp
     ../../include/algol/sequence/generator/arithmetic_progression_generator.hpp
     ../../include/algol/sequence/generator/collatz_generator.hpp
@@ -25,7 +26,7 @@ set(SOURCE_FILES
     ../../include/algol/stream/lines_range.hpp
     ../../include/algol/result/result.hpp
     ../../include/algol/eval/eval.hpp
-    ../../include/algol/result/to.hpp ../../include/algol/perf/benchmark.hpp)
+    ../../include/algol/result/to.hpp ../../include/algol/perf/benchmark.hpp ../../include/algol/ds/stack/concepts.hpp ../../include/algol/algorithms/stack/sort.hpp)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 

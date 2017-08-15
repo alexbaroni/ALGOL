@@ -3,89 +3,87 @@
 
 #include "algol/sequence/sequence.hpp"
 
-namespace algol {
-  namespace sequence {
-    namespace generator {
-      template <typename T>
-      class factorial_infinite_generator {
-        mutable T current_;
-        mutable T term_;
+namespace algol::sequence {
+  namespace generator {
+    template <typename T>
+    class factorial_infinite_generator {
+      mutable T current_;
+      mutable T term_;
 
-      protected:
-        bool next () const
-        {
-          term_++;
-          current_ *= term_;
-          return true;
-        }
+    protected:
+      bool next () const
+      {
+        term_++;
+        current_ *= term_;
+        return true;
+      }
 
-        T const& dereference () const
-        {
-          return current_;
-        }
+      T const& dereference () const
+      {
+        return current_;
+      }
 
-        explicit operator bool () const // any objects left?
-        {
-          return true;
-        }
+      explicit operator bool () const // any objects left?
+      {
+        return true;
+      }
 
-        bool operator! () const
-        {
+      bool operator! () const
+      {
+        return false;
+      }
+
+      factorial_infinite_generator () :
+          current_(T{1}), term_(T{1})
+      {}
+    };
+
+    template <typename T>
+    class factorial_first_n_generator {
+      mutable T current_;
+      mutable T term_;
+      mutable std::size_t count_;
+
+    protected:
+      bool next () const
+      {
+        count_--;
+
+        if (count_ <= 0)
           return false;
-        }
 
-        factorial_infinite_generator () :
-            current_(T{1}), term_(T{1})
-        {}
-      };
+        term_++;
+        current_ *= term_;
+        return true;
+      }
 
-      template <typename T>
-      class factorial_first_n_generator {
-        mutable T current_;
-        mutable T term_;
-        mutable std::size_t count_;
+      T const& dereference () const
+      {
+        return current_;
+      }
 
-      protected:
-        bool next () const
-        {
-          count_--;
+      explicit operator bool () const // any objects left?
+      {
+        return count_ > 0;
+      }
 
-          if (count_ <= 0)
-            return false;
+      bool operator! () const
+      {
+        return count_ <= 0;
+      }
 
-          term_++;
-          current_ *= term_;
-          return true;
-        }
-
-        T const& dereference () const
-        {
-          return current_;
-        }
-
-        explicit operator bool () const // any objects left?
-        {
-          return count_ > 0;
-        }
-
-        bool operator! () const
-        {
-          return count_ <= 0;
-        }
-
-        factorial_first_n_generator (std::size_t count) :
-            current_(T{1}), term_(T{1}), count_ {count}
-        {}
-      };
-    }
-
-    template <typename T>
-    using factorial_infinite_seq =
-    sequence<T, generator::factorial_infinite_generator<T>>;
-
-    template <typename T>
-    using factorial_first_n_seq =
-    sequence<T, generator::factorial_first_n_generator<T>>;
+      factorial_first_n_generator (std::size_t count) :
+          current_(T{1}), term_(T{1}), count_ {count}
+      {}
+    };
   }
+
+  template <typename T>
+  using factorial_infinite_seq =
+  sequence<T, generator::factorial_infinite_generator<T>>;
+
+  template <typename T>
+  using factorial_first_n_seq =
+  sequence<T, generator::factorial_first_n_generator<T>>;
 }
 #endif // ALGOL_SEQUENCE_GENERATOR_FACTORIAL_GENERATOR_HPP

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cassert>
-#include "algol/perf/duration.hpp"
 #include "algol/perf/benchmark.hpp"
 
 long fibonacci(unsigned n)

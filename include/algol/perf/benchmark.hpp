@@ -43,11 +43,12 @@ namespace algol::perf {
     {
       auto result = benchmark_result<DurationT, R>{};
       auto sw = stopwatch<DurationT, ClockT>{};
-      if constexpr (std::is_void_v<R>)
-      {
+      if constexpr (std::is_void_v<R>) {
+        //std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
         std::invoke(std::forward<decltype(f)>(f), std::forward<Args>(args)...);
       }
       else {
+        //result.result = std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
         result.result = std::invoke(std::forward<decltype(f)>(f), std::forward<Args>(args)...);
       }
       result.duration = sw.elapsed();

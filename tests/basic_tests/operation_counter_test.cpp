@@ -19,7 +19,7 @@ protected:
 };
 
 TEST_F(operation_counter_fixture, test_ctor_count) {
-  operation_counter c{0};
+  operation_counter c = {0};
   operation_counter::value_type v = c.value();
   EXPECT_EQ(c.value(), 0);
   EXPECT_TRUE(v == c);
