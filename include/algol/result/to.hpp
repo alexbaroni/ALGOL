@@ -8,10 +8,11 @@
 
 #include <string>
 #include <type_traits>
+#include "algol/math/math.hpp"
 #include "algol/result/result.hpp"
 
 namespace algol {
-  template<typename T, typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_same_v<T, bool>>>
+  template<typename T, typename = std::enable_if_t<algol::math::is_numeric_v<T>>>
   auto to(std::string const& from) noexcept {
     try {
       if constexpr (std::is_same_v<T, float>)

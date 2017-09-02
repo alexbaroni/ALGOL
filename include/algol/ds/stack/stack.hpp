@@ -46,7 +46,7 @@ namespace algol::ds {
   };
 
   /**
-   * \brief Stack interface
+   * \brief Stack ADT interface
    * \details A stack is a sequence that can be accessed in <b>'last-in, first-out' (LIFO) order</b>
    * The only accessible item is the one that was most recently added (pushed).
    * The preconditions of the operations are enforced, postconditions and invariant aren't enforced.

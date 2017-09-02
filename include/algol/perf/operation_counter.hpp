@@ -445,7 +445,6 @@ namespace algol::perf {
       ::new(std::addressof(value_)) T(std::forward<Args>(args)...);
     }
 
-
     // generates a non-template operator... for this T and this Counter
     template <typename U>
     friend bool operator== (U const& y, operation_counter const& x)

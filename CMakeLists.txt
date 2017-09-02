@@ -12,8 +12,8 @@
 #
 cmake_minimum_required(VERSION 3.8)
 
-set(CMAKE_C_COMPILER gcc-7.1)
-set(CMAKE_CXX_COMPILER g++-7.1)
+set(CMAKE_C_COMPILER gcc-7.2)
+set(CMAKE_CXX_COMPILER g++-7.2)
 
 project(ALGOL CXX)
 enable_testing()

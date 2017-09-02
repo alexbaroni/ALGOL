@@ -1,11 +1,14 @@
 /**
  * \file
- * Linked stack implementation
+ * Array stack implementation.
  */
 
-#ifndef ALGOL_DS_LINKED_STACK_HPP
-#define ALGOL_DS_LINKED_STACK_HPP
+#ifndef ALGOL_DS_ARRAY_STACK_HPP
+#define ALGOL_DS_ARRAY_STACK_HPP
 
+#include <algorithm>
+#include <array>
+#include <type_traits>
 #include "stack.hpp"
 #include "stl2/concepts.hpp"
 
@@ -13,19 +16,172 @@ namespace algol::ds {
   namespace concepts = std::experimental::ranges;
 
   /**
-   * \brief Implementation of the Stsck ADT using a linked structure
-   * \details see class [stack](@ref stack)
-   * \tparam T type of the items stored in the stack
+   * \brief Implementation of the Stsck ADT using a std::array
+   * \details A stack is a sequence that can be accessed in <b>'last-in, first-out' (LIFO) order</b>
+   * The only accessible item is the one that was most recently added (pushed).
+   * The preconditions of the operations are enforced, postconditions and invariant aren't enforced.
+   * \tparam T type of the items stored in the stack.
    * \invariant The item that is accessible at the top of the stack is the item that has
-   * most recently been pushed onto it and not yet popped (removed)
+   * most recently been pushed onto it and not yet popped (removed).
    */
-  template <concepts::CopyConstructible T>
-  class linked_stack final : public stack<T> {
+  template <concepts::CopyConstructible T, std::size_t N>
+  class array_stack final {
   public:
-    using value_type = typename stack<T>::value_type;
-    using reference = typename stack<T>::reference;
-    using const_reference = typename stack<T>::const_reference;
-    using size_type = typename stack<T>::size_type;
+    using value_type = T;
+    using reference = value_type&;
+    using const_reference = value_type const&;
+    using size_type = std::size_t;
+
+    /**
+     * \brief The stack is empty?
+     * \precondition None
+     * \postcondition Stack is not changed
+     * \complexity O(1)
+     * \return True if the stack is empty, false otherwise
+     */
+    constexpr bool empty () const
+    {
+      return items_ == size_type{0};
+    }
+
+    /**
+     * \brief The stack is full?
+     * \precondition None
+     * \postcondition Stack is not changed
+     * \complexity O(1)
+     * \return True if the stack is full, false otherwise
+     */
+    constexpr bool full () const
+    {
+      return top_item_ == N;
+    }
+
+    /**
+     * \brief The size of the stack
+     * \precondition None
+     * \postcondition Stack is not changed
+     * \complexity O(1)
+     * \return The current number of the items on the stack
+     */
+    constexpr size_type size () const
+    {
+      return items_;
+    }
+
+    /**
+     * \brief A reference at the item on the top of the stack
+     * \precondition The stack is not empty
+     * \postcondition Stack is not changed
+     * \complexity O(1)
+     * \throws stack_empty_error if the stack is empty
+     * \return The item on the top of the stack
+     */
+    constexpr reference top () &
+    {
+      if (empty())
+        throw stack_empty_error{"Attempting top() on empty stack"};
+
+      return array_[top_item_ - 1];
+    }
+
+    /**
+     * \brief A constant reference at the item on the top of the stack
+     * \precondition The stack is not empty
+     * \postcondition Stack is not changed
+     * \complexity O(1)
+     * \throws stack_empty_error if the stack is empty
+     * \return The item on the top of the stack
+     */
+    constexpr const_reference top () const&
+    {
+      if (empty())
+        throw stack_empty_error{"Attempting top() on empty stack"};
+
+      return array_[top_item_ - 1];
+    }
+
+    /**
+     * \brief Push the item passed onto the stack
+     * \precondition The stack is not full
+     * \postcondition The size of the Stack is increased by 1 and the item passed becomes the current top
+     * \complexity O(1)
+     * \throws stack_full_error if the stack is full and the stack is not changed
+     * \param value The item to push onto the stack
+     */
+    constexpr void push (value_type const& value)
+    {
+      if (full())
+        throw stack_full_error{"Attempting push() on full stack"};
+
+      array_[top_item_] = value;
+      top_item_++;
+      items_++;
+    }
+
+    /**
+     * \brief Push the item passed onto the stack
+     * \precondition The stack is not full
+     * \postcondition The size of the Stack is increased by 1 and the item passed becomes the current top
+     * \complexity O(1)
+     * \throws stack_full_error if the stack is full and the stack is not changed
+     * \param value The item to push onto the stack with move operation
+     */
+    constexpr void push (value_type&& value)
+    {
+      if (full())
+        throw stack_full_error{"Attempting push() on full stack"};
+
+      array_[top_item_] = std::move(value);
+      top_item_++;
+      items_++;
+    }
+
+    /**
+     * \brief Pop the current top item from the stack
+     * \precondition The stack is not empty
+     * \postcondition The size of the Stack is decreased by 1 and the current top item is removed from the stack
+     * \complexity O(1)
+     * \throws stack_empty_error if the stack is empty
+     */
+    constexpr void pop ()
+    {
+      if (empty())
+        throw stack_empty_error{"Attempting pop() on empty stack"};
+
+      top_item_--;
+      items_--;
+    }
+
+    /**
+     * \brief Clear the stack removing all the items
+     * \details Invalidates any references or pointers referring to contained elements
+     * \precondition None
+     * \postcondition The stack is empty, the size becomes 0
+     * \complexity O(1)
+     */
+    constexpr void clear ()
+    {
+      items_ = size_type{0};
+      top_item_ = size_type{0};
+    }
+
+    /**
+     * \brief Creates a vector with the items pushed onto the stack
+     * \precondition None
+     * \postcondition The stack is unchanged
+     * \complexity O(N)
+     * \return A vector with the items pushed onto the stack
+     */
+    std::vector<value_type> to_vector () const
+    {
+      std::vector<value_type> vector {};
+      vector.reserve(size());
+
+      for (auto i = items_; i > size_type{0}; --i) {
+        vector.emplace_back(array_[i - 1]);
+      }
+      return vector;
+    }
 
     /**
      * \brief Default constructor
@@ -33,8 +189,9 @@ namespace algol::ds {
      * \postcondition The stack is empty
      * \complexity O(1)
      */
-    linked_stack () noexcept(std::is_nothrow_constructible_v<size_type, int>)
-        : stack<T>(), top_node_ {nullptr}, items_ {size_type{0}}
+    constexpr array_stack ()
+      noexcept (std::is_nothrow_default_constructible_v<value_type> && noexcept(size_type{0}))
+        : items_{size_type{0}}, top_item_{size_type{0}}, array_{}
     {}
 
     /**
@@ -47,10 +204,10 @@ namespace algol::ds {
      * \complexity O(N)
      * \param values The items to be pushed onto the stack
      */
-    linked_stack (std::initializer_list<value_type> values) : linked_stack()
+    constexpr array_stack (std::initializer_list<value_type> values) : array_stack ()
     {
       for (auto const& v : values)
-        push_(v);
+        push(v);
     }
 
     /**
@@ -60,39 +217,16 @@ namespace algol::ds {
      * \complexity O(N)
      * \param rhs The stack to be copied
      */
-    linked_stack (linked_stack const& rhs) : linked_stack()
-    {
-      linked_stack stack;
-
-      if (!rhs.empty()) {
-        for (auto i = size_type{0}; i < rhs.items_; ++i) {
-          stack.push_((node *) ::operator new(sizeof(node)));
-        }
-
-        node* this_iter = stack.top_node_;
-        node* rhs_iter = rhs.top_node_;
-
-        while (rhs_iter) {
-          new(std::addressof(this_iter->value_)) T(rhs_iter->value_);
-          this_iter = this_iter->next_;
-          rhs_iter = rhs_iter->next_;
-        }
-      }
-      swap(stack);
-    }
+    array_stack (array_stack const&) = default;
 
     /**
      * \brief Move constructor
      * \precondition None
      * \postcondition This stack is equal to the provided stack that becomes empty
-     * \complexity O(1)
+     * \complexity O(N) moving std:array is O(N)
      * \param rhs The stack to be moved, items contained are 'stolen' from this stack
      */
-    linked_stack (linked_stack&& rhs) noexcept : top_node_ {rhs.top_node_}, items_ {rhs.items_}
-    {
-      rhs.top_node_ = nullptr;
-      rhs.items_ = size_type{0};
-    }
+    array_stack (array_stack&&) = default;
 
     /**
      * \brief Assignment operator
@@ -103,41 +237,26 @@ namespace algol::ds {
      * \param rhs The stack to be copied
      * \return The stack containing the provided stack items
      */
-    linked_stack& operator= (linked_stack const& rhs)
-    {
-      linked_stack temp {rhs};
-      swap(temp);
-      return *this;
-    }
+    array_stack& operator= (array_stack const&) = default;
 
     /**
      * \brief Move assignment operator
      * \details The actual items of the stack are destroyed and are replaced with the items of the provided stack
      * \precondition None
      * \postcondition This stack is equal to the provided stack that becomes empty
-     * \complexity O(1)
+     * \complexity O(N) moving std:array is O(N)
      * \param rhs The stack to be moved, items contained are 'stolen' from this stack
      * \return The stack containing the provided stack items
      */
-    linked_stack& operator= (linked_stack&& rhs) noexcept
-    {
-      linked_stack temp {std::move(rhs)};
-      swap(temp);
-      return *this;
-    }
+    array_stack& operator= (array_stack&&) = default;
 
     /**
      * \brief Destructor
      * \precondition None
      * \postcondition The stack items are destroyed
-     * \complexity O(N)
+     * \complexity O(N) Destructor calls (for std::array elements)
      */
-    ~linked_stack ()
-    {
-      while (!empty_()) {
-        pop_();
-      }
-    }
+    ~array_stack () = default;
 
     /**
      * \brief Equality operator
@@ -149,24 +268,18 @@ namespace algol::ds {
      * \return True if the items are the same and in the same order, false otherwise
      */
 
-    bool operator== (linked_stack const& rhs) const
+    constexpr bool operator== (array_stack const& rhs) const
     requires concepts::EqualityComparable<T>
     {
       if (items_ != rhs.items_)
         return false;
 
-      node* this_iter = top_node_;
-      node* rhs_iter = rhs.top_node_;
-
-      while (this_iter && rhs_iter) {
-        if (this_iter->value_ != rhs_iter->value_)
+      for (auto i = size_type{0}; i < items_; ++i) {
+        if (array_[i] != rhs.array_[i])
           return false;
-
-        this_iter = this_iter->next_;
-        rhs_iter = rhs_iter->next_;
       }
 
-      return !this_iter && !rhs_iter;
+      return true;
     }
 
     /**
@@ -179,7 +292,7 @@ namespace algol::ds {
      * \return True if the items are not the same or not in the same order, false otherwise
      */
 
-    bool operator!= (linked_stack const& rhs) const
+    constexpr bool operator!= (array_stack const& rhs) const
     requires concepts::EqualityComparable<T>
     {
       return !(*this == rhs);
@@ -200,24 +313,19 @@ namespace algol::ds {
      * \param rhs The stack to be compared with this
      * \return True if this stack is lexicographically less than the provided stack, false otherwise
      */
-    bool operator< (linked_stack const& rhs) const
+    constexpr bool operator< (array_stack const& rhs) const
     requires concepts::StrictTotallyOrdered<T>
     {
-      node* this_iter = top_node_;
-      node* rhs_iter = rhs.top_node_;
-
-      while (this_iter && rhs_iter) {
-        if (this_iter->value_ < rhs_iter->value_)
+      auto items = std::min(items_, rhs.items_);
+      for (auto i = size_type{0}; i < items; ++i) {
+        if (array_[i] < rhs.array_[i])
           return true;
 
-        if (this_iter->value_ > rhs_iter->value_)
+        if (array_[i] > rhs.array_[i])
           return false;
-
-        this_iter = this_iter->next_;
-        rhs_iter = rhs_iter->next_;
       }
 
-      return !this_iter && rhs_iter;
+      return items_ < rhs.items_;
     }
 
     /**
@@ -235,7 +343,7 @@ namespace algol::ds {
      * \param rhs The stack to be compared with this
      * \return True if this stack is lexicographically less than or equal to the provided stack, false otherwise
      */
-    bool operator<= (linked_stack const& rhs) const
+    constexpr  bool operator<= (array_stack const& rhs) const
     requires concepts::StrictTotallyOrdered<T>
     {
       return !(*this > rhs);
@@ -256,7 +364,7 @@ namespace algol::ds {
      * \param rhs The stack to be compared with this
      * \return True if this stack is lexicographically greater than the provided stack, false otherwise
      */
-    bool operator> (linked_stack const& rhs) const
+    constexpr bool operator> (array_stack const& rhs) const
     requires concepts::StrictTotallyOrdered<T>
     {
       return rhs < *this;
@@ -277,7 +385,7 @@ namespace algol::ds {
      * \param rhs The stack to be compared with this
      * \return True if this stack is lexicographically greater than or equal to the provided stack, false otherwise
      */
-    bool operator>= (linked_stack const& rhs) const
+    constexpr bool operator>= (array_stack const& rhs) const
     requires concepts::StrictTotallyOrdered<T>
     {
       return !(*this < rhs);
@@ -288,111 +396,38 @@ namespace algol::ds {
      * \details noexcept operation, it cannot throw
      * \precondition None
      * \postcondition This stack becomes the rhs stack and viceversa
-     * \complexity O(1)
+     * \complexity O(N) std::array swap is O(N)
      * \param rhs The stack to be swapped with this
      */
-    void swap (linked_stack& rhs) noexcept
+    void swap (array_stack& rhs) noexcept(std::is_nothrow_swappable_v<value_type>)
     {
       using std::swap;
-      swap(top_node_, rhs.top_node_);
       swap(items_, rhs.items_);
+      swap(top_item_, rhs.top_item_);
+      swap(array_, rhs.array_);
     }
 
   private:
-    struct node {
-      value_type value_;
-      node* next_;
-    };
-
-    bool empty_ () const final
-    {
-      return top_node_ == nullptr;
-    }
-
-    bool full_ () const final
-    {
-      return false;
-    }
-
-    size_type size_ () const final
-    {
-      return items_;
-    }
-
-    reference top_ () & final
-    {
-      return top_node_->value_;
-    }
-
-    const_reference top_ () const& final
-    {
-      return top_node_->value_;
-    }
-
-    void push_ (value_type const& value) final
-    {
-      push_(new node {value, nullptr});
-    }
-
-    void push_ (value_type&& value) final
-    {
-      push_(new node {std::move(value), nullptr});
-    }
-
-    void pop_ () final
-    {
-      node* node_to_pop = top_node_;
-      top_node_ = top_node_->next_;
-      items_--;
-      delete node_to_pop;
-    }
-
-    void clear_ () final
-    {
-      linked_stack temp {};
-      swap(temp);
-    }
-
-    std::vector<value_type> to_vector_ () const final
-    {
-      std::vector<value_type> vector {};
-      vector.reserve(size_());
-
-      node* this_iter = top_node_;
-
-      while (this_iter) {
-        vector.emplace_back(this_iter->value_);
-        this_iter = this_iter->next_;
-      }
-      return vector;
-    }
-
-    void push_ (node* node_to_push)
-    {
-      node_to_push->next_ = top_node_;
-      top_node_ = node_to_push;
-      items_++;
-    }
-
-    node* top_node_;
     size_type items_;
+    size_type top_item_;
+    std::array<value_type, N> array_;
   };
 
   /**
-   * \brief Exchanges the items of lhs and rhs stacks.
-   * \details Non member function, noexcept it cannot fail.
-   * \tparam T type of the items stored in the stack.
-   * \precondition None.
-   * \postcondition The lhs stack becomes the rhs stack and viceversa.
-   * \complexity O(1)
-   * \param lhs Stack to be exchanged with rhs.
-   * \param rhs Stack to be exchanged with lhs.
+   * \brief Exchanges the items of lhs and rhs stacks
+   * \details Non member function, noexcept it cannot fail
+   * \tparam T type of the items stored in the stack
+   * \precondition None
+   * \postcondition The lhs stack becomes the rhs stack and viceversa
+   * \complexity O(N)
+   * \param lhs Stack to be exchanged with rhs
+   * \param rhs Stack to be exchanged with lhs
    */
-  template <typename T>
-  void swap (linked_stack<T>& lhs, linked_stack<T>& rhs) noexcept
+  template <typename T, typename stack<T>::size_type N>
+  void swap (array_stack<T, N>& lhs, array_stack<T, N>& rhs) noexcept(noexcept(lhs.swap(rhs)))
   {
     lhs.swap(rhs);
   }
 }
 
-#endif //ALGOL_DS_LINKED_STACK_HPP
+#endif //ALGOL_DS_ARRAY_STACK_HPP

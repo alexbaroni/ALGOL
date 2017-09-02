@@ -1,8 +1,5 @@
-#include <vector>
-#include <memory>
-
-#include "algol/ds/stack/stack.hpp"
-#include "algol/ds/stack/fixed_stack.hpp"
+#include <algol/func/function.hpp>
+#include "algol/ds/stack/array_stack.hpp"
 #include "algol/perf/operation_counter.hpp"
 #include "gtest/gtest.h"
 
@@ -10,12 +7,12 @@ namespace ds = algol::ds;
 
 using operation_counter = algol::perf::operation_counter<std::int32_t, std::uint64_t>;
 
-class fixed_stack_fixture : public ::testing::Test {
+class array_stack_fixture : public ::testing::Test {
 protected:
-  ds::fixed_stack<operation_counter, 100> op_count_stack;
+  ds::array_stack<operation_counter, 100> op_count_stack;
 };
 
-TEST_F(fixed_stack_fixture, axioms) {
+TEST_F(array_stack_fixture, axioms) {
   // Note: Axioms for the ADT stack
   // new stack is empty and not full
   EXPECT_TRUE(op_count_stack.empty());
@@ -42,7 +39,23 @@ TEST_F(fixed_stack_fixture, axioms) {
   EXPECT_EQ(op_count_stack.size(), size - 1u);
 }
 
-TEST_F(fixed_stack_fixture, constructor) {
+TEST_F(array_stack_fixture, free_functions) {
+  operation_counter c = 10;
+  EXPECT_TRUE(std::empty(op_count_stack));
+  EXPECT_TRUE(std::size(op_count_stack) == 0);
+  EXPECT_FALSE(algol::full(op_count_stack));
+  algol::push(op_count_stack, operation_counter{1});
+  algol::push(op_count_stack, c);
+  EXPECT_FALSE(std::empty(op_count_stack));
+  EXPECT_TRUE(std::size(op_count_stack) == 2);
+  EXPECT_FALSE(algol::full(op_count_stack));
+  EXPECT_EQ(algol::top(op_count_stack), 10);
+  algol::top(op_count_stack) = 3;
+  constexpr ds::array_stack<int, 10> s {1,2,3};
+  EXPECT_EQ(algol::top(s), 3);
+}
+
+TEST_F(array_stack_fixture, constructor) {
   EXPECT_FALSE(!op_count_stack.empty());
   EXPECT_TRUE(op_count_stack.empty());
   EXPECT_EQ(op_count_stack.size(), 0u);
@@ -50,16 +63,16 @@ TEST_F(fixed_stack_fixture, constructor) {
   EXPECT_TRUE(!op_count_stack.full());
 }
 
-TEST_F(fixed_stack_fixture, initilizer_list) {
+TEST_F(array_stack_fixture, initilizer_list) {
   std::vector<operation_counter> val = {6, 5, 4, 3, 2, 1};
-  ds::fixed_stack<operation_counter,6> init_list_stack{1, 2, 3, 4, 5, 6};
+  ds::array_stack<operation_counter,6> init_list_stack{1, 2, 3, 4, 5, 6};
   EXPECT_FALSE(init_list_stack.empty());
   EXPECT_EQ(init_list_stack.size(), 6u);
   ASSERT_EQ(init_list_stack.to_vector(), val);
 }
 
-TEST_F(fixed_stack_fixture, empty) {
-  auto const& stack = static_cast<const ds::fixed_stack<operation_counter, 100>&>(op_count_stack);
+TEST_F(array_stack_fixture, empty) {
+  auto const& stack = static_cast<const ds::array_stack<operation_counter, 100>&>(op_count_stack);
   EXPECT_TRUE(op_count_stack.empty());
   EXPECT_EQ(op_count_stack.size(), 0u);
   EXPECT_THROW(op_count_stack.pop(), ds::stack_empty_error);
@@ -67,16 +80,14 @@ TEST_F(fixed_stack_fixture, empty) {
   EXPECT_THROW(stack.top(), ds::stack_empty_error);
 }
 
-TEST_F(fixed_stack_fixture, one_element) {
+TEST_F(array_stack_fixture, one_element) {
   op_count_stack.push(2);
   EXPECT_FALSE(op_count_stack.empty());
   EXPECT_EQ(op_count_stack.size(), 1u);
   EXPECT_EQ(op_count_stack.top(), 2);
-  op_count_stack.emplace(6);
-  EXPECT_EQ(op_count_stack.top(), 6);
 }
 
-TEST_F(fixed_stack_fixture, update_top_element) {
+TEST_F(array_stack_fixture, update_top_element) {
   op_count_stack.push(2);
   EXPECT_FALSE(op_count_stack.empty());
   EXPECT_EQ(op_count_stack.size(), 1u);
@@ -85,8 +96,8 @@ TEST_F(fixed_stack_fixture, update_top_element) {
   EXPECT_EQ(op_count_stack.top(), 3);
 }
 
-TEST_F(fixed_stack_fixture, swap) {
-  ds::fixed_stack<operation_counter, 100> swap_stack;
+TEST_F(array_stack_fixture, swap) {
+  ds::array_stack<operation_counter, 100> swap_stack;
   op_count_stack.push(2);
   op_count_stack.push(3);
   swap(swap_stack, op_count_stack);
@@ -95,7 +106,7 @@ TEST_F(fixed_stack_fixture, swap) {
   EXPECT_EQ(swap_stack.top(), 3);
 }
 
-TEST_F(fixed_stack_fixture, five_elements) {
+TEST_F(array_stack_fixture, five_elements) {
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -126,21 +137,21 @@ TEST_F(fixed_stack_fixture, five_elements) {
   EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
 }
 
-TEST_F(fixed_stack_fixture, full_stack) {
+TEST_F(array_stack_fixture, full_stack) {
   for(int i = 0; i < 100; ++i)
     op_count_stack.push(i);
   EXPECT_TRUE(op_count_stack.full());
   EXPECT_THROW(op_count_stack.push(100), ds::stack_full_error);
 }
 
-TEST_F(fixed_stack_fixture, copy_constructor) {
+TEST_F(array_stack_fixture, copy_constructor) {
   for (operation_counter i = 0; i < 100; ++i)
     op_count_stack.push(i);
 
   EXPECT_EQ(op_count_stack.size(), 100u);
   EXPECT_EQ(op_count_stack.top(), 99);
 
-  ds::fixed_stack <operation_counter, 100> copy_stack = op_count_stack;
+  ds::array_stack<operation_counter, 100> copy_stack = op_count_stack;
   EXPECT_EQ(copy_stack.size(), 100u);
   EXPECT_EQ(copy_stack.top(), 99);
   EXPECT_EQ(op_count_stack.size(), 100u);
@@ -161,17 +172,17 @@ TEST_F(fixed_stack_fixture, copy_constructor) {
   EXPECT_TRUE(op_count_stack.empty());
 }
 
-TEST_F(fixed_stack_fixture, move_constructor) {
+TEST_F(array_stack_fixture, move_constructor) {
   for (operation_counter i = 0; i < 100; ++i)
     op_count_stack.push(i);
 
   EXPECT_EQ(op_count_stack.size(), 100u);
   EXPECT_EQ(op_count_stack.top(), 99);
 
-  ds::fixed_stack <operation_counter, 100> move_stack = std::move(op_count_stack);
-  EXPECT_EQ(op_count_stack.size(), 0u);
-  EXPECT_TRUE(op_count_stack.empty());
-  EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
+  ds::array_stack<operation_counter, 100> move_stack = std::move(op_count_stack);
+//  EXPECT_EQ(op_count_stack.size(), 0u);
+//  EXPECT_TRUE(op_count_stack.empty());
+//  EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
   EXPECT_EQ(move_stack.size(), 100u);
   EXPECT_EQ(move_stack.top(), 99);
   for (auto i = 0; i < 50; ++i)
@@ -183,13 +194,13 @@ TEST_F(fixed_stack_fixture, move_constructor) {
   EXPECT_TRUE(move_stack.empty());
 }
 
-TEST_F(fixed_stack_fixture, assign_operator) {
+TEST_F(array_stack_fixture, assign_operator) {
   for (operation_counter i = 0; i < 100; ++i)
     op_count_stack.push(i);
 
   EXPECT_EQ(op_count_stack.size(), 100u);
   EXPECT_EQ(op_count_stack.top(), 99);
-  ds::fixed_stack <operation_counter, 100> other_stack;
+  ds::array_stack<operation_counter, 100> other_stack;
   for (operation_counter i = 0; i < 10; ++i)
     other_stack.push(i);
 
@@ -201,42 +212,25 @@ TEST_F(fixed_stack_fixture, assign_operator) {
   EXPECT_EQ(other_stack.top(), 99);
 }
 
-TEST_F(fixed_stack_fixture, move_assign_operator) {
+TEST_F(array_stack_fixture, move_assign_operator) {
   for (operation_counter i = 0; i < 100; ++i)
     op_count_stack.push(i);
 
   EXPECT_EQ(op_count_stack.size(), 100u);
   EXPECT_EQ(op_count_stack.top(), 99);
-  ds::fixed_stack <operation_counter, 100> other_stack;
+  ds::array_stack<operation_counter, 100> other_stack;
   other_stack = std::move(op_count_stack);
 
   EXPECT_EQ(other_stack.size(), 100u);
   EXPECT_EQ(other_stack.top(), 99);
-  EXPECT_EQ(op_count_stack.size(), 0u);
-  EXPECT_TRUE(op_count_stack.empty());
-  EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
+//  EXPECT_EQ(op_count_stack.size(), 0u);
+//  EXPECT_TRUE(op_count_stack.empty());
+//  EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
 }
 
-TEST_F(fixed_stack_fixture, using_interface) {
-  ds::stack <operation_counter>& stack = op_count_stack;
-
-  for (operation_counter i = 0; i < 100; ++i)
-    stack.push(i);
-
-  EXPECT_EQ(stack.size(), 100u);
-  EXPECT_EQ(stack.top(), 99);
-  for (auto i = 0; i < 50; ++i)
-    stack.pop();
-  EXPECT_EQ(stack.size(), 50u);
-  EXPECT_EQ(stack.top(), 49);
-  for (auto i = 0; i < 50; ++i)
-    stack.pop();
-  EXPECT_TRUE(stack.empty());
-}
-
-TEST_F(fixed_stack_fixture, equal) {
-  ds::fixed_stack <operation_counter, 100> other_stack;
-  ds::fixed_stack <operation_counter, 100> other_stack2;
+TEST_F(array_stack_fixture, equal) {
+  ds::array_stack <operation_counter, 100> other_stack;
+  ds::array_stack <operation_counter, 100> other_stack2;
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -263,8 +257,8 @@ TEST_F(fixed_stack_fixture, equal) {
   EXPECT_TRUE(op_count_stack == other_stack2);
 }
 
-TEST_F(fixed_stack_fixture, not_equal) {
-  ds::fixed_stack <operation_counter, 100> other_stack;
+TEST_F(array_stack_fixture, not_equal) {
+  ds::array_stack <operation_counter, 100> other_stack;
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -282,8 +276,8 @@ TEST_F(fixed_stack_fixture, not_equal) {
   EXPECT_FALSE(op_count_stack != other_stack);
 }
 
-TEST_F(fixed_stack_fixture, less_than) {
-  ds::fixed_stack <operation_counter, 100> other_stack;
+TEST_F(array_stack_fixture, less_than) {
+  ds::array_stack <operation_counter, 100> other_stack;
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -311,8 +305,8 @@ TEST_F(fixed_stack_fixture, less_than) {
   EXPECT_FALSE(other_stack < op_count_stack);
 }
 
-TEST_F(fixed_stack_fixture, less_than_or_equal) {
-  ds::fixed_stack <operation_counter, 100> other_stack;
+TEST_F(array_stack_fixture, less_than_or_equal) {
+  ds::array_stack <operation_counter, 100> other_stack;
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -340,8 +334,8 @@ TEST_F(fixed_stack_fixture, less_than_or_equal) {
   EXPECT_FALSE(other_stack <= op_count_stack);
 }
 
-TEST_F(fixed_stack_fixture, greater_than) {
-  ds::fixed_stack <operation_counter, 100> other_stack;
+TEST_F(array_stack_fixture, greater_than) {
+  ds::array_stack <operation_counter, 100> other_stack;
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -369,8 +363,8 @@ TEST_F(fixed_stack_fixture, greater_than) {
   EXPECT_TRUE(other_stack > op_count_stack);
 }
 
-TEST_F(fixed_stack_fixture, greater_than_or_equal) {
-  ds::fixed_stack <operation_counter, 100> other_stack;
+TEST_F(array_stack_fixture, greater_than_or_equal) {
+  ds::array_stack <operation_counter, 100> other_stack;
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -398,7 +392,7 @@ TEST_F(fixed_stack_fixture, greater_than_or_equal) {
   EXPECT_TRUE(other_stack >= op_count_stack);
 }
 
-TEST_F(fixed_stack_fixture, clear) {
+TEST_F(array_stack_fixture, clear) {
   op_count_stack.push(1);
   op_count_stack.push(2);
   op_count_stack.push(3);
@@ -414,7 +408,7 @@ TEST_F(fixed_stack_fixture, clear) {
   EXPECT_THROW(op_count_stack.top(), ds::stack_empty_error);
 }
 
-TEST_F(fixed_stack_fixture, to_vector) {
+TEST_F(array_stack_fixture, to_vector) {
   std::vector<operation_counter> val = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
   for (operation_counter i = 0; i < 10; ++i)
     op_count_stack.push(i);

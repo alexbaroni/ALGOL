@@ -12,7 +12,7 @@
 #include "stl2/concepts.hpp"
 
 namespace algol::ds {
-  using namespace ::std::experimental::ranges;
+  namespace concepts = std::experimental::ranges;
 
   /**
    * \brief Implementation of the Stsck ADT using a fixed array
@@ -21,7 +21,7 @@ namespace algol::ds {
    * \invariant The item that is accessible at the top of the stack is the item that has
    * most recently been pushed onto it and not yet popped (removed)
    */
-  template <CopyConstructible T, typename stack<T>::size_type N>
+  template <concepts::CopyConstructible T, typename stack<T>::size_type N>
   class fixed_stack final : public stack<T> {
   public:
     using value_type = typename stack<T>::value_type;
@@ -37,7 +37,7 @@ namespace algol::ds {
      */
     fixed_stack ()
         : stack<T>(), items_{size_type{0}}, top_item_{size_type{0}},
-          array_{alloc_traits::allocate(allocator_, N)}
+          array_{std::make_unique<value_type[]>(N)}
     {}
 
     /**
@@ -85,7 +85,8 @@ namespace algol::ds {
      * \complexity O(1)
      * \param rhs The stack to be moved, items contained are 'stolen' from this stack
      */
-    fixed_stack (fixed_stack&& rhs) noexcept : items_ {rhs.items_}, top_item_ {rhs.top_item_}, array_ {rhs.array_}
+    fixed_stack (fixed_stack&& rhs) noexcept
+        : items_ {rhs.items_}, top_item_ {rhs.top_item_}, array_ {std::move(rhs.array_)}
     {
       rhs.items_ = size_type{0};
       rhs.top_item_ = size_type{0};
@@ -135,7 +136,40 @@ namespace algol::ds {
       for (auto i = size_type{0}; i < items_; ++i) {
         alloc_traits::destroy(allocator_, std::addressof(array_[i]));
       }
-      alloc_traits::deallocate(allocator_, array_, N);
+    }
+
+    /**
+     * \brief Emplace the item passed onto the stack
+     * \precondition The stack is not full
+     * \postcondition The size of the Stack is increased by 1 and the item passed becomes the current top
+     * \complexity O(1)
+     * \throws stack_full_error if the stack is full and the stack is not changed
+     * \tparam Args parameters types for constructor of T
+     * \param args parameters for constructor of T
+     */
+    template<typename... Args>
+    std::enable_if_t<std::is_constructible_v<T, Args&&...>, void>
+    emplace (Args&&... args)
+    {
+      emplace_(std::forward<Args>(args)...);
+    }
+
+    /**
+     * \brief Emplace the item passed onto the stack
+     * \precondition The stack is not full
+     * \postcondition The size of the Stack is increased by 1 and the item passed becomes the current top
+     * \complexity O(1)
+     * \throws stack_full_error if the stack is full and the stack is not changed
+     * \tparam U initializer list type for constructor of T
+     * \tparam Args parameters types for constructor of T
+     * \param ilist parameters for constructor of T
+     * \param args initializer list for constructor of T
+     */
+    template<typename U, typename... Args>
+    std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&&...>, void>
+    emplace (std::initializer_list<U> ilist, Args&& ... args)
+    {
+      emplace_(ilist, std::forward<Args>(args)...);
     }
 
     /**
@@ -149,7 +183,7 @@ namespace algol::ds {
      */
 
     bool operator== (fixed_stack const& rhs) const
-    requires EqualityComparable<T> ()
+    requires concepts::EqualityComparable<T>
     {
       if (items_ != rhs.items_)
         return false;
@@ -173,7 +207,7 @@ namespace algol::ds {
      */
 
     bool operator!= (fixed_stack const& rhs) const
-    requires EqualityComparable<T> ()
+    requires concepts::EqualityComparable<T>
     {
       return !(*this == rhs);
     }
@@ -194,7 +228,7 @@ namespace algol::ds {
      * \return True if this stack is lexicographically less than the provided stack, false otherwise
      */
     bool operator< (fixed_stack const& rhs) const
-    requires StrictTotallyOrdered<T> ()
+    requires concepts::StrictTotallyOrdered<T>
     {
       auto items = std::min(items_, rhs.items_);
       for (auto i = size_type{0}; i < items; ++i) {
@@ -224,7 +258,7 @@ namespace algol::ds {
      * \return True if this stack is lexicographically less than or equal to the provided stack, false otherwise
      */
     bool operator<= (fixed_stack const& rhs) const
-    requires StrictTotallyOrdered<T> ()
+    requires concepts::StrictTotallyOrdered<T>
     {
       return !(*this > rhs);
     }
@@ -245,7 +279,7 @@ namespace algol::ds {
      * \return True if this stack is lexicographically greater than the provided stack, false otherwise
      */
     bool operator> (fixed_stack const& rhs) const
-    requires StrictTotallyOrdered<T> ()
+    requires concepts::StrictTotallyOrdered<T>
     {
       return rhs < *this;
     }
@@ -266,7 +300,7 @@ namespace algol::ds {
      * \return True if this stack is lexicographically greater than or equal to the provided stack, false otherwise
      */
     bool operator>= (fixed_stack const& rhs) const
-    requires StrictTotallyOrdered<T> ()
+    requires concepts::StrictTotallyOrdered<T>
     {
       return !(*this < rhs);
     }
@@ -354,12 +388,20 @@ namespace algol::ds {
       return vector;
     }
 
+    template<typename... Args>
+    void emplace_ (Args&& ... args) noexcept(std::is_nothrow_constructible<T, Args...>())
+    {
+      alloc_traits::construct(allocator_, std::addressof(array_[top_item_]), value_type{std::forward<Args>(args)...});
+      top_item_++;
+      items_++;
+    }
+
     using alloc = std::allocator<value_type>;
     using alloc_traits = std::allocator_traits<alloc>;
 
     size_type items_;
     size_type top_item_;
-    value_type* array_;
+    std::unique_ptr<value_type[]> array_;
     alloc allocator_;
   };
 
