@@ -81,14 +81,18 @@ namespace algol::io::pprint {
       if (evt == std::ios_base::erase_event) { // erase deco
         void const* const p = s.pword(idx);
         if (p) {
-          delete static_cast<deco_type const* const>(p);
+          //TODO undestand why have to remove trailing const
+          //delete static_cast<deco_type const* const>(p);
+          delete static_cast<deco_type const*>(p);
           s.pword(idx) = nullptr;
         }
       }
       else if (evt == std::ios_base::copyfmt_event) { // copy deco
         void const* const p = s.pword(idx);
         if (p) {
-          auto np = new deco_type {*static_cast<deco_type const* const>(p)};
+          //TODO undestand why have to remove trailing const
+          //auto np = new deco_type {*static_cast<deco_type const* const>(p)};
+          auto np = new deco_type {*static_cast<deco_type const*>(p)};
           s.pword(idx) = static_cast<void*>(np);
         }
       }
@@ -259,8 +263,10 @@ std::basic_ostream<CharT, TraitT>& operator<< (std::basic_ostream<CharT, TraitT>
 {
   using deco_type = algol::io::pprint::decor<std::pair<T, U>, CharT, TraitT>;
   using defaulted_type = algol::io::pprint::defaulted<std::pair<T, U>, CharT, TraitT>;
-  void const* const p = s.pword(deco_type::xindex);
-  auto const d = static_cast<deco_type const* const>(p);
+  //TODO undestand why have to remove trailing const
+//  void const* const p = s.pword(deco_type::xindex);
+//  auto const d = static_cast<deco_type const* const>(p);
+  auto const d = static_cast<deco_type const*>(s.pword(deco_type::xindex));
   s << (d ? d->prefix : defaulted_type::decoration().prefix);
   s << v.first;
   s << (d ? d->delimiter : defaulted_type::decoration().delimiter);
@@ -276,8 +282,10 @@ typename std::enable_if<algol::io::pprint::detail::is_range<T>::value,
   bool first(true);
   using deco_type = algol::io::pprint::decor<T, CharT, TraitT>;
   using default_type = algol::io::pprint::defaulted<T, CharT, TraitT>;
-  void const* const p = s.pword(deco_type::xindex);
-  auto d = static_cast<algol::io::pprint::decor<T, CharT, TraitT> const* const>(p);
+  //TODO undestand why have to remove trailing const
+//  void const* const p = s.pword(deco_type::xindex);
+//  auto d = static_cast<algol::io::pprint::decor<T, CharT, TraitT> const* const>(p);
+  auto d = static_cast<algol::io::pprint::decor<T, CharT, TraitT>const*>(s.pword(deco_type::xindex));
   s << (d ? d->prefix : default_type::decoration().prefix);
   for (auto const& e : v) { // v is range thus range based for works
     if (!first) s << (d ? d->delimiter : default_type::decoration().delimiter);

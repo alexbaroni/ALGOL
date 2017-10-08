@@ -16,7 +16,7 @@ protected:
 };
 
 TEST_F(stopwatch_fixture, elapsed_gt_zero) {
-  EXPECT_GT(sw_ns.elapsed().count(), 0);
+  EXPECT_GE(sw_ns.elapsed().count(), 0);
 }
 
 TEST_F(stopwatch_fixture, ostream_op_contains_ns) {

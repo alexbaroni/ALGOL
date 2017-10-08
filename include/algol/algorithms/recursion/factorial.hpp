@@ -2,6 +2,7 @@
 #define ALGOL_ALGORITHMS_RECURSION_FACTORIAL_HPP
 
 #include <string>
+#include <stdexcept>
 #include "algol/math/math.hpp"
 #include "stl2/concepts.hpp"
 

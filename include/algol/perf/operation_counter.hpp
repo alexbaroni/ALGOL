@@ -89,6 +89,7 @@ namespace algol::perf {
       using std::swap;
 
       assignments_ += 2;
+      swaps_++;
       swap(value_, rhs.value_);
     }
 
@@ -315,6 +316,9 @@ namespace algol::perf {
     static Counter const& destructions ()
     { return destructions_; }
 
+    static Counter const& swaps ()
+    { return swaps_; }
+
     static Counter const& increments ()
     { return increments_; }
 
@@ -385,6 +389,7 @@ namespace algol::perf {
          << " Assignments:          " << assignments_ << '\n'
          << " Moves:                " << moves_ << '\n'
          << " Destructions:         " << destructions_ << '\n'
+         << " Swaps:                " << swaps_ << '\n'
          << " Increments:           " << increments_ << '\n'
          << " Decrements:           " << decrements_ << '\n'
          << " Additions:            " << additions_ << '\n'
@@ -414,6 +419,7 @@ namespace algol::perf {
       assignments_ = Counter{};
       moves_ = Counter{};
       destructions_ = Counter{};
+      swaps_ = Counter{};
       increments_ = Counter{};
       decrements_ = Counter{};
       additions_ = Counter{};
@@ -746,6 +752,7 @@ namespace algol::perf {
     static Counter assignments_;
     static Counter moves_;
     static Counter destructions_;
+    static Counter swaps_;
     static Counter increments_;
     static Counter decrements_;
     static Counter additions_;
@@ -780,6 +787,9 @@ namespace algol::perf {
 
   template <typename T, typename Counter>
   Counter operation_counter<T, Counter>::destructions_ = Counter{};
+
+  template <typename T, typename Counter>
+  Counter operation_counter<T, Counter>::swaps_ = Counter{};
 
   template <typename T, typename Counter>
   Counter operation_counter<T, Counter>::increments_ = Counter{};

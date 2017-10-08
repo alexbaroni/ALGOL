@@ -63,6 +63,8 @@ int main() {
   assert(prefix_to_postfix2(prefix) == postfix);
   prefix = "+ - * ^ A B C D / / E F + G H";
   postfix = "A B ^ C * D - E F / G H + / +";
+  // this assert depending on system and compiler a nice or horrible message
   assert(prefix_to_postfix2(prefix) == postfix);
+
   return 0;
 }

@@ -17,7 +17,7 @@ using operation_counter = algol::perf::operation_counter<int, std::uint64_t>;
  * \complexity O(N)
  * recurrence relation : T(1) = 1, T(N) = 2T(n/2) + 1 => 2n - 1 (+1 is for < operations)
  * maximun depth of recursion = lg(N)  O(lg(N))
- * \precondition first < last
+ * \precondition first < last and last should be reachable from first
  * \throws std::domain_error if first >= last
  * \tparam It the type of iterator
  * \param first the first element of the range
@@ -31,8 +31,11 @@ constexpr auto max (It first, It last)
 {
   using namespace std::literals::string_literals;
 //TODO: reinsert as soon as bug in stdlib is fixed
-//auto count = std::distance(first, last);
+#if __GNUC__ >= 8
+  auto count = std::distance(first, last);
+#else
   auto count = last - first;
+#endif
   if (count <= 0)
     throw std::domain_error{"max is undefined on empty range"s};
   if (count == 1) return (*first * 1); // *1 to count recursion operations
@@ -58,6 +61,7 @@ int main()
   std::cout << "recursion times " << operation_counter::multiplications()
             << " compares " << operation_counter::less_comparisons() << std::endl;
 
+  //std::cout <<__GNUC__ << ' ' << __GNUC_MINOR__ << ' ' << __cplusplus << ' ' << _GLIBCXX_RELEASE << std::endl;
   //constexpr std::array<int, 0> zs{};
   //constexpr auto max_of_zs = max(std::begin(zs), std::end(zs)); // compiler error
   //assert(max_of_zs == 0);

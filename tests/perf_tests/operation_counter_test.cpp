@@ -99,6 +99,7 @@ TEST_F(operation_counter_fixture, swap)
   EXPECT_EQ(c1.value(), 2);
   EXPECT_EQ(c2.value(), 3);
   EXPECT_EQ(operation_counter::assignments(), static_cast<operation_counter::counter_type>(4));
+  EXPECT_EQ(operation_counter::swaps(), static_cast<operation_counter::counter_type>(1));
 }
 
 TEST_F(operation_counter_fixture, test_op_plus_count) {
