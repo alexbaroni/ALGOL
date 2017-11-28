@@ -7,7 +7,7 @@
 #include <system_error>
 
 namespace algol {
-  template<typename T>
+  template <typename T>
   class result {
   public:
     using value_type = T;
@@ -28,11 +28,11 @@ namespace algol {
     explicit result (T&& rhs) : value_(std::move(rhs)), has_value_(true)
     {}
 
-    template<typename... Args>
+    template <typename... Args>
     explicit result (std::in_place_t, Args&& ... args) : value_(std::forward<Args>(args)...), has_value_(true)
     {}
 
-    template<typename U, typename... Args>
+    template <typename U, typename... Args>
     explicit result (std::in_place_t, std::initializer_list<U> ilist, Args&& ... args) :
         value_(ilist, std::forward<Args>(args)...), has_value_(true)
     {}
@@ -166,7 +166,7 @@ namespace algol {
     {}
   };
 
-  template<>
+  template <>
   class result<void> {
   public:
     using value_type = void;
@@ -258,37 +258,37 @@ namespace algol {
 
 // relational operator
 
-  template<typename T>
+  template <typename T>
   bool operator== (result<T> const& x, result<T> const& y)
   {
     return bool(x) != bool(y) ? false : bool(x) == false ? true : static_cast<T>(x) == static_cast<T>(y);
   }
 
-  template<typename T>
+  template <typename T>
   bool operator!= (result<T> const& x, result<T> const& y)
   {
     return !(x == y);
   }
 
-  template<typename T>
+  template <typename T>
   bool operator< (result<T> const& x, result<T> const& y)
   {
     return (!y) ? false : (!x) ? true : static_cast<T>(x) < static_cast<T>(y);
   }
 
-  template<typename T>
+  template <typename T>
   bool operator> (result<T> const& x, result<T> const& y)
   {
     return (y < x);
   }
 
-  template<typename T>
+  template <typename T>
   bool operator<= (result<T> const& x, result<T> const& y)
   {
     return !(y < x);
   }
 
-  template<typename T>
+  template <typename T>
   bool operator>= (result<T> const& x, result<T> const& y)
   {
     return !(x < y);
@@ -297,79 +297,79 @@ namespace algol {
 
 // comparison with T
 
-  template<typename T>
+  template <typename T>
   bool operator== (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) == rhs : false;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator== (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs == static_cast<T>(rhs) : false;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator!= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) != rhs : true;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator!= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs != static_cast<T>(rhs) : true;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator< (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? static_cast<T>(lhs) < rhs : true;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator< (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? lhs < static_cast<T>(rhs) : false;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator> (T const& lhs, result<T> const& rhs)
   {
     return bool(lhs) ? static_cast<T>(rhs) < lhs : false;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator> (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? rhs < static_cast<T>(lhs) : false;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator<= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? !(static_cast<T>(rhs) < lhs) : false;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator<= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? !(rhs < static_cast<T>(lhs)) : true;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator>= (result<T> const& lhs, T const& rhs)
   {
     return bool(lhs) ? !(static_cast<T>(lhs) < rhs) : false;
   }
 
-  template<typename T>
+  template <typename T>
   bool operator>= (T const& lhs, result<T> const& rhs)
   {
     return bool(rhs) ? !(lhs < static_cast<T>(rhs)) : true;
   }
 
-  template<typename T>
+  template <typename T>
   void swap (result<T>& lhs, result<T>& rhs) noexcept(noexcept(lhs.swap(rhs)))
   {
     lhs.swap(rhs);
@@ -393,13 +393,13 @@ namespace algol {
     return result<T>{std::in_place, ilist, std::forward<Args>(args)...};
   }
 
-  template<class T = void>
+  template <class T = void>
   inline result<T> make_result (std::error_code error)
   {
     return result<T>(std::move(error));
   }
 
-  template<class T = void>
+  template <class T = void>
   inline result<T> make_result (std::exception_ptr excp)
   {
     return result<T>(std::move(excp));
@@ -407,11 +407,13 @@ namespace algol {
 }
 
 namespace std {
-  template<typename T>
+  template <typename T>
   struct tuple_size<algol::result<T>>
-      : std::integral_constant<std::size_t, 1> {};
+      : std::integral_constant<std::size_t, 1> {
+  };
 
-  template<typename T> struct tuple_element<0,algol::result<T>> { using type = const T&; };
+  template <typename T>
+  struct tuple_element<0, algol::result<T>> { using type = const T&; };
 }
 
 #endif //ALGOL_RESULT_RESULT_HPP

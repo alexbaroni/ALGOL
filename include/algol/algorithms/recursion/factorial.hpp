@@ -27,19 +27,28 @@ namespace algol::algorithms::recursion {
   namespace concepts = std::experimental::ranges;
 
   template <typename T>
-  requires algol::math::Numeric<T> ||
-    (concepts::CopyConstructible<T> && concepts::StrictTotallyOrdered<T> &&
-      !concepts::Same<concepts::value_type_t<T>, bool> &&
-      algol::math::Differentiable<T>() && algol::math::Multipliable<T>())
-  constexpr auto factorial (T n) -> T
-  {
-    using namespace std::literals::string_literals;
+  requires algol::math::Numeric<T>
+  ||
+  (
+  concepts::CopyConstructible<T>&& concepts::StrictTotallyOrdered<T>
+  &&
+  !
+  concepts::Same<concepts::value_type_t<T>, bool>&&
+  algol::math::Differentiable<T> ()&&
+  algol::math::Multipliable<T> ()
+  )
+  constexpr auto factorial(T
+  n) -> T {
+  using namespace std::literals::string_literals;
 
-    if (n < 0)
-      throw std::domain_error{"factorial is defined only for positive numbers"s};
-    if (n == 0) return 1;
-    return n * factorial(n - 1);
-  }
+  if (n < 0)
+  throw std::domain_error {
+  "factorial is defined only for positive numbers"s
+};
+if (n == 0) return 1;
+return
+n* factorial(n - 1);
+}
 }
 
 #endif //ALGOL_ALGORITHMS_RECURSION_FACTORIAL_HPP

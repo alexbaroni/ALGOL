@@ -28,24 +28,34 @@ namespace algol::algorithms::sort {
    * \param last iterator to the one past last element of the range
    * \param comp comparison invokable
    */
-  template<concepts::ForwardIterator ForwardIt,
+  template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
-  void bubble_sort(ForwardIt first, ForwardIt last, Compare comp = Compare{})
+  void bubble_sort (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
-    bool swapped;
     auto n = std::distance(first, last);
     if (n < 2)
       return;
 
+    bool swapped;
     do {
+      // loop invariant (holds also at the end of this loop)
+      // the range {first, last) is a permutation of the input range and
+      // not swapped -> range [first,last) is sorted
       swapped = false;
-      for (auto it = std::next(first), prev = first; it != last; ++it, ++prev) {
-        if (comp(*it, *prev)) {
-          std::iter_swap(it, prev);
+      for (auto next = std::next(first), prev = first; next != last; ++next, ++prev) {
+        // loop invariant (holds also at the end of this loop)
+        // next ranges from second to last element
+        // prev ranges from first to penultimate element
+        // the range {first, last) is a permutation of the input range
+        // not swapped -> range [first,next) is sorted
+        if (comp(*next, *prev)) {
+          std::iter_swap(next, prev);
           swapped = true;
         }
       }
-    } while(swapped);
+    } while (swapped);
+    // loop postcondition
+    // the range {first, last) is a permutation of the input range it has the same elements in sorted order
   }
 
   /**
@@ -61,26 +71,40 @@ namespace algol::algorithms::sort {
    * \param last iterator to the one past last element of the range
    * \param comp comparison invokable
    */
-  template<concepts::ForwardIterator ForwardIt,
+  template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
-  void optimized_bubble_sort(ForwardIt first, ForwardIt last, Compare comp = Compare{})
+  void bubble_sort_optimized (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
-    bool swapped;
-
     auto n = std::distance(first, last);
     if (n < 2)
       return;
 
+    bool swapped;
     do {
+      // loop invariant (holds also at the end of this loop), old last is the last iterator passed in
+      // the range {first, old last) is a permutation of the input range and
+      // not swapped -> range [first, old last) is sorted
+      // range [last, old last) is sorted
+      // last != old last -> every element in range [first, last) <= *last
       swapped = false;
-      for (auto it = std::next(first), prev = first; it != last; ++it, ++prev) {
-        if (comp(*it, *prev)) {
-          std::iter_swap(it, prev);
+      for (auto next = std::next(first), prev = first; next != last; ++next, ++prev) {
+        // loop invariant (holds also at the end of this loop), old last is the last iterator passed in
+        // the range [first, old last) is a permutation of the input range
+        // next ranges from second to last element
+        // prev ranges from first to element before last
+        // range [last, old last) is sorted
+        // last != old last -> every element in range [first, last) <= *last
+        if (comp(*next, *prev)) {
+          std::iter_swap(next, prev);
           swapped = true;
         }
       }
+      // loop postcondition
+      // last != old last -> every element in range [first, last] <= *last
       last = std::next(first, --n);
-    } while(swapped);
+    } while (swapped);
+    // loop postcondition
+    // the range {first, old last) is a permutation of the input range it has the same elements in sorted order
   }
 
   /**
@@ -101,24 +125,40 @@ namespace algol::algorithms::sort {
    * \param last iterator to the one past last element of the range
    * \param comp comparison invokable
    */
-  template<concepts::ForwardIterator ForwardIt,
+  template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
-  void fast_bubble_sort (ForwardIt first, ForwardIt last, Compare comp = Compare{})
+  void bubble_sort_fast (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
     auto n = std::distance(first, last);
     if (n < 2)
       return;
 
     do {
+      // loop invariant (holds also at the end of this loop), old last is the last iterator passed in
+      // the range {first, old last) is a permutation of the input range and
+      // n == 0 (no swaps) -> range [first, old last) is sorted
+      // range [last, old last) is sorted
+      // last != old last -> every element in range [first, last) <= *last
       n = 0;
-      for (auto it = std::next(first), prev = first; it != last; ++it, ++prev) {
-        if (comp(*it, *prev)) {
-          std::iter_swap(it, prev);
-          n = std::distance(first, it);
+      for (auto next = std::next(first), prev = first; next != last; ++next, ++prev) {
+        // loop invariant (holds also at the end of this loop), old last is the last iterator passed in
+        // the range [first, old last) is a permutation of the input range
+        // last is where last swap was done
+        // next ranges from second to last element
+        // prev ranges from first to element before last
+        // range [last, old last) is sorted
+        // last != old last -> every element in range [first, last) <= *last
+        if (comp(*next, *prev)) {
+          std::iter_swap(next, prev);
+          n = std::distance(first, next);
         }
       }
+      // loop postcondition
+      // last != old last -> every element in range [first, last] <= *last
       last = std::next(first, n);
-    } while(n > 0);
+    } while (n > 0);
+    // loop postcondition
+    // the range {first, old last) is a permutation of the input range it has the same elements in sorted order
   }
 
   /**
@@ -149,37 +189,46 @@ namespace algol::algorithms::sort {
    * \param last iterator to the one past last element of the range
    * \param comp comparison invokable
    */
-  template<concepts::ForwardIterator ForwardIt,
+  template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
   void comb_sort (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
-    bool sorted = false;
-    auto shrink_numerator = 13, shrink_denominator = 10;
     auto gap = std::distance(first, last);
-
     if (gap < 2)
       return;
 
-    while(!sorted) {
+    bool swapped;
+    auto shrink_numerator = 13, shrink_denominator = 10;
+    do {
+      // loop invariant (holds also at the end of this loop) the range [first, last)
+      // is a permutation of the input range and not swapped -> [first, last) is gap_sorted for gap
+      // [first, old last) gap_sorted for gap = 1 -> [first, last) is sorted
+      // 1 <= gap <= number of elements in [first, last) range
       gap = (gap * shrink_denominator) / shrink_numerator;
       if (gap > 1) {
         if (gap == 9 || gap == 10)
           gap = 11;
-
-        sorted = false;
       }
       else {
         gap = 1;
-        sorted = true;
       }
 
-      for (auto it = first, next = std::next(it, gap); next != last; ++it, ++next) {
-        if (comp(*next, *it)) {
-          std::iter_swap(next, it);
-          sorted = false;
+      swapped = false;
+      for (auto prev = first, next = std::next(prev, gap); next != last; ++prev, ++next) {
+        // loop invariant (holds also at the end of this loop) the range [first, last)
+        // is a permutation of the input range
+        // 1 <= gap <= number of elements in [first, last) range
+        // next ranges from first+gap to last element
+        // prev ranges from first to last - gap
+        // not swapped -> [first, next] is gap_sorted for gap
+        if (comp(*next, *prev)) {
+          std::iter_swap(next, prev);
+          swapped = true;
         }
       }
-    }
+    } while (gap > 1 || swapped);
+    // loop postcondition
+    // the range {first, old last) is a permutation of the input range it has the same elements in sorted order
   }
 }
 

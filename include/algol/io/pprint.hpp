@@ -285,7 +285,7 @@ typename std::enable_if<algol::io::pprint::detail::is_range<T>::value,
   //TODO undestand why have to remove trailing const
 //  void const* const p = s.pword(deco_type::xindex);
 //  auto d = static_cast<algol::io::pprint::decor<T, CharT, TraitT> const* const>(p);
-  auto d = static_cast<algol::io::pprint::decor<T, CharT, TraitT>const*>(s.pword(deco_type::xindex));
+  auto d = static_cast<algol::io::pprint::decor<T, CharT, TraitT> const*>(s.pword(deco_type::xindex));
   s << (d ? d->prefix : default_type::decoration().prefix);
   for (auto const& e : v) { // v is range thus range based for works
     if (!first) s << (d ? d->delimiter : default_type::decoration().delimiter);

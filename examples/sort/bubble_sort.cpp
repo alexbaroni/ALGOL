@@ -6,17 +6,25 @@
 #include <iterator>
 #include <forward_list>
 #include "pcg_random.hpp"
+#include "../utility/utility.hpp"
 #include "algol/func/function.hpp"
 #include "algol/ds/array/array.hpp"
 #include "algol/perf/stopwatch.hpp"
 #include <algol/algorithms/algorithm.hpp>
+#include <algol/perf/benchmark.hpp>
 #include "algol/perf/operation_counter.hpp"
 #include "algol/algorithms/sort/bubble_sort.hpp"
 
 using stopwatch = algol::perf::stopwatch<std::chrono::nanoseconds>;
 using operation_counter = algol::perf::operation_counter<int, std::uint64_t>;
+using benchmark = algol::perf::benchmark<std::chrono::nanoseconds>;
 
-constexpr auto to_op_counter = [](auto i) { return algol::perf::operation_counter<int>(i); };
+const std::size_t BENCHMARK_RUNS = 100;
+const std::size_t BENCHMARK_SIZE = 1000;
+
+constexpr auto to_op_counter = [] (auto i) { return algol::perf::operation_counter<int>(i); };
+
+std::array<std::array<operation_counter, BENCHMARK_SIZE>, BENCHMARK_RUNS> bench;
 
 template <typename T, std::size_t N>
 constexpr auto build_reverse_array ()
@@ -34,7 +42,14 @@ void build_random_array (std::array<T, N>& arr, URBG&& gen)
     v = distribution(gen);
 }
 
-int main()
+template <typename URBG>
+void init_bench_array (URBG&& gen)
+{
+  for (auto& v : bench)
+    build_unsorted_range(std::begin(v), std::end(v), -BENCHMARK_SIZE, BENCHMARK_SIZE, gen);
+}
+
+int main ()
 {
   using namespace algol::algorithms::sort;
 
@@ -43,6 +58,8 @@ int main()
 
   // Make a random number engine
   pcg32 rng(seed_source);
+
+  init_bench_array(rng);
 
   std::cout << "Bubble sort worst case (reverse order)" << std::endl;
   {
@@ -123,7 +140,7 @@ int main()
     build_random_array(arr, rng);
     operation_counter::reset();
     stopwatch sw;
-    optimized_bubble_sort(std::begin(arr), std::end(arr));
+    bubble_sort_optimized(std::begin(arr), std::end(arr));
     std::cout << sw;
     std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
     assert(std::is_sorted(std::begin(arr), std::end(arr)));
@@ -135,7 +152,7 @@ int main()
     build_random_array(arr, rng);
     operation_counter::reset();
     stopwatch sw;
-    fast_bubble_sort(std::begin(arr), std::end(arr));
+    bubble_sort_fast(std::begin(arr), std::end(arr));
     std::cout << sw;
     std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
     assert(std::is_sorted(std::begin(arr), std::end(arr)));
@@ -151,6 +168,246 @@ int main()
     std::cout << sw;
     std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
     assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+
+  std::cout << std::endl << "Std 1000 elements:" << std::endl;
+  {
+    std::cout << std::endl << "sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "unsorted elements:" << std::endl;
+    std::array<std::array<operation_counter, BENCHMARK_SIZE>, BENCHMARK_RUNS> array = bench;
+    auto run_num = 0;
+    operation_counter::reset();
+    auto result = benchmark::run_n(BENCHMARK_RUNS, [&run_num, &array] () {
+      bubble_sort(std::begin(array[run_num]), std::end(array[run_num]));
+      ++run_num;
+    });
+    std::cout << benchmark::run_average(result);
+    std::cout << "< " << operation_counter::less_comparisons() / BENCHMARK_RUNS
+              << " swaps " << operation_counter::swaps() / BENCHMARK_RUNS << std::endl;
+    //assert(std::is_sorted(std::begin(array), std::end(array)));
+  }
+
+  std::cout << std::endl << "Optimized 1000 elements:" << std::endl;
+  {
+    std::cout << std::endl << "sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_optimized(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_optimized(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_optimized(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_optimized(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "unsorted elements:" << std::endl;
+    std::array<std::array<operation_counter, BENCHMARK_SIZE>, BENCHMARK_RUNS> array = bench;
+    auto run_num = 0;
+    operation_counter::reset();
+    auto result = benchmark::run_n(BENCHMARK_RUNS, [&run_num, &array] () {
+      bubble_sort_optimized(std::begin(array[run_num]), std::end(array[run_num]));
+      ++run_num;
+    });
+    std::cout << benchmark::run_average(result);
+    std::cout << "< " << operation_counter::less_comparisons() / BENCHMARK_RUNS
+              << " swaps " << operation_counter::swaps() / BENCHMARK_RUNS << std::endl;
+    //assert(std::is_sorted(std::begin(array), std::end(array)));
+  }
+
+  std::cout << std::endl << "Fast 1000 elements:" << std::endl;
+  {
+    std::cout << std::endl << "sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_fast(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_fast(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_fast(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    bubble_sort_fast(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "unsorted elements:" << std::endl;
+    std::array<std::array<operation_counter, BENCHMARK_SIZE>, BENCHMARK_RUNS> array = bench;
+    auto run_num = 0;
+    operation_counter::reset();
+    auto result = benchmark::run_n(BENCHMARK_RUNS, [&run_num, &array] () {
+      bubble_sort_fast(std::begin(array[run_num]), std::end(array[run_num]));
+      ++run_num;
+    });
+    std::cout << benchmark::run_average(result);
+    std::cout << "< " << operation_counter::less_comparisons() / BENCHMARK_RUNS
+              << " swaps " << operation_counter::swaps() / BENCHMARK_RUNS << std::endl;
+    //assert(std::is_sorted(std::begin(array), std::end(array)));
+  }
+
+  std::cout << std::endl << "Comb 1000 elements:" << std::endl;
+  {
+    std::cout << std::endl << "sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    comb_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    comb_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    comb_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "mostly reverse sorted elements:" << std::endl;
+    std::array<operation_counter, 1000> arr;
+    build_mostly_reverse_sorted_range(std::begin(arr), std::end(arr), -5);
+    operation_counter::reset();
+    stopwatch sw;
+    comb_sort(std::begin(arr), std::end(arr));
+    std::cout << sw;
+    std::cout << "< " << operation_counter::less_comparisons() << " swaps " << operation_counter::swaps() << std::endl;
+    assert(std::is_sorted(std::begin(arr), std::end(arr)));
+  }
+  {
+    std::cout << std::endl << "unsorted elements:" << std::endl;
+    std::array<std::array<operation_counter, BENCHMARK_SIZE>, BENCHMARK_RUNS> array = bench;
+    auto run_num = 0;
+    operation_counter::reset();
+    auto result = benchmark::run_n(BENCHMARK_RUNS, [&run_num, &array] () {
+      comb_sort(std::begin(array[run_num]), std::end(array[run_num]));
+      ++run_num;
+    });
+    std::cout << benchmark::run_average(result);
+    std::cout << "< " << operation_counter::less_comparisons() / BENCHMARK_RUNS
+              << " swaps " << operation_counter::swaps() / BENCHMARK_RUNS << std::endl;
+    //assert(std::is_sorted(std::begin(array), std::end(array)));
   }
 
   return 0;

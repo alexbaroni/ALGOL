@@ -28,8 +28,8 @@ namespace algol::ds {
       typename R = std::invoke_result_t<std::decay_t<F>, std::size_t, std::decay_t<Args>...>>
   constexpr auto fill_array (F&& f, Args&& ... args) noexcept(std::is_nothrow_invocable_r_v<R, F, std::size_t, Args...>)
   {
-    std::array<R, N> vs{};
-    for (std::size_t i{0}; i < N; ++i)
+    std::array<R, N> vs {};
+    for (std::size_t i {0}; i < N; ++i)
 //      vs[i] = std::invoke(std::forward<decltype(f)>(f), i, std::forward<Args>(args)...);
       vs[i] = std::apply(std::forward<decltype(f)>(f), std::make_tuple(i, std::forward<Args>(args)...));
     return vs;

@@ -2,6 +2,7 @@
 #define ALGOL_PERF_STOPWATCH_HPP
 
 #include <chrono>
+#include "algol/io/manip.hpp"
 #include "algol/perf/duration.hpp"
 
 namespace algol::perf {
@@ -31,9 +32,14 @@ namespace algol::perf {
     friend std::ostream& operator<< (std::ostream& os, stopwatch const& value)
     {
       DurationT elapsed = value.elapsed();
-      return os << "tick: " << ClockT::period::num << "/" << ClockT::period::den << " "
-                << "steady: " << std::boolalpha << ClockT::is_steady << '\n'
-                << "elapsed: " << elapsed.count() << " " << duration_string<DurationT>::symbol() << std::endl;
+      if (algol::io::is_in_compact_format(os)) {
+        return os << elapsed.count() << ' ' << duration_string<DurationT>::symbol();
+      }
+      else {
+        return os << "tick: " << ClockT::period::num << '/' << ClockT::period::den << ' '
+                  << "steady: " << std::boolalpha << ClockT::is_steady << '\n'
+                  << "elapsed: " << elapsed.count() << ' ' << duration_string<DurationT>::symbol() << std::endl;
+      }
     }
 
     typename ClockT::time_point start_time_;

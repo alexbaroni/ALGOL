@@ -5,7 +5,7 @@
 
 namespace algol::sequence {
   namespace generator {
-    template<typename T>
+    template <typename T>
     class collatz_generator {
       mutable T current_;
     protected:

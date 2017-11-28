@@ -20,33 +20,45 @@ or nothing
 */
 
 namespace algol::math {
-  template<typename T>
+  template <typename T>
   struct is_numeric : std::integral_constant<bool, std::is_arithmetic_v<T> && !std::is_same_v<T, bool>> {};
 
-  template<typename T>
+  template <typename T>
   inline constexpr bool is_numeric_v = is_numeric<T>::value;
 
-  template<typename T>
+  template <typename T>
   concept bool Numeric = algol::math::is_numeric_v<T>;
 
   template <class T>
-  concept bool Addable() {
-    return requires(T a, T b) { {a + b} -> T; };
+  concept bool Addable ()
+  {
+    return requires(T a, T b) {
+      { a + b } -> T;
+    };
   }
 
   template <class T>
-  concept bool Differentiable() {
-    return requires(T a, T b) { {a - b} -> T; };
+  concept bool Differentiable ()
+  {
+    return requires(T a, T b) {
+      { a - b } -> T;
+    };
   }
 
   template <class T>
-  concept bool Multipliable() {
-    return requires(T a, T b) { {a * b} -> T; };
+  concept bool Multipliable ()
+  {
+    return requires(T a, T b) {
+      { a * b } -> T;
+    };
   }
 
   template <class T>
-  concept bool Dividable() {
-    return requires(T a, T b) { {a / b} -> T; };
+  concept bool Dividable ()
+  {
+    return requires(T a, T b) {
+      { a / b } -> T;
+    };
   }
 
   /**
@@ -56,8 +68,9 @@ namespace algol::math {
    * @param divisor
    * @return dividend mod divisor
    */
-  template<typename T, typename = std::enable_if_t<is_numeric_v<T>>>
-  constexpr auto mod (T dividend, T divisor) {
+  template <typename T, typename = std::enable_if_t<is_numeric_v<T>>>
+  constexpr auto mod (T dividend, T divisor)
+  {
     if constexpr (std::is_floating_point_v<T>)
       return std::fmod(dividend, divisor);
     else
@@ -71,11 +84,11 @@ namespace algol::math {
    * @param b rhs term
    * @return true if they are nearly equal
    */
-  template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+  template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
   auto nearly_equal (T a, T b)
   {
-    return b > std::nextafter(a, std::numeric_limits<T>::lowest())
-           && b < std::nextafter(a, std::numeric_limits<T>::max());
+    return b > std::nextafter(a, std::numeric_limits<T>::lowest()) &&
+           b < std::nextafter(a, std::numeric_limits<T>::max());
   }
 
   /**
@@ -87,7 +100,7 @@ namespace algol::math {
    * @return true if they are nearly equal
    */
 
-  template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+  template <typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
   auto nearly_equal (T a, T b, int factor)
   {
     auto min_a = a - (a - std::nextafter(a, std::numeric_limits<T>::lowest())) * factor;

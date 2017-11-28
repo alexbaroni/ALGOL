@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include "algol/io/manip.hpp"
 
 namespace algol::perf {
   /**
@@ -19,30 +20,30 @@ namespace algol::perf {
     using counter_type = Counter;
 
     operation_counter () noexcept(std::is_nothrow_default_constructible_v<T>) : value_ {}
-    { assignments_++; }
+    { constructions_++; }
 
     operation_counter (T value) noexcept(std::is_nothrow_constructible_v<T>) : value_ {value}
-    { assignments_++; }
+    { constructions_++; }
 
     operation_counter (operation_counter const& value) noexcept(std::is_nothrow_copy_constructible_v<T>)
         : value_ {value.value_}
-    { assignments_++; }
+    { constructions_++; }
 
     operation_counter (operation_counter&& value) noexcept(std::is_nothrow_move_constructible_v<T>)
         : value_(std::move(value.value_))
     { moves_++; }
 
-    template<typename... Args,
-        std::enable_if_t<std::is_constructible_v<T, Args&&...>, bool> = false>
-    explicit operation_counter(std::in_place_t, Args&&... args)
+    template <typename... Args,
+        std::enable_if_t<std::is_constructible_v<T, Args&& ...>, bool> = false>
+    explicit operation_counter (std::in_place_t, Args&& ... args)
         : value_(std::forward<Args>(args)...)
-    { assignments_++; }
+    { constructions_++; }
 
-    template<typename U, typename... Args,
-        std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&&...>, bool> = false>
-    explicit operation_counter(std::in_place_t, std::initializer_list<U> ilist, Args&&... args)
+    template <typename U, typename... Args,
+        std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&& ...>, bool> = false>
+    explicit operation_counter (std::in_place_t, std::initializer_list<U> ilist, Args&& ... args)
         : value_(ilist, std::forward<Args>(args)...)
-    { assignments_++; }
+    { constructions_++; }
 
     operation_counter& operator= (T const& value) noexcept(std::is_nothrow_copy_assignable_v<T>)
     {
@@ -65,17 +66,17 @@ namespace algol::perf {
       return *this;
     }
 
-    template<typename... Args>
-    std::enable_if_t<std::is_constructible_v<T, Args&&...>, T&>
-    emplace (Args&&... args)
+    template <typename... Args>
+    std::enable_if_t<std::is_constructible_v<T, Args&& ...>, T&>
+    emplace (Args&& ... args)
     {
       assignments_++;
       emplace_(std::forward<Args>(args)...);
       return value_;
     }
 
-    template<typename U, typename... Args>
-    std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&&...>, T&>
+    template <typename U, typename... Args>
+    std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&& ...>, T&>
     emplace (std::initializer_list<U> ilist, Args&& ... args)
     {
       assignments_++;
@@ -84,11 +85,10 @@ namespace algol::perf {
     }
 
     void swap (operation_counter& rhs)
-      noexcept(std::is_nothrow_move_constructible<T>() && std::is_nothrow_swappable_v<T>)
+    noexcept(std::is_nothrow_move_constructible<T>() && std::is_nothrow_swappable_v<T>)
     {
       using std::swap;
 
-      assignments_ += 2;
       swaps_++;
       swap(value_, rhs.value_);
     }
@@ -104,7 +104,7 @@ namespace algol::perf {
       return value_;
     }
 
-    T& value () &
+    T& value ()&
     {
       accesses_++;
       return value_;
@@ -116,7 +116,7 @@ namespace algol::perf {
       return value_;
     }
 
-    T&& value () &&
+    T&& value ()&&
     {
       accesses_++;
       return std::move(value_);
@@ -307,6 +307,9 @@ namespace algol::perf {
     static Counter const& accesses ()
     { return accesses_; }
 
+    static Counter const& constructions ()
+    { return constructions_; }
+
     static Counter const& assignments ()
     { return assignments_; }
 
@@ -382,40 +385,74 @@ namespace algol::perf {
     static Counter const& complements ()
     { return complements_; }
 
-    static void report (std::ostream& os)
+    static std::ostream& report (std::ostream& os)
     {
-      os << "Counter report:" << '\n'
-         << " Accesses:             " << accesses_ << '\n'
-         << " Assignments:          " << assignments_ << '\n'
-         << " Moves:                " << moves_ << '\n'
-         << " Destructions:         " << destructions_ << '\n'
-         << " Swaps:                " << swaps_ << '\n'
-         << " Increments:           " << increments_ << '\n'
-         << " Decrements:           " << decrements_ << '\n'
-         << " Additions:            " << additions_ << '\n'
-         << " Subtractions:         " << subtractions_ << '\n'
-         << " Multiplications:      " << multiplications_ << '\n'
-         << " Divisions:            " << divisions_ << '\n'
-         << " Moduli:               " << moduli_ << '\n'
-         << " Equal comparisons:    " << equal_comparisons_ << '\n'
-         << " Less comparisons:     " << less_comparisons_ << '\n'
-         << " Great comparisons:    " << great_comparisons_ << '\n'
-         << " Less eq comparisons:  " << less_eq_comparisons_ << '\n'
-         << " Great eq comparisons: " << great_eq_comparisons_ << '\n'
-         << " Ands:                 " << ands_ << '\n'
-         << " Ors:                  " << ors_ << '\n'
-         << " Xors:                 " << xors_ << '\n'
-         << " Left_shifts:          " << left_shifts_ << '\n'
-         << " Right_shifts:         " << right_shifts_ << '\n'
-         << " Unary_plus:           " << unary_plus_ << '\n'
-         << " Unary_minus:          " << unary_minus_ << '\n'
-         << " Nots:                 " << nots_ << '\n'
-         << " Complements:          " << complements_ << std::endl;
+      if (algol::io::is_in_compact_format(os)) {
+        os << "Accesses:" << accesses_ << ';'
+           << " Constructions:" << constructions_ << ';'
+           << " Assignments:" << assignments_ << ';'
+           << " Moves:" << moves_ << ';'
+           << " Destructions:" << destructions_ << ';'
+           << " Swaps:" << swaps_ << ';'
+           << " Increments:" << increments_ << ';'
+           << " Decrements:" << decrements_ << ';'
+           << " Additions:" << additions_ << ';'
+           << " Subtractions:" << subtractions_ << ';'
+           << " Multiplications:" << multiplications_ << ';'
+           << " Divisions:" << divisions_ << ';'
+           << " Moduli:" << moduli_ << ';'
+           << " Equal comparisons:" << equal_comparisons_ << ';'
+           << " Less comparisons:" << less_comparisons_ << ';'
+           << " Great comparisons:" << great_comparisons_ << ';'
+           << " Less eq comparisons:" << less_eq_comparisons_ << ';'
+           << " Great eq comparisons:" << great_eq_comparisons_ << ';'
+           << " Ands:" << ands_ << ';'
+           << " Ors:" << ors_ << ';'
+           << " Xors:" << xors_ << ';'
+           << " Left_shifts:" << left_shifts_ << ';'
+           << " Right_shifts:" << right_shifts_ << ';'
+           << " Unary_plus:" << unary_plus_ << ';'
+           << " Unary_minus:" << unary_minus_ << ';'
+           << " Nots:" << nots_ << ';'
+           << " Complements:" << complements_ << ';';
+      }
+      else {
+        os << "Counter report:" << '\n'
+           << " Accesses:             " << accesses_ << '\n'
+           << " Constructions:        " << constructions_ << '\n'
+           << " Assignments:          " << assignments_ << '\n'
+           << " Moves:                " << moves_ << '\n'
+           << " Destructions:         " << destructions_ << '\n'
+           << " Swaps:                " << swaps_ << '\n'
+           << " Increments:           " << increments_ << '\n'
+           << " Decrements:           " << decrements_ << '\n'
+           << " Additions:            " << additions_ << '\n'
+           << " Subtractions:         " << subtractions_ << '\n'
+           << " Multiplications:      " << multiplications_ << '\n'
+           << " Divisions:            " << divisions_ << '\n'
+           << " Moduli:               " << moduli_ << '\n'
+           << " Equal comparisons:    " << equal_comparisons_ << '\n'
+           << " Less comparisons:     " << less_comparisons_ << '\n'
+           << " Great comparisons:    " << great_comparisons_ << '\n'
+           << " Less eq comparisons:  " << less_eq_comparisons_ << '\n'
+           << " Great eq comparisons: " << great_eq_comparisons_ << '\n'
+           << " Ands:                 " << ands_ << '\n'
+           << " Ors:                  " << ors_ << '\n'
+           << " Xors:                 " << xors_ << '\n'
+           << " Left_shifts:          " << left_shifts_ << '\n'
+           << " Right_shifts:         " << right_shifts_ << '\n'
+           << " Unary_plus:           " << unary_plus_ << '\n'
+           << " Unary_minus:          " << unary_minus_ << '\n'
+           << " Nots:                 " << nots_ << '\n'
+           << " Complements:          " << complements_ << std::endl;
+      }
+      return os;
     }
 
     static void reset (void)
     {
       accesses_ = Counter{};
+      constructions_ = Counter{};
       assignments_ = Counter{};
       moves_ = Counter{};
       destructions_ = Counter{};
@@ -444,7 +481,7 @@ namespace algol::perf {
     }
 
   private:
-    template<typename... Args>
+    template <typename... Args>
     void emplace_ (Args&& ... args) noexcept(std::is_nothrow_constructible<T, Args...>())
     {
       value_.~T();
@@ -749,6 +786,7 @@ namespace algol::perf {
 
     T value_;
     static Counter accesses_;
+    static Counter constructions_;
     static Counter assignments_;
     static Counter moves_;
     static Counter destructions_;
@@ -778,6 +816,9 @@ namespace algol::perf {
 
   template <typename T, typename Counter>
   Counter operation_counter<T, Counter>::accesses_ = Counter{};
+
+  template <typename T, typename Counter>
+  Counter operation_counter<T, Counter>::constructions_ = Counter{};
 
   template <typename T, typename Counter>
   Counter operation_counter<T, Counter>::assignments_ = Counter{};
@@ -856,14 +897,14 @@ namespace algol::perf {
 
   template <typename T, typename Counter>
   inline std::enable_if_t<std::is_move_constructible_v<T> && std::is_swappable_v<T>>
-  swap (operation_counter<T, Counter>& lhs,  operation_counter<T, Counter>& rhs) noexcept(noexcept(lhs.swap(rhs)))
+  swap (operation_counter<T, Counter>& lhs, operation_counter<T, Counter>& rhs) noexcept(noexcept(lhs.swap(rhs)))
   {
     lhs.swap(rhs);
   }
 
-  template<typename T, typename Counter>
+  template <typename T, typename Counter>
   std::enable_if_t<!(std::is_move_constructible_v<T> && std::is_swappable_v<T>)>
-  swap (operation_counter<T, Counter>&,  operation_counter<T, Counter>&) = delete;
+  swap (operation_counter<T, Counter>&, operation_counter<T, Counter>&) = delete;
 
 }
 

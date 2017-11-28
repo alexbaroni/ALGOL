@@ -5,44 +5,45 @@
 
 namespace algol {
   static constexpr struct identity_ {
-    template<typename T>
+    template <typename T>
     constexpr auto operator() (T&& x) const noexcept
     {
       return x;
     }
-  } identity{};
+  } identity {};
 
   template <typename C>
-  constexpr auto full(C const& c) -> decltype(c.full())
+  constexpr auto full (C const& c) -> decltype(c.full())
   {
     return c.full();
   }
 
   template <typename C>
-  constexpr auto top(C& c) -> decltype(c.top())
+  constexpr auto top (C& c) -> decltype(c.top())
   {
     return c.top();
   }
 
   template <typename C>
-  constexpr auto top(C const& c) -> decltype(c.top())
+  constexpr auto top (C const& c) -> decltype(c.top())
   {
     return c.top();
   }
-  template<typename C, typename... Args>
-  constexpr auto push (C& c, Args&&... args) -> decltype(c.push(std::forward<Args>(args)...))
+
+  template <typename C, typename... Args>
+  constexpr auto push (C& c, Args&& ... args) -> decltype(c.push(std::forward<Args>(args)...))
   {
     c.push(std::forward<Args>(args)...);
   }
 
   template <typename C>
-  constexpr auto pop(C const& c) -> decltype(c.pop())
+  constexpr auto pop (C const& c) -> decltype(c.pop())
   {
     return c.pop();
   }
 
   template <typename C>
-  constexpr auto clear(C const& c) -> decltype(c.clear())
+  constexpr auto clear (C const& c) -> decltype(c.clear())
   {
     return c.clear();
   }

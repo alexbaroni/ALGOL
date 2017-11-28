@@ -17,14 +17,15 @@ using even_fibonacci_first_n_seq = algol::sequence::even_fibonacci_first_n_seq<u
 class fibonacci_fixture : public ::testing::Test {
 protected:
   fibonacci_infinite_seq inf_seq;
-  fibonacci_upto_n_seq upto_n_seq{55};
-  fibonacci_first_n_seq first_n_seq{10};
+  fibonacci_upto_n_seq upto_n_seq {55};
+  fibonacci_first_n_seq first_n_seq {10};
   even_fibonacci_infinite_seq even_inf_seq;
-  even_fibonacci_upto_n_seq even_upto_n_seq{4000000};
-  even_fibonacci_first_n_seq even_first_n_seq{10};
+  even_fibonacci_upto_n_seq even_upto_n_seq {4000000};
+  even_fibonacci_first_n_seq even_first_n_seq {10};
 };
 
-TEST_F(fibonacci_fixture, infinite) {
+TEST_F(fibonacci_fixture, infinite)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(inf_seq), std::end(inf_seq));
   std::copy_n(std::begin(inf_seq), 10, std::back_inserter(val));
@@ -32,7 +33,8 @@ TEST_F(fibonacci_fixture, infinite) {
   ASSERT_EQ(val, (std::vector<uint32_t>{1, 1, 2, 3, 5, 8, 13, 21, 34, 55}));
 }
 
-TEST_F(fibonacci_fixture, upto_n) {
+TEST_F(fibonacci_fixture, upto_n)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(upto_n_seq), std::end(upto_n_seq));
   std::copy(std::begin(upto_n_seq), std::end(upto_n_seq), std::back_inserter(val));
@@ -40,7 +42,8 @@ TEST_F(fibonacci_fixture, upto_n) {
   ASSERT_EQ(val, (std::vector<uint32_t>{1, 1, 2, 3, 5, 8, 13, 21, 34, 55}));
 }
 
-TEST_F(fibonacci_fixture, first_n) {
+TEST_F(fibonacci_fixture, first_n)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(first_n_seq), std::end(first_n_seq));
   std::copy(std::begin(first_n_seq), std::end(first_n_seq), std::back_inserter(val));
@@ -48,7 +51,8 @@ TEST_F(fibonacci_fixture, first_n) {
   ASSERT_EQ(val, (std::vector<uint32_t>{1, 1, 2, 3, 5, 8, 13, 21, 34, 55}));
 }
 
-TEST_F(fibonacci_fixture, even_infinite) {
+TEST_F(fibonacci_fixture, even_infinite)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(even_inf_seq), std::end(even_inf_seq));
   std::copy_n(std::begin(even_inf_seq), 11, std::back_inserter(val));
@@ -58,7 +62,8 @@ TEST_F(fibonacci_fixture, even_infinite) {
   ASSERT_EQ(sum, 4613732u);
 }
 
-TEST_F(fibonacci_fixture, even_upto_n) {
+TEST_F(fibonacci_fixture, even_upto_n)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(even_upto_n_seq), std::end(even_upto_n_seq));
   std::copy(std::begin(even_upto_n_seq), std::end(even_upto_n_seq), std::back_inserter(val));
@@ -68,7 +73,8 @@ TEST_F(fibonacci_fixture, even_upto_n) {
   ASSERT_EQ(sum, 4613732u);
 }
 
-TEST_F(fibonacci_fixture, even_first_n) {
+TEST_F(fibonacci_fixture, even_first_n)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(even_first_n_seq), std::end(even_first_n_seq));
   std::copy(std::begin(even_first_n_seq), std::end(even_first_n_seq), std::back_inserter(val));

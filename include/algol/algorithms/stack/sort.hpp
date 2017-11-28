@@ -16,7 +16,7 @@ namespace algol::algorithms::stack {
    * \param stack The stack to sort
    * \return None
    */
-  template<algol::concepts::Stack S, typename Compare = std::less<typename S::value_type>,
+  template <algol::concepts::Stack S, typename Compare = std::less<typename S::value_type>,
       typename = std::enable_if_t<std::is_move_assignable_v<S>>>
   void stack_sort (S& stack, Compare comp = Compare{})
   {
@@ -63,16 +63,16 @@ namespace algol::algorithms::stack {
    * \param stack The stack to sort
    * \return None
    */
-  template<algol::concepts::Stack S, typename Compare = std::less<typename S::value_type>>
+  template <algol::concepts::Stack S, typename Compare = std::less<typename S::value_type>>
   void insertion_sort (S& stack, Compare comp = Compare{})
   {
-    S temp_stack{};
+    S temp_stack {};
     auto sorted = typename S::size_type{1};
 
     // we consider the maximum instead of minimum because we are dealing with stacks and
     // we have to push the greatest elements first
 
-    while(sorted <= std::size(stack)) {
+    while (sorted <= std::size(stack)) {
       // loop invariant (holds also at the end of this loop)
       // stack is a permutation of the input stack it has the same elements in different order
       // starting from bottom of the stack there are (sorted - 1) elements in the correct order
@@ -126,16 +126,16 @@ namespace algol::algorithms::stack {
    * \param stack The stack to sort
    * \return None
    */
-  template<algol::concepts::Stack S, typename Compare = std::less<typename S::value_type>>
+  template <algol::concepts::Stack S, typename Compare = std::less<typename S::value_type>>
   void selection_sort (S& stack, Compare comp = Compare{})
   {
-    S temp_stack{};
+    S temp_stack {};
     auto sorted = typename S::size_type{1};
 
     // we consider the maximum instead of minimum because we are dealing with stacks and
     // we have to push the greatest elements first
 
-    while(sorted < std::size(stack)) {
+    while (sorted < std::size(stack)) {
       // loop invariant (holds also at the end of this loop)
       // stack is a permutation of the input stack it has the same elements in different order
       // starting from bottom of the stack there are (sorted - 1) elements in the correct order

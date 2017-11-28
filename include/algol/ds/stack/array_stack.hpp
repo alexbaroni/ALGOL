@@ -69,22 +69,6 @@ namespace algol::ds {
     }
 
     /**
-     * \brief A reference at the item on the top of the stack
-     * \precondition The stack is not empty
-     * \postcondition Stack is not changed
-     * \complexity O(1)
-     * \throws stack_empty_error if the stack is empty
-     * \return The item on the top of the stack
-     */
-    constexpr reference top () &
-    {
-      if (empty())
-        throw stack_empty_error{"Attempting top() on empty stack"};
-
-      return array_[top_item_ - 1];
-    }
-
-    /**
      * \brief A constant reference at the item on the top of the stack
      * \precondition The stack is not empty
      * \postcondition Stack is not changed
@@ -190,8 +174,8 @@ namespace algol::ds {
      * \complexity O(1)
      */
     constexpr array_stack ()
-      noexcept (std::is_nothrow_default_constructible_v<value_type> && noexcept(size_type{0}))
-        : items_{size_type{0}}, top_item_{size_type{0}}, array_{}
+    noexcept(std::is_nothrow_default_constructible_v<value_type> && noexcept(size_type{0}))
+        : items_ {size_type{0}}, top_item_ {size_type{0}}, array_ {}
     {}
 
     /**
@@ -204,7 +188,7 @@ namespace algol::ds {
      * \complexity O(N)
      * \param values The items to be pushed onto the stack
      */
-    constexpr array_stack (std::initializer_list<value_type> values) : array_stack ()
+    constexpr array_stack (std::initializer_list<value_type> values) : array_stack()
     {
       for (auto const& v : values)
         push(v);
@@ -272,9 +256,9 @@ namespace algol::ds {
     requires concepts::EqualityComparable<T>
     {
       if (items_ != rhs.items_)
-        return false;
+      return false;
 
-      for (auto i = size_type{0}; i < items_; ++i) {
+      for (auto i = size_type{ 0 }; i < items_; ++i) {
         if (array_[i] != rhs.array_[i])
           return false;
       }
@@ -317,7 +301,7 @@ namespace algol::ds {
     requires concepts::StrictTotallyOrdered<T>
     {
       auto items = std::min(items_, rhs.items_);
-      for (auto i = size_type{0}; i < items; ++i) {
+      for (auto i = size_type{ 0 }; i < items; ++i) {
         if (array_[i] < rhs.array_[i])
           return true;
 
@@ -343,7 +327,7 @@ namespace algol::ds {
      * \param rhs The stack to be compared with this
      * \return True if this stack is lexicographically less than or equal to the provided stack, false otherwise
      */
-    constexpr  bool operator<= (array_stack const& rhs) const
+    constexpr bool operator<= (array_stack const& rhs) const
     requires concepts::StrictTotallyOrdered<T>
     {
       return !(*this > rhs);

@@ -11,11 +11,12 @@ using arithmetic_progression_first_n = algol::sequence::arithmetic_progression_f
 
 class arithmetic_progression_fixture : public ::testing::Test {
 protected:
-  arithmetic_progression_infinite inf_seq{5, 2};
-  arithmetic_progression_first_n first_n_seq{2, 3, 6};
+  arithmetic_progression_infinite inf_seq {5, 2};
+  arithmetic_progression_first_n first_n_seq {2, 3, 6};
 };
 
-TEST_F(arithmetic_progression_fixture, infinite) {
+TEST_F(arithmetic_progression_fixture, infinite)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(inf_seq), std::end(inf_seq));
   std::copy_n(std::begin(inf_seq), 5, std::back_inserter(val));
@@ -23,7 +24,8 @@ TEST_F(arithmetic_progression_fixture, infinite) {
   ASSERT_EQ(val, (std::vector<uint32_t>{5, 7, 9, 11, 13}));
 }
 
-TEST_F(arithmetic_progression_fixture, first_n) {
+TEST_F(arithmetic_progression_fixture, first_n)
+{
   std::vector<uint32_t> val;
   EXPECT_NE(std::begin(first_n_seq), std::end(first_n_seq));
   std::copy(std::begin(first_n_seq), std::end(first_n_seq), std::back_inserter(val));

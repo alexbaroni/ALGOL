@@ -55,7 +55,6 @@ int main ()
     std::cout << l << " - " << c << std::endl;
   }
 
-  std::cout << sw << std::endl;
-  operation_counter::report(std::cout);
+  std::cout << sw << std::endl << operation_counter::report;
   return 0;
 }

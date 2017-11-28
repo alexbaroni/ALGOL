@@ -4,7 +4,6 @@
 #include "algol/sequence/sequence.hpp"
 #include "algol/sequence/generator/fibonacci_generator.hpp"
 
-
 int main ()
 {
   using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
@@ -27,7 +26,8 @@ int main ()
   std::cout << sw << std::endl;
   std::cout << sum << std::endl;
 
-  operation_counter::report(std::cout);
+  std::cout << operation_counter::report;
+  std::cout << std::endl;
 
   std::cout << "even sequence" << std::endl;
   operation_counter::reset();
@@ -38,9 +38,9 @@ int main ()
     sum += fn;
   }
 
-  std::cout << sw << std::endl;
+  std::cout << algol::io::compact << sw << std::endl;
   std::cout << sum << std::endl;
 
-  operation_counter::report(std::cout);
+  std::cout << operation_counter::report;
   return 0;
 }

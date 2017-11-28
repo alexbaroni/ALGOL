@@ -5,9 +5,10 @@
 namespace ds = algol::ds;
 
 template <typename T>
-constexpr auto push(T i) {
+constexpr auto push (T i)
+{
 
-  return [i](auto j){ return i + j; };
+  return [i] (auto j) { return i + j; };
 }
 
 //template <typename T, std::size_t N>
@@ -17,16 +18,18 @@ constexpr auto push(T i) {
 //}
 
 template <typename T, std::size_t N>
-constexpr auto bottom_element(ds::array_stack<T, N> s){
+constexpr auto bottom_element (ds::array_stack<T, N> s)
+{
   if (s.size() == 1) return s.top();
   s.pop();
   return bottom_element(s);
 }
 
 template <typename T, std::size_t N>
-constexpr auto max(ds::array_stack<T, N> s){
+constexpr auto max (ds::array_stack<T, N> s)
+{
   T max = T{};
-  while(!std::empty(s)) {
+  while (!std::empty(s)) {
     if (max < s.top())
       max = s.top();
     s.pop();
@@ -35,14 +38,17 @@ constexpr auto max(ds::array_stack<T, N> s){
   return max;
 }
 
-constexpr bool f()
+constexpr bool f ()
 {
-  constexpr ds::array_stack <int, 10> dstack{0,1,2,3,4,5,6,7,8,9};
-  constexpr auto dstack2{dstack};
+  constexpr ds::array_stack<int, 10> dstack {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  constexpr auto dstack2 {dstack};
   static_assert(dstack == dstack2);
   static_assert(dstack <= dstack2);
   static_assert(dstack >= dstack2);
-  constexpr auto spop =[](auto s){ s.pop(); return s; };
+  constexpr auto spop = [] (auto s) {
+    s.pop();
+    return s;
+  };
 //  constexpr auto check =[](ds::array_stack <int, 10> s) constexpr {
 //    s.pop();
 //    static_assert(s.top() == 8);
@@ -70,9 +76,9 @@ constexpr bool f()
   return true;
 }
 
-int main()
+int main ()
 {
-  constexpr ds::array_stack <int, 10> cstack;
+  constexpr ds::array_stack<int, 10> cstack;
   static_assert(cstack.size() == 0);
   static_assert(cstack.empty());
   static_assert(!cstack.full());

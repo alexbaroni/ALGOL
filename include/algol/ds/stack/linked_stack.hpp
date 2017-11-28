@@ -34,7 +34,7 @@ namespace algol::ds {
      * \complexity O(1)
      */
     linked_stack () noexcept(std::is_nothrow_constructible_v<size_type, int>)
-        : stack<T>(), top_node_ {nullptr}, items_ {size_type{0}}
+        : stack<T>(), items_ {size_type{0}}
     {}
 
     /**
@@ -66,11 +66,11 @@ namespace algol::ds {
 
       if (!rhs.empty()) {
         for (auto i = size_type{0}; i < rhs.items_; ++i) {
-          stack.push_((node *) ::operator new(sizeof(node)));
+          stack.push_((node * ) ::operator new(sizeof(node)));
         }
 
-        node* this_iter = stack.top_node_;
-        node* rhs_iter = rhs.top_node_;
+        node* this_iter = stack.top_node_->next_;
+        node* rhs_iter = rhs.top_node_->next_;
 
         while (rhs_iter) {
           new(std::addressof(this_iter->value_)) T(rhs_iter->value_);
@@ -88,9 +88,9 @@ namespace algol::ds {
      * \complexity O(1)
      * \param rhs The stack to be moved, items contained are 'stolen' from this stack
      */
-    linked_stack (linked_stack&& rhs) noexcept : top_node_ {rhs.top_node_}, items_ {rhs.items_}
+    linked_stack (linked_stack&& rhs) noexcept : top_node_ {std::move(rhs.top_node_)}, items_ {rhs.items_}
     {
-      rhs.top_node_ = nullptr;
+      rhs.top_node_.reset();
       rhs.items_ = size_type{0};
     }
 
@@ -155,8 +155,8 @@ namespace algol::ds {
       if (items_ != rhs.items_)
         return false;
 
-      node* this_iter = top_node_;
-      node* rhs_iter = rhs.top_node_;
+      node* this_iter = top_node_->next_;
+      node* rhs_iter = rhs.top_node_->next_;
 
       while (this_iter && rhs_iter) {
         if (this_iter->value_ != rhs_iter->value_)
@@ -203,8 +203,8 @@ namespace algol::ds {
     bool operator< (linked_stack const& rhs) const
     requires concepts::StrictTotallyOrdered<T>
     {
-      node* this_iter = top_node_;
-      node* rhs_iter = rhs.top_node_;
+      node* this_iter = top_node_->next_;
+      node* rhs_iter = rhs.top_node_->next_;
 
       while (this_iter && rhs_iter) {
         if (this_iter->value_ < rhs_iter->value_)
@@ -306,7 +306,7 @@ namespace algol::ds {
 
     bool empty_ () const final
     {
-      return top_node_ == nullptr;
+      return items_ == 0;
     }
 
     bool full_ () const final
@@ -319,14 +319,9 @@ namespace algol::ds {
       return items_;
     }
 
-    reference top_ () & final
-    {
-      return top_node_->value_;
-    }
-
     const_reference top_ () const& final
     {
-      return top_node_->value_;
+      return top_node_->next_->value_;
     }
 
     void push_ (value_type const& value) final
@@ -341,8 +336,8 @@ namespace algol::ds {
 
     void pop_ () final
     {
-      node* node_to_pop = top_node_;
-      top_node_ = top_node_->next_;
+      node* node_to_pop = top_node_->next_;
+      top_node_->next_ = top_node_->next_->next_;
       items_--;
       delete node_to_pop;
     }
@@ -358,7 +353,7 @@ namespace algol::ds {
       std::vector<value_type> vector {};
       vector.reserve(size_());
 
-      node* this_iter = top_node_;
+      node* this_iter = top_node_->next_;
 
       while (this_iter) {
         vector.emplace_back(this_iter->value_);
@@ -369,12 +364,12 @@ namespace algol::ds {
 
     void push_ (node* node_to_push)
     {
-      node_to_push->next_ = top_node_;
-      top_node_ = node_to_push;
+      node_to_push->next_ = top_node_->next_;
+      top_node_->next_ = node_to_push;
       items_++;
     }
 
-    node* top_node_;
+    std::unique_ptr<node> top_node_ = std::make_unique<node>();
     size_type items_;
   };
 

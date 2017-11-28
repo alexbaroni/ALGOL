@@ -25,9 +25,9 @@ namespace algol::eval {
   // This is the custom error code enum
   class eval_error : public std::error_code {
   public:
-    eval_error() = default;  // Expected requires E to be default constructible
+    eval_error () = default;  // Expected requires E to be default constructible
     // Only allow my construction from my enum
-    inline eval_error(eval_errors c);
+    inline eval_error (eval_errors c);
   };
 
   namespace detail {
@@ -35,26 +35,25 @@ namespace algol::eval {
     class eval_error_category : public std::error_category {
     public:
       // Return a short descriptive name for the category
-      virtual const char* name() const noexcept final { return "eval_error"; }
+      virtual const char* name () const noexcept final
+      { return "eval_error"; }
 
       // Return what each enum means in text
-      virtual std::string message(int c) const final {
+      virtual std::string message (int c) const final
+      {
         switch (static_cast<eval_errors>(c)) {
-          case eval_errors::invalid_prefix_expression:
-            return "invalid prefix expression";
-          case eval_errors::invalid_postfix_expression:
-            return "invalid postfix expression";
-          default:
-            return "unknown";
+          case eval_errors::invalid_prefix_expression:return "invalid prefix expression";
+          case eval_errors::invalid_postfix_expression:return "invalid postfix expression";
+          default:return "unknown";
         }
       }
 
       // OPTIONAL: Allow generic error conditions to be compared to me
-      virtual std::error_condition default_error_condition(int c) const noexcept final {
+      virtual std::error_condition default_error_condition (int c) const noexcept final
+      {
         switch (static_cast<eval_errors>(c)) {
           case eval_errors::invalid_prefix_expression:
-          case eval_errors::invalid_postfix_expression:
-            return make_error_condition(std::errc::invalid_argument);
+          case eval_errors::invalid_postfix_expression:return make_error_condition(std::errc::invalid_argument);
           default:
             // I have no mapping for this code
             return std::error_condition(c, *this);
@@ -64,21 +63,25 @@ namespace algol::eval {
   }
 
   // Declare a global function returning a static instance of the custom category
-  extern const detail::eval_error_category& eval_error_category() {
+  extern const detail::eval_error_category& eval_error_category ()
+  {
     static detail::eval_error_category c;
     return c;
   }
 
   // Now we have the custom error code category, implement the eval_error constructor
-  inline eval_error::eval_error(eval_errors e) : std::error_code(static_cast<int>(e), eval_error_category()) {}
+  inline eval_error::eval_error (eval_errors e) : std::error_code(static_cast<int>(e), eval_error_category())
+  {}
 
   // Overload the global make_error_code() free function with our
   // custom enum. It will be found via ADL by the compiler if needed.
-  inline std::error_code make_error_code(eval_errors e) {
+  inline std::error_code make_error_code (eval_errors e)
+  {
     return eval_error(e);
   }
 
-  inline std::error_condition make_error_condition(eval_errors e) {
+  inline std::error_condition make_error_condition (eval_errors e)
+  {
     return std::error_condition(static_cast<int>(e), detail::eval_error_category{});
   }
 }
@@ -86,7 +89,7 @@ namespace algol::eval {
 namespace std {
   // Tell the C++ 11 STL metaprogramming that enum eval_error::valid_errors
   // is registered with the standard error code system
-  template<>
+  template <>
   struct is_error_code_enum<algol::eval::eval_errors> : std::true_type {};
 }
 
@@ -94,20 +97,23 @@ namespace algol::eval {
   namespace detail {
     const std::string left_operand_converted = "#";
 
-    bool is_operator(char op) {
+    bool is_operator (char op)
+    {
       return op == '+' || op == '-' || op == '*' || op == '/' || op == '^' || op == '%';
     }
 
-    bool is_operator(std::string const& op) {
+    bool is_operator (std::string const& op)
+    {
       return op == "+" || op == "-" || op == "*" || op == "/" || op == "^" || op == "%";
     }
   }
 
   // Only evaluates expression with numbers and +,-,*,/,^,% separated by spaces
-  template<typename T, std::size_t N = 100>
-  auto evaluate_postfix(std::string const& expression) {
+  template <typename T, std::size_t N = 100>
+  auto evaluate_postfix (std::string const& expression)
+  {
     algol::ds::fixed_stack<T, N> stack;
-    eval_tokenizer postfix{expression};
+    eval_tokenizer postfix {expression};
 
     for (const auto& token : postfix) {
       if (detail::is_operator(token)) {
@@ -118,23 +124,17 @@ namespace algol::eval {
           stack.pop();
 
           switch (token[0]) {
-            case '+':
-              stack.push(operand1 + operand2);
+            case '+':stack.push(operand1 + operand2);
               break;
-            case '-':
-              stack.push(operand1 - operand2);
+            case '-':stack.push(operand1 - operand2);
               break;
-            case '*':
-              stack.push(operand1 * operand2);
+            case '*':stack.push(operand1 * operand2);
               break;
-            case '/':
-              stack.push(operand1 / operand2);
+            case '/':stack.push(operand1 / operand2);
               break;
-            case '%':
-              stack.push(algol::math::mod(operand1, operand2));
+            case '%':stack.push(algol::math::mod(operand1, operand2));
               break;
-            case '^':
-              stack.push(std::pow(operand1, operand2));
+            case '^':stack.push(std::pow(operand1, operand2));
               break;
           }
         }
@@ -144,7 +144,8 @@ namespace algol::eval {
         }
       }
       else {
-        if (auto operand = algol::to<T>(token); operand.has_value()) {
+        if (auto operand = algol::to<T>(token);
+        operand.has_value()) {
           stack.push(operand);
         }
         else {
@@ -160,10 +161,11 @@ namespace algol::eval {
     return algol::make_result<T>(stack.top());
   }
 
-  template<std::size_t N = 100>
-  auto postfix_to_prefix(std::string const& expression) {
+  template <std::size_t N = 100>
+  auto postfix_to_prefix (std::string const& expression)
+  {
     algol::ds::fixed_stack<std::string, N> stack;
-    eval_tokenizer postfix{expression};
+    eval_tokenizer postfix {expression};
 
     for (auto token : postfix) {
       if (detail::is_operator(token)) {
@@ -193,10 +195,11 @@ namespace algol::eval {
     return algol::make_result<std::string>(stack.top());
   }
 
-  template<std::size_t N = 100>
-  auto prefix_to_postfix(std::string const& expression) {
+  template <std::size_t N = 100>
+  auto prefix_to_postfix (std::string const& expression)
+  {
     std::string postfix;
-    eval_tokenizer prefix{expression};
+    eval_tokenizer prefix {expression};
     algol::ds::fixed_stack<std::string, N> stack;
 
     for (const auto& token : prefix) {

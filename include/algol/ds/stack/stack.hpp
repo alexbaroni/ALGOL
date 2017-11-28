@@ -99,22 +99,6 @@ namespace algol::ds {
     }
 
     /**
-     * \brief A reference at the item on the top of the stack
-     * \precondition The stack is not empty
-     * \postcondition Stack is not changed
-     * \complexity O(1)
-     * \throws stack_empty_error if the stack is empty
-     * \return The item on the top of the stack
-     */
-    reference top () &
-    {
-      if (empty_())
-        throw stack_empty_error{"Attempting top() on empty stack"};
-
-      return top_();
-    }
-
-    /**
      * \brief A constant reference at the item on the top of the stack
      * \precondition The stack is not empty
      * \postcondition Stack is not changed
@@ -212,7 +196,6 @@ namespace algol::ds {
     virtual bool empty_ () const = 0;
     virtual bool full_ () const = 0;
     virtual size_type size_ () const = 0;
-    virtual reference top_ () & = 0;
     virtual const_reference top_ () const& = 0;
     virtual void push_ (value_type const& value) = 0;
     virtual void push_ (value_type&& value) = 0;

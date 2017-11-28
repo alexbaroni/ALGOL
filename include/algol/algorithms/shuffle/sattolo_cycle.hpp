@@ -33,7 +33,7 @@ namespace algol::algorithms::shuffle {
 
     auto end = std::prev(last);
     for (auto it = first; it != end; ++it) {
-      std::uniform_int_distribution<difference_type> distribution(std::distance(first, std::next(it)), n-1);
+      std::uniform_int_distribution<difference_type> distribution(std::distance(first, std::next(it)), n - 1);
       std::iter_swap(it, std::next(first, distribution(gen)));
     }
   }

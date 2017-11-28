@@ -8,7 +8,7 @@
 #include <boost/io/ios_state.hpp>
 
 namespace algol::integer {
-  template<typename T,
+  template <typename T,
       typename = std::enable_if_t<(std::is_integral_v<T> || std::is_convertible_v<T, int>) && !std::is_same_v<T, bool>>>
   class integer_interval {
   public:
@@ -17,17 +17,21 @@ namespace algol::integer {
     integer_interval () : integer_interval(T{}, T{})
     {}
 
-    integer_interval (T lower, T upper) : lower_(lower), upper_(upper) {}
+    integer_interval (T lower, T upper) : lower_(lower), upper_(upper)
+    {}
 
     integer_interval (integer_interval const&) = default;
     integer_interval& operator= (integer_interval const&) = default;
     ~integer_interval () = default;
 
-    T const& lower () const { return lower_; }
+    T const& lower () const
+    { return lower_; }
 
-    T const& upper () const { return upper_; }
+    T const& upper () const
+    { return upper_; }
 
-    bool is_empty () const { return lower_ >= upper_; }
+    bool is_empty () const
+    { return lower_ >= upper_; }
 
     void set_empty ()
     {

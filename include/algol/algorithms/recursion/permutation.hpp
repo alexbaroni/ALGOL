@@ -11,10 +11,10 @@
 namespace algol::algorithms::recursion {
   namespace concepts = std::experimental::ranges;
 
-  template<typename T>
+  template <typename T>
   using pull_type = typename boost::coroutines2::coroutine<T>::pull_type;
 
-  template<typename T>
+  template <typename T>
   using push_type = typename boost::coroutines2::coroutine<T>::push_type;
 
   namespace detail {
@@ -78,8 +78,8 @@ namespace algol::algorithms::recursion {
    * \param last iterator to the one past last element of the range
    * \return a range of iterator that define a permutation
    */
-  template<concepts::ForwardIterator ForwardIt>
-  pull_type<detail::iterator_range<ForwardIt>> permutations(ForwardIt first, ForwardIt last)
+  template <concepts::ForwardIterator ForwardIt>
+  pull_type<detail::iterator_range<ForwardIt>> permutations (ForwardIt first, ForwardIt last)
   {
     using std::placeholders::_1;
     pull_type<detail::iterator_range<ForwardIt>> source {std::bind(detail::permute<ForwardIt>, _1, first, first, last)};

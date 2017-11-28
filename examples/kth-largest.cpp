@@ -46,7 +46,7 @@ int main ()
   std::cout << sw << std::endl;
   std::cout << "3rd largest: " << k << std::endl;
 
-  operation_counter::report(std::cout);
+  std::cout << operation_counter::report;
 
   std::cout << "kth-largest 2" << std::endl;
   operation_counter::reset();
@@ -56,7 +56,7 @@ int main ()
 
   std::cout << sw << std::endl;
   std::cout << "3rd largest: " << k << std::endl;
-  operation_counter::report(std::cout);
+  std::cout << operation_counter::report;
 
   return 0;
 }

@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <cassert>
 #include "stack.hpp"
 #include "stl2/concepts.hpp"
 
@@ -33,11 +34,11 @@ namespace algol::ds {
      * \brief Default constructor
      * \precondition None
      * \postcondition The stack is empty
-     * \complexity O(1)
+     * \complexity O(N) array initializing
      */
     fixed_stack ()
-        : stack<T>(), items_{size_type{0}}, top_item_{size_type{0}},
-          array_{std::make_unique<value_type[]>(N)}
+        : stack<T>(), items_ {size_type{0}}, top_item_ {size_type{0}},
+          array_ {std::make_unique<value_type[]>(N)}
     {}
 
     /**
@@ -65,10 +66,14 @@ namespace algol::ds {
      */
     fixed_stack (fixed_stack const& rhs) : fixed_stack()
     {
+      assert(rhs.items_ >= size_type{0} && rhs.items_ <= N);
+      assert(rhs.top_item_ >= size_type{0} && rhs.top_item_ <= N);
+
       fixed_stack stack;
 
       if (!rhs.empty()) {
         for (auto i = size_type{0}; i < rhs.items_; ++i) {
+          alloc_traits::destroy(allocator_, std::addressof(stack.array_[i]));
           alloc_traits::construct(allocator_, std::addressof(stack.array_[i]), value_type{rhs.array_[i]});
         }
 
@@ -104,6 +109,9 @@ namespace algol::ds {
      */
     fixed_stack& operator= (fixed_stack const& rhs)
     {
+      assert(rhs.items_ >= size_type{0} && rhs.items_ <= N);
+      assert(rhs.top_item_ >= size_type{0} && rhs.top_item_ <= N);
+
       fixed_stack temp {rhs};
       swap(temp);
       return *this;
@@ -120,6 +128,9 @@ namespace algol::ds {
      */
     fixed_stack& operator= (fixed_stack&& rhs) noexcept
     {
+      assert(rhs.items_ >= size_type{0} && rhs.items_ <= N);
+      assert(rhs.top_item_ >= size_type{0} && rhs.top_item_ <= N);
+
       fixed_stack temp {std::move(rhs)};
       swap(temp);
       return *this;
@@ -131,12 +142,7 @@ namespace algol::ds {
      * \postcondition The stack items are destroyed
      * \complexity O(N) Destructor calls
      */
-    ~fixed_stack ()
-    {
-      for (auto i = size_type{0}; i < items_; ++i) {
-        alloc_traits::destroy(allocator_, std::addressof(array_[i]));
-      }
-    }
+    ~fixed_stack () = default;
 
     /**
      * \brief Emplace the item passed onto the stack
@@ -147,9 +153,9 @@ namespace algol::ds {
      * \tparam Args parameters types for constructor of T
      * \param args parameters for constructor of T
      */
-    template<typename... Args>
-    std::enable_if_t<std::is_constructible_v<T, Args&&...>, void>
-    emplace (Args&&... args)
+    template <typename... Args>
+    std::enable_if_t<std::is_constructible_v<T, Args&& ...>, void>
+    emplace (Args&& ... args)
     {
       emplace_(std::forward<Args>(args)...);
     }
@@ -165,8 +171,8 @@ namespace algol::ds {
      * \param ilist parameters for constructor of T
      * \param args initializer list for constructor of T
      */
-    template<typename U, typename... Args>
-    std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&&...>, void>
+    template <typename U, typename... Args>
+    std::enable_if_t<std::is_constructible_v<T, std::initializer_list<U>, Args&& ...>, void>
     emplace (std::initializer_list<U> ilist, Args&& ... args)
     {
       emplace_(ilist, std::forward<Args>(args)...);
@@ -185,10 +191,15 @@ namespace algol::ds {
     bool operator== (fixed_stack const& rhs) const
     requires concepts::EqualityComparable<T>
     {
+      assert(items_ >= size_type{0} && items_ <= N);
+      assert(top_item_ >= size_type{0} && top_item_ <= N);
+      assert(rhs.items_ >= size_type{0} && rhs.items_ <= N);
+      assert(rhs.top_item_ >= size_type{0} && rhs.top_item_ <= N);
+
       if (items_ != rhs.items_)
         return false;
 
-      for (auto i = size_type{0}; i < items_; ++i) {
+      for (auto i = size_type{ 0 }; i < items_; ++i) {
         if (array_[i] != rhs.array_[i])
           return false;
       }
@@ -216,7 +227,7 @@ namespace algol::ds {
      * \brief Less than operator
      * \details Lexicographical comparison is a operation with the following properties:
      * - Two stacks are compared element by element
-     * - The first mismatching item defines which stacks is lexicographically less or greater than the other
+     * - The first mismatching item defines which stack is lexicographically less or greater than the other
      * - If one stack is a prefix of another, the shorter stack is lexicographically less than the other
      * - If two stacks have equivalent elements and are of the same length, then the stacks are lexicographically equal
      * - An empty stack is lexicographically less than any non-empty stack
@@ -230,8 +241,13 @@ namespace algol::ds {
     bool operator< (fixed_stack const& rhs) const
     requires concepts::StrictTotallyOrdered<T>
     {
+      assert(items_ >= size_type{0} && items_ <= N);
+      assert(top_item_ >= size_type{0} && top_item_ <= N);
+      assert(rhs.items_ >= size_type{0} && rhs.items_ <= N);
+      assert(rhs.top_item_ >= size_type{0} && rhs.top_item_ <= N);
+
       auto items = std::min(items_, rhs.items_);
-      for (auto i = size_type{0}; i < items; ++i) {
+      for (auto i = size_type{ 0 }; i < items; ++i) {
         if (array_[i] < rhs.array_[i])
           return true;
 
@@ -246,7 +262,7 @@ namespace algol::ds {
      * \brief Less than or equal operator
      * \details Lexicographical comparison is a operation with the following properties:
      * - Two stacks are compared element by element
-     * - The first mismatching item defines which stacks is lexicographically less or greater than the other
+     * - The first mismatching item defines which stack is lexicographically less or greater than the other
      * - If one stack is a prefix of another, the shorter stack is lexicographically less than the other
      * - If two stacks have equivalent elements and are of the same length, then the stacks are lexicographically equal
      * - An empty stack is lexicographically less than any non-empty stack
@@ -267,7 +283,7 @@ namespace algol::ds {
      * \brief Greater than operator
      * \details Lexicographical comparison is a operation with the following properties:
      * - Two stacks are compared element by element
-     * - The first mismatching item defines which stacks is lexicographically less or greater than the other
+     * - The first mismatching item defines which stack is lexicographically less or greater than the other
      * - If one stack is a prefix of another, the shorter stack is lexicographically less than the other
      * - If two stacks have equivalent elements and are of the same length, then the stacks are lexicographically equal
      * - An empty stack is lexicographically less than any non-empty stack
@@ -288,7 +304,7 @@ namespace algol::ds {
      * \brief Greater than or equal operator
      * \details Lexicographical comparison is a operation with the following properties:
      * - Two stacks are compared element by element
-     * - The first mismatching item defines which stacks is lexicographically less or greater than the other
+     * - The first mismatching item defines which stack is lexicographically less or greater than the other
      * - If one stack is a prefix of another, the shorter stack is lexicographically less than the other
      * - If two stacks have equivalent elements and are of the same length, then the stacks are lexicographically equal
      * - An empty stack is lexicographically less than any non-empty stack
@@ -315,6 +331,11 @@ namespace algol::ds {
      */
     void swap (fixed_stack& rhs) noexcept
     {
+      assert(items_ >= size_type{0} && items_ <= N);
+      assert(top_item_ >= size_type{0} && top_item_ <= N);
+      assert(rhs.items_ >= size_type{0} && rhs.items_ <= N);
+      assert(rhs.top_item_ >= size_type{0} && rhs.top_item_ <= N);
+
       using std::swap;
       swap(items_, rhs.items_);
       swap(top_item_, rhs.top_item_);
@@ -324,31 +345,39 @@ namespace algol::ds {
   private:
     bool empty_ () const final
     {
+      assert(items_ >= size_type{0} && items_ <= N);
+
       return items_ == size_type{0};
     }
 
     bool full_ () const final
     {
+      assert(items_ >= size_type{0} && items_ <= N);
+
       return top_item_ == N;
     }
 
     size_type size_ () const final
     {
-      return items_;
-    }
+      assert(items_ >= size_type{0} && items_ <= N);
 
-    reference top_ () & final
-    {
-      return array_[top_item_ - 1];
+      return items_;
     }
 
     const_reference top_ () const& final
     {
+      assert(items_ >= size_type{0} && items_ <= N);
+      assert(top_item_ >= size_type{0} && top_item_ <= N);
+
       return array_[top_item_ - 1];
     }
 
     void push_ (value_type const& value) final
     {
+      assert(items_ >= size_type{0} && items_ < N);
+      assert(top_item_ >= size_type{0} && top_item_ < N);
+
+      alloc_traits::destroy(allocator_, std::addressof(array_[top_item_]));
       alloc_traits::construct(allocator_, std::addressof(array_[top_item_]), value_type{value});
       top_item_++;
       items_++;
@@ -356,6 +385,10 @@ namespace algol::ds {
 
     void push_ (value_type&& value) final
     {
+      assert(items_ >= size_type{0} && items_ < N);
+      assert(top_item_ >= size_type{0} && top_item_ < N);
+
+      alloc_traits::destroy(allocator_, std::addressof(array_[top_item_]));
       alloc_traits::construct(allocator_, std::addressof(array_[top_item_]), value_type{std::move(value)});
       top_item_++;
       items_++;
@@ -363,22 +396,27 @@ namespace algol::ds {
 
     void pop_ () final
     {
+      assert(items_ > size_type{0} && items_ <= N);
+      assert(top_item_ > size_type{0} && top_item_ <= N);
+
       top_item_--;
       items_--;
-      alloc_traits::destroy(allocator_, std::addressof(array_[top_item_]));
     }
 
     void clear_ () final
     {
-      for (auto i = size_type{0}; i < items_; ++i) {
-        alloc_traits::destroy(allocator_, std::addressof(array_[i]));
-      }
+      assert(items_ >= size_type{0} && items_ <= N);
+      assert(top_item_ >= size_type{0} && top_item_ <= N);
+
       items_ = size_type{0};
       top_item_ = size_type{0};
     }
 
     std::vector<value_type> to_vector_ () const final
     {
+      assert(items_ >= size_type{0} && items_ <= N);
+      assert(top_item_ >= size_type{0} && top_item_ <= N);
+
       std::vector<value_type> vector {};
       vector.reserve(size_());
 
@@ -388,9 +426,13 @@ namespace algol::ds {
       return vector;
     }
 
-    template<typename... Args>
+    template <typename... Args>
     void emplace_ (Args&& ... args) noexcept(std::is_nothrow_constructible<T, Args...>())
     {
+      assert(items_ >= size_type{0} && items_ < N);
+      assert(top_item_ >= size_type{0} && top_item_ < N);
+
+      alloc_traits::destroy(allocator_, std::addressof(array_[top_item_]));
       alloc_traits::construct(allocator_, std::addressof(array_[top_item_]), value_type{std::forward<Args>(args)...});
       top_item_++;
       items_++;

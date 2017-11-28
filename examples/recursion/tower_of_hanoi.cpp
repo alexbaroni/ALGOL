@@ -12,12 +12,12 @@ void tower_of_hanoi (char from, char to, char spare, std::size_t disks)
     //std::cout << from << " -> " << to << std::endl;
     return;
   }
-  tower_of_hanoi(from, spare, to, disks -1);
+  tower_of_hanoi(from, spare, to, disks - 1);
   tower_of_hanoi(from, to, spare, 1);
-  tower_of_hanoi(spare, to, from, disks -1);
+  tower_of_hanoi(spare, to, from, disks - 1);
 }
 
-int main()
+int main ()
 {
   using benchmark = algol::perf::benchmark<std::chrono::nanoseconds>;
   //tower_of_hanoi('A', 'B', 'C', 3);

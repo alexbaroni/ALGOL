@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iterator>
+#include "algol/io/manip.hpp"
 #include "algol/perf/stopwatch.hpp"
 #include "algol/perf/operation_counter.hpp"
 #include <algol/integer/integer_interval.hpp>
@@ -25,7 +26,8 @@ int main ()
     std::cout << l << " - " << std::distance(std::begin(seq), std::end(seq)) << std::endl;
   }
 
-  std::cout << sw << std::endl;
-  operation_counter::report(std::cout);
+  std::cout << sw << std::endl << operation_counter::report;
+  std::cout << std::endl << algol::io::compact << operation_counter::report << std::endl;
+
   return 0;
 }

@@ -15,25 +15,29 @@ protected:
   stopwatch_ms sw_ms;
 };
 
-TEST_F(stopwatch_fixture, elapsed_gt_zero) {
+TEST_F(stopwatch_fixture, elapsed_gt_zero)
+{
   EXPECT_GE(sw_ns.elapsed().count(), 0);
 }
 
-TEST_F(stopwatch_fixture, ostream_op_contains_ns) {
+TEST_F(stopwatch_fixture, ostream_op_contains_ns)
+{
   std::ostringstream os;
   os << sw_ns;
   EXPECT_THAT(os.str(), testing::HasSubstr("elapsed:"));
   EXPECT_THAT(os.str(), testing::HasSubstr("ns"));
 }
 
-TEST_F(stopwatch_fixture, ostream_op_contains_us) {
+TEST_F(stopwatch_fixture, ostream_op_contains_us)
+{
   std::ostringstream os;
   os << sw_us;
   EXPECT_THAT(os.str(), testing::HasSubstr("elapsed:"));
   EXPECT_THAT(os.str(), testing::HasSubstr("us"));
 }
 
-TEST_F(stopwatch_fixture, ostream_op_contains_ms) {
+TEST_F(stopwatch_fixture, ostream_op_contains_ms)
+{
   std::ostringstream os;
   os << sw_ms;
   EXPECT_THAT(os.str(), testing::HasSubstr("elapsed:"));

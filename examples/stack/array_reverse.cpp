@@ -8,17 +8,18 @@
 
 using stopwatch = algol::perf::stopwatch<std::chrono::microseconds>;
 
-int main() {
+int main ()
+{
   stopwatch sw;
   algol::ds::linked_stack<std::size_t> stack;
   std::array<std::size_t, 10000> array = algol::ds::fill_array<10000>(algol::identity);
 
-  for(const auto& v : array)
+  for (const auto& v : array)
     stack.push(v);
 
   assert(stack.top() == 9999);
 
-  for(auto& v : array) {
+  for (auto& v : array) {
     v = stack.top();
     stack.pop();
   }

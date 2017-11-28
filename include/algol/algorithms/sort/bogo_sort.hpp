@@ -26,7 +26,7 @@ namespace algol::algorithms::sort {
    */
   template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
-  void random_bogo_sort (ForwardIt first, ForwardIt last, Compare comp = Compare{})
+  void bogo_sort_random (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
     using namespace algol::algorithms::shuffle;
 
@@ -54,7 +54,7 @@ namespace algol::algorithms::sort {
    */
   template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
-  void deterministic_bogo_sort (ForwardIt first, ForwardIt last, Compare comp = Compare{})
+  void bogo_sort_deterministic (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
     using namespace algol::algorithms::recursion;
 

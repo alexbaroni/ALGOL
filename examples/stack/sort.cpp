@@ -16,8 +16,8 @@ const size_t M = N * 20;
 std::array<std::size_t, N> array_n = algol::ds::fill_array<N>(algol::identity);
 std::array<std::size_t, M> array_m = algol::ds::fill_array<M>(algol::identity);
 
-std::array<std::size_t, N> rarray_n{};
-std::array<std::size_t, M> rarray_m{};
+std::array<std::size_t, N> rarray_n {};
+std::array<std::size_t, M> rarray_m {};
 
 std::random_device rd;  //Will be used to obtain a seed for the random number engine
 std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
@@ -25,114 +25,114 @@ std::uniform_int_distribution<std::size_t> dis(100, 999);
 
 using benchmark = algol::perf::benchmark<std::chrono::microseconds>;
 
-void fill_rarray()
+void fill_rarray ()
 {
-  for(auto& v : rarray_n) {
+  for (auto& v : rarray_n) {
     v = dis(gen);
   }
 
-  for(auto& v : rarray_m) {
+  for (auto& v : rarray_m) {
     v = dis(gen);
   }
 }
 
-void fn()
+void fn ()
 {
   algol::ds::fixed_stack<std::size_t, N> stack;
-  for(const auto& v : array_n)
+  for (const auto& v : array_n)
     stack.push(N - v);
 
   assert(stack.top() == 1);
   algol::algorithms::stack::insertion_sort(stack);
 }
 
-void fm()
+void fm ()
 {
   algol::ds::fixed_stack<std::size_t, M> stack;
-  for(const auto& v : array_m)
+  for (const auto& v : array_m)
     stack.push(M - v);
 
   assert(stack.top() == 1);
   algol::algorithms::stack::insertion_sort(stack);
 }
 
-void fnr()
+void fnr ()
 {
   algol::ds::fixed_stack<std::size_t, N> stack;
-  for(const auto& v : rarray_n)
+  for (const auto& v : rarray_n)
     stack.push(v);
 
   algol::algorithms::stack::insertion_sort(stack);
 }
 
-void fmr()
+void fmr ()
 {
   algol::ds::fixed_stack<std::size_t, M> stack;
-  for(const auto& v : rarray_m)
+  for (const auto& v : rarray_m)
     stack.push(v);
 
   algol::algorithms::stack::insertion_sort(stack);
 }
 
-void gn()
+void gn ()
 {
   algol::ds::fixed_stack<std::size_t, N> stack;
-  for(const auto& v : array_n)
+  for (const auto& v : array_n)
     stack.push(N - v);
 
   assert(stack.top() == 1);
   algol::algorithms::stack::selection_sort(stack);
 }
 
-void gm()
+void gm ()
 {
   algol::ds::fixed_stack<std::size_t, M> stack;
-  for(const auto& v : array_m)
+  for (const auto& v : array_m)
     stack.push(M - v);
 
   assert(stack.top() == 1);
   algol::algorithms::stack::selection_sort(stack);
 }
 
-void gnr()
+void gnr ()
 {
   algol::ds::fixed_stack<std::size_t, N> stack;
-  for(const auto& v : rarray_n)
+  for (const auto& v : rarray_n)
     stack.push(v);
 
   algol::algorithms::stack::selection_sort(stack);
 }
 
-void gmr()
+void gmr ()
 {
   algol::ds::fixed_stack<std::size_t, M> stack;
-  for(const auto& v : rarray_m)
+  for (const auto& v : rarray_m)
     stack.push(v);
 
   algol::algorithms::stack::selection_sort(stack);
 }
 
-void hnr()
+void hnr ()
 {
   algol::ds::fixed_stack<std::size_t, N> stack;
-  for(const auto& v : rarray_n)
+  for (const auto& v : rarray_n)
     stack.push(v);
 
   algol::algorithms::stack::stack_sort(stack);
 }
 
-void hmr()
+void hmr ()
 {
   algol::ds::fixed_stack<std::size_t, M> stack;
-  for(const auto& v : rarray_m)
+  for (const auto& v : rarray_m)
     stack.push(v);
 
   algol::algorithms::stack::stack_sort(stack);
 }
 
-void ins_sort()
+void ins_sort ()
 {
-  algol::ds::fixed_stack<std::size_t, N> stack{2,4,3,5,6,1};
+  algol::ds::fixed_stack<std::size_t, N> stack {2, 4, 3, 5, 6, 1};
   assert(stack.top() == 1);
   std::cout << stack.to_vector() << std::endl;
   algol::algorithms::stack::insertion_sort(stack);
@@ -140,16 +140,16 @@ void ins_sort()
   std::cout << stack.to_vector() << std::endl;
 
   stack.clear();
-  for(const auto& v : array_n)
+  for (const auto& v : array_n)
     stack.push(N - v);
 
   assert(stack.top() == 1);
-  auto sort = [&stack]() { algol::algorithms::stack::insertion_sort(stack); };
+  auto sort = [&stack] () { algol::algorithms::stack::insertion_sort(stack); };
   auto r1 = benchmark::run(sort);
   std::cout << "One run: " << r1;
   assert(std::size(stack) == 100);
   stack.clear();
-  for(const auto& v : array_n)
+  for (const auto& v : array_n)
     stack.push(N - v);
   algol::algorithms::stack::insertion_sort(stack);
   std::cout << stack.to_vector() << std::endl;
@@ -164,16 +164,16 @@ void ins_sort()
   std::cout << "Input size: " << M << " " << average_m;
 
   auto ratio = average_m.duration / average_n.duration;
-  std::cout << "Input size ratio: " << M/N << ", average execution ratio: " << ratio << std::endl;
+  std::cout << "Input size ratio: " << M / N << ", average execution ratio: " << ratio << std::endl;
 }
 
-void ins_sort_r()
+void ins_sort_r ()
 {
-  algol::ds::fixed_stack<std::size_t, N> stack{};
-  for(const auto& v : rarray_n)
+  algol::ds::fixed_stack<std::size_t, N> stack {};
+  for (const auto& v : rarray_n)
     stack.push(v);
 
-  auto sort = [&stack]() { algol::algorithms::stack::insertion_sort(stack); };
+  auto sort = [&stack] () { algol::algorithms::stack::insertion_sort(stack); };
   auto r1 = benchmark::run(sort);
   std::cout << "One run: " << r1;
   assert(std::size(stack) == 100);
@@ -189,10 +189,10 @@ void ins_sort_r()
   std::cout << "Input size: " << M << " " << average_m;
 
   auto ratio = average_m.duration / average_n.duration;
-  std::cout << "Input size ratio: " << M/N << ", average execution ratio: " << ratio << std::endl;
+  std::cout << "Input size ratio: " << M / N << ", average execution ratio: " << ratio << std::endl;
 }
 
-void sel_sort()
+void sel_sort ()
 {
   algol::ds::fixed_stack<std::size_t, N> stack {2, 4, 3, 5, 6, 1};
   assert(stack.top() == 1);
@@ -207,16 +207,16 @@ void sel_sort()
   std::cout << stack.to_vector() << std::endl;
 
   stack.clear();
-  for(const auto& v : array_n)
+  for (const auto& v : array_n)
     stack.push(N - v);
 
   assert(stack.top() == 1);
-  auto sort = [&stack]() { algol::algorithms::stack::selection_sort(stack); };
+  auto sort = [&stack] () { algol::algorithms::stack::selection_sort(stack); };
   auto r1 = benchmark::run(sort);
   std::cout << "One run: " << r1;
   assert(std::size(stack) == 100);
   stack.clear();
-  for(const auto& v : array_n)
+  for (const auto& v : array_n)
     stack.push(N - v);
   algol::algorithms::stack::selection_sort(stack);
   std::cout << stack.to_vector() << std::endl;
@@ -231,16 +231,16 @@ void sel_sort()
   std::cout << "Input size: " << M << " " << average_m;
 
   auto ratio = average_m.duration / average_n.duration;
-  std::cout << "Input size ratio: " << M/N << ", average execution ratio: " << ratio;
+  std::cout << "Input size ratio: " << M / N << ", average execution ratio: " << ratio;
 }
 
-void sel_sort_r()
+void sel_sort_r ()
 {
   algol::ds::fixed_stack<std::size_t, N> stack {};
-  for(const auto& v : rarray_n)
+  for (const auto& v : rarray_n)
     stack.push(v);
 
-  auto sort = [&stack]() { algol::algorithms::stack::selection_sort(stack); };
+  auto sort = [&stack] () { algol::algorithms::stack::selection_sort(stack); };
   auto r1 = benchmark::run(sort);
   std::cout << "One run: " << r1;
   assert(std::size(stack) == 100);
@@ -256,17 +256,16 @@ void sel_sort_r()
   std::cout << "Input size: " << M << " " << average_m;
 
   auto ratio = average_m.duration / average_n.duration;
-  std::cout << "Input size ratio: " << M/N << ", average execution ratio: " << ratio;
+  std::cout << "Input size ratio: " << M / N << ", average execution ratio: " << ratio;
 }
 
-
-void stk_sort_r()
+void stk_sort_r ()
 {
-  algol::ds::fixed_stack<std::size_t, N> stack{};
-  for(const auto& v : rarray_n)
+  algol::ds::fixed_stack<std::size_t, N> stack {};
+  for (const auto& v : rarray_n)
     stack.push(v);
 
-  auto sort = [&stack]() { algol::algorithms::stack::stack_sort(stack); };
+  auto sort = [&stack] () { algol::algorithms::stack::stack_sort(stack); };
   auto r1 = benchmark::run(sort);
   std::cout << "One run: " << r1;
   assert(std::size(stack) == 100);
@@ -282,10 +281,11 @@ void stk_sort_r()
   std::cout << "Input size: " << M << " " << average_m;
 
   auto ratio = average_m.duration / average_n.duration;
-  std::cout << "Input size ratio: " << M/N << ", average execution ratio: " << ratio << std::endl;
+  std::cout << "Input size ratio: " << M / N << ", average execution ratio: " << ratio << std::endl;
 }
 
-int main() {
+int main ()
+{
   fill_rarray();
   std::cout << "Insertion sort" << std::endl;
   ins_sort();

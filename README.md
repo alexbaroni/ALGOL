@@ -41,7 +41,7 @@ int main()
     }
 
     std::cout << sw << std::endl;
-    //operation_counter::report(std::cout);
+    //std::cout << operation_counter::report;
     std::cout << "Assignments: " << operation_counter::assignments() << '\n';
     std::cout << "Comparisons: " << operation_counter::equal_comparisons() << std::endl;
 

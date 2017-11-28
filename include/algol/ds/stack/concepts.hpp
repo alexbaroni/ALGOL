@@ -7,7 +7,8 @@ namespace algol::concepts {
   template <typename S>
   concept bool Stack ()
   {
-    return requires(S stack, typename S::value_type const& value) {
+    return requires(S
+    stack, typename S::value_type const&value) {
       typename S::value_type;
       typename S::size_type;
       typename S::reference;

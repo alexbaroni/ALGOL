@@ -7,12 +7,13 @@
 
 class result_fixture : public ::testing::Test {
 protected:
-  algol::result<int> res_err{std::make_error_code(std::errc::invalid_argument)};
+  algol::result<int> res_err {std::make_error_code(std::errc::invalid_argument)};
   //auto res_err = algol::make_result(std::make_error_code(std::errc::invalid_argument));
-  algol::result<int> res_exc{std::make_exception_ptr(std::invalid_argument{"invalid argument"})};
+  algol::result<int> res_exc {std::make_exception_ptr(std::invalid_argument{"invalid argument"})};
 };
 
-TEST_F(result_fixture, result) {
+TEST_F(result_fixture, result)
+{
   auto res_1 = algol::make_result(1);
   EXPECT_EQ(res_1, 1);
   ASSERT_TRUE(res_1);
@@ -29,7 +30,8 @@ TEST_F(result_fixture, result) {
   EXPECT_EQ(res_3, 1);
 }
 
-TEST_F(result_fixture, error_result) {
+TEST_F(result_fixture, error_result)
+{
   auto res_1 = algol::make_result(1);
   ASSERT_FALSE(res_err.has_value());
   ASSERT_TRUE(res_err.has_error());
@@ -53,7 +55,8 @@ TEST_F(result_fixture, error_result) {
                }, std::system_error);
 }
 
-TEST_F(result_fixture, exception_result) {
+TEST_F(result_fixture, exception_result)
+{
   auto res_1 = algol::make_result(1);
   ASSERT_FALSE(res_exc.has_value());
   ASSERT_FALSE(res_exc.has_error());
@@ -77,7 +80,8 @@ TEST_F(result_fixture, exception_result) {
                }, std::invalid_argument);
 }
 
-TEST_F(result_fixture, compare_with_result) {
+TEST_F(result_fixture, compare_with_result)
+{
   auto res_1 = algol::make_result(1);
   auto res_2 = algol::make_result(2);
   auto res_3 = algol::make_result(1);
@@ -95,8 +99,8 @@ TEST_F(result_fixture, compare_with_result) {
   ASSERT_TRUE(res_2 >= res_1);
 }
 
-
-TEST_F(result_fixture, compare_with_t) {
+TEST_F(result_fixture, compare_with_t)
+{
   auto res_1 = algol::make_result(1);
   auto res_2 = algol::make_result(2);
   ASSERT_TRUE(res_1 == 1);
@@ -117,7 +121,8 @@ TEST_F(result_fixture, compare_with_t) {
   ASSERT_TRUE(1 >= res_1);
 }
 
-TEST_F(result_fixture, in_place) {
+TEST_F(result_fixture, in_place)
+{
   auto res = algol::result<int>{std::in_place, 2};
   ASSERT_TRUE(res == 2);
   auto res_2 = algol::result<std::vector<int>>{std::in_place, {2, 3, 4, 5}};
@@ -131,11 +136,11 @@ TEST_F(result_fixture, in_place) {
 TEST_F(result_fixture, structured_binding)
 {
   auto res_3 = algol::make_result<std::vector<int>>({2, 3, 4, 5});
-  auto [v] = res_3;
+  auto[v] = res_3;
   ASSERT_EQ(v.size(), 4u);
   auto res_4 = algol::make_result<std::pair<int, double>>(2, 3.0);
-  auto [p] = res_4;
-  auto [i, d] = p;
+  auto[p] = res_4;
+  auto[i, d] = p;
   ASSERT_TRUE(i == 2 && d == 3.0);
 //  auto re = algol::make_result(std::make_error_code(std::errc::invalid_argument));
 //  auto [x] = re;

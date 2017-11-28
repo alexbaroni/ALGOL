@@ -51,15 +51,15 @@ namespace algol::algorithms::sort {
    * \param comp comparison invokable
    */
 
-  template<concepts::BidirectionalIterator BidirIt,
+  template <concepts::BidirectionalIterator BidirIt,
       typename Compare = std::less<typename std::iterator_traits<BidirIt>::value_type>>
-  void standard_insertion_sort (BidirIt first, BidirIt last, Compare comp = Compare{})
+  void insertion_sort (BidirIt first, BidirIt last, Compare comp = Compare{})
   {
     if (std::distance(first, last) < 2)
       return;
 
-    for (auto unsorted = std::next(first); unsorted != last; ++unsorted) {
-      for(auto it = unsorted; it != first && comp(*it, *std::prev(it)); --it) {
+    for (auto next = std::next(first); next != last; ++next) {
+      for (auto it = next; it != first && comp(*it, *std::prev(it)); --it) {
         std::iter_swap(it, std::prev(it));
       }
     }
@@ -78,9 +78,9 @@ namespace algol::algorithms::sort {
    * \param last iterator to the one past last element of the range
    * \param comp comparison invokable
    */
-  template<concepts::ForwardIterator ForwardIt,
+  template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
-  void stl_insertion_sort(ForwardIt first, ForwardIt last, Compare comp = Compare{})
+  void insertion_sort_stl (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
     if (std::distance(first, last) < 2)
       return;
@@ -108,35 +108,29 @@ namespace algol::algorithms::sort {
    * \param last iterator to the one past last element of the range
    * \param comp comparison invokable
    */
-  template<concepts::ForwardIterator ForwardIt,
+  template <concepts::ForwardIterator ForwardIt,
       typename Compare = std::less<typename std::iterator_traits<ForwardIt>::value_type>>
-  void insertion_sort(ForwardIt first, ForwardIt last, Compare comp = Compare{})
+  void insertion_sort (ForwardIt first, ForwardIt last, Compare comp = Compare{})
   {
     if (std::distance(first, last) < 2)
       return;
-    for (auto it = std::next(first); it != last; ++it) {
-      // finds in the [first, it) range the insertion point for the first unsorted element
-      auto rot_it = first;
-      // linear upper_bound
-      // while (!comp(*it, *rot_it) && rot_it != it)
-      //   ++rot_it;
-      // logarithmic upper_bound
-      auto count = std::distance(rot_it, it);
-      while (count > 0) {
-        auto middle = rot_it;
-        auto step = count / 2;
-        std::advance(middle, step);
-        if (!comp(*it, *middle)) {
-          rot_it = ++middle;
-          count -= step + 1;
-        }
-        else
-          count = step;
-      }
-      // make a rotation to place the first unsorted element in place (partially sorted)
-      while(rot_it != it) {
-        std::iter_swap(rot_it, it);
-        ++rot_it;
+    for (auto next = std::next(first); next != last; ++next) {
+      // loop invariant (holds also at the end of this loop)
+      // the range [first, last) is a permutation of the input range
+      // the range [first, next) is sorted
+      // next in range [first+1, last)
+      auto value = next;
+      auto prev = std::next(first, std::distance(first, next) - 1);
+      while (std::distance(first, value) >= 1 && comp(*value, *prev)) {
+        // loop invariant (holds also at the end of this loop)
+        // prev in range [first, next)
+        // the range [first, prev] + value + [value+1, last) is a permutation of the input range
+        // the range [first, prev) is sorted
+        // the range [prev, next) is sorted
+        // *value <= every element in range [value+1, next)
+        std::iter_swap(value, prev);
+        value = prev;
+        prev = std::next(first, value == first ? 0 : std::distance(first, value) - 1);
       }
     }
   }

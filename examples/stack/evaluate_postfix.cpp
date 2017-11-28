@@ -5,9 +5,9 @@
 #include "algol/math/math.hpp"
 #include "algol/eval/eval.hpp"
 
-
-int main() {
-  double val;
+int main ()
+{
+  [[maybe_unused]] double val;
   std::string expression = "2 3 4 + *";
   val = algol::eval::evaluate_postfix<double>(expression);
   assert(algol::math::nearly_equal(val, 14.0));
@@ -36,7 +36,7 @@ int main() {
     expression = "7 3 12 + ";
     val = algol::eval::evaluate_postfix<double>(expression); //throws invalid_postfix_expression
   }
-  catch(std::system_error const& e) {
+  catch (std::system_error const& e) {
     std::cout << e.code().category().name() << ": " << e.what() << std::endl;
   }
 

@@ -4,7 +4,7 @@
 #include "algol/io/pprint.hpp"
 #include "algol/algorithms/shuffle/fisher_yates.hpp"
 
-int main()
+int main ()
 {
   using namespace algol::algorithms::shuffle;
   std::array arr {2, 4, 6};
@@ -15,7 +15,7 @@ int main()
     fisher_yates_shuffle(std::begin(arr), std::end(arr), gen);
     std::cout << arr << std::endl;
   }
-  std::array<int,1> arr2 {1};
+  std::array<int, 1> arr2 {1};
   fisher_yates_shuffle(std::begin(arr2), std::end(arr2), gen);
   std::cout << arr2 << std::endl;
 }
